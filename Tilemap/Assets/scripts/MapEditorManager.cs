@@ -14,6 +14,8 @@ public class MapEditorManager : MonoBehaviour
     planes: 2
     river: 3
     road: 4
+    farm: 5
+    bonfire: 6
      */
     public List<TileBase> tileBases;
 
@@ -34,7 +36,7 @@ public class MapEditorManager : MonoBehaviour
         
         
         //when the button gets pressed, we insert the appropriate tile in the tilemap.
-        if (Input.GetMouseButtonDown(0) && ItemButtons[CurrentButtonPressed].Clicked)
+        if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked)
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {

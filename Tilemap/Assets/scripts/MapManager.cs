@@ -49,7 +49,7 @@ public class MapManager : MonoBehaviour
     
     void Update()
     {
-        /*This is an example of how to get all the info in a tile and then change it to another tile.
+        /*an example to make sure that the tiles are working:
         if(Input.GetMouseButtonDown(0))
         {
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -62,7 +62,8 @@ public class MapManager : MonoBehaviour
 
             print("At position " + gridPosition + "there is a " + tilename + " with " + tilestatus + " weather");
             map.SetTile(gridPosition, tileBases[0]);
-        }*/
+        }
+        */
     }
     public string Getname(Vector2 worldPosition)
     {
@@ -76,6 +77,19 @@ public class MapManager : MonoBehaviour
         string tilename = dataFromTiles[tile].name;
 
         return tilename;
+    }
+    public int Getowner(Vector2 worldPosition)
+    {
+        Vector3Int gridPosition = map.WorldToCell(worldPosition);
+
+        TileBase tile = map.GetTile(gridPosition);
+
+        if (tile == null)
+            return 0;
+
+        int tileowner = dataFromTiles[tile].owner;
+
+        return tileowner;
     }
 
     public string Getstatus(Vector2 worldPosition)
