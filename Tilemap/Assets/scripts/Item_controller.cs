@@ -32,6 +32,6 @@ public class Item_controller : MonoBehaviour
         Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
         Instantiate(editor.ItemImage[ID], new Vector3(worldPosition.x, worldPosition.y, 0), Quaternion.identity);
         editor.CurrentButtonPressed = ID;
-        print(ID);
+        //print(ID);
     }
 }

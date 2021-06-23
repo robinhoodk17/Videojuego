@@ -12,4 +12,5 @@ public class TileData : ScriptableObject
 
     public string name;
     public string status;
+    public int owner;
 }
