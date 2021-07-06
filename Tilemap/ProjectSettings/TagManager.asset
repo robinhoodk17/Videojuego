@@ -7,6 +7,7 @@ TagManager:
   - MapEditorManager
   - MapManager
   - ItemImage
+  - builtMap
   layers:
   - Default
   - TransparentFX

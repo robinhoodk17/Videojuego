@@ -17,11 +17,11 @@ public class MapEditorManager : MonoBehaviour
     farm: 5
     bonfire: 6
      */
-    public List<TileBase> tileBases;
+    public List<levelTile> tileBases;
 
     //this is the current tilemap we are using (the same as in MapManager)
     [SerializeField]
-    private Tilemap map;
+    private Tilemap map, conditions, units;
 
     //this is the button that was most recently pressed, and so the kind of tile that will be spawned.
     public int CurrentButtonPressed;
@@ -42,12 +42,27 @@ public class MapEditorManager : MonoBehaviour
             {
                 return;
             }
+            levelTile selectedtile = tileBases[CurrentButtonPressed];
+            int typenumber = (int)selectedtile.type;
+            if (typenumber<1000)
+            {
                 map.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
+            }
+            if (typenumber >= 1000 && typenumber < 2000)
+            {
+                units.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
+            }
+            if (typenumber >= 2000)
+            {
+                conditions.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
+            }
             //Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
         }
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButton(1))
         {
             map.SetTile(gridPosition, null);
+            conditions.SetTile(gridPosition, null);
+            units.SetTile(gridPosition, null);
         }
 
     }

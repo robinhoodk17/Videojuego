@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c689fe08f1a0a3428c9f10f0846c4b0, type: 3}
+  m_Name: warrior
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 21300000, guid: e551217bc12dcb144a16d946bb4b42ca, type: 3}
+  m_DefaultGameObject: {fileID: 0}
+  m_DefaultColliderType: 1
+  m_TilingRules: []
+  type: 1000
+  status: clear
+  owner: 1
+  HP: 10
+  MP: 0
+  maxHP: 10
+  movement: 6
+  tag: infantry

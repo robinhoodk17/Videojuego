@@ -1,8 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEditor;
 
+public enum BattleState { START, PLAYERTURN, ENDTURN, WON, LOST }
 //remember to add in the inspector the tiles in the tiledatas and the tilemap in "map" (for loading the map) and tilebases (for being able to edit)
 
 public class MapManager : MonoBehaviour
@@ -18,90 +23,162 @@ public class MapManager : MonoBehaviour
 
     /* To set a tile to the element y of the tileDatas dictionary
      * 
-    map.SetTile(gridPosition, tileBases[y]);
+    map.SetTile(gridPosition, levelTile[y]);
 
      */
     [SerializeField]
-    private Tilemap map;
-
-    [SerializeField]
-    private List<TileData> tileDatas;
-
-    [SerializeField]
-    public List<TileBase> tileBases;
-
-    private Dictionary<TileBase, TileData> dataFromTiles;
-    //this creates the dictionary using the key "tileBase" and stores the data of each tile on its "TileData"
-    private void Awake()
+    private Tilemap map, conditions, units;
+    public int numberOfPlayers;
+    public BattleState state;
+    public int activeplayer;
+    public GameObject playerstartpanel;
+    public TextMeshProUGUI activeplayertext;
+    void Start()
     {
-        dataFromTiles = new Dictionary<TileBase, TileData>();
-
-        foreach (var tileData in tileDatas)
-        {
-            foreach (var tile in tileData.tiles)
-            {
-                dataFromTiles.Add(tile, tileData);
-            }
-        }
-
+        activeplayer = 1;
+        state = BattleState.PLAYERTURN;
     }
-
-    
     void Update()
     {
-        /*an example to make sure that the tiles are working:
+        /*an example to make sure that the tiles are working: (it prints the tile you click and the 2 tiles on its right)
         if(Input.GetMouseButtonDown(0))
         {
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int gridPosition = map.WorldToCell(mousePosition);
+            if (units.HasTile(gridPosition))
+            {
+                levelTile clickedTile = units.GetTile<levelTile>(gridPosition);
 
-            TileBase clickedTile = map.GetTile(gridPosition);
+                string tilename = clickedTile.type.ToString();
+                string tilestatus = clickedTile.status;
 
-            string tilename = dataFromTiles[clickedTile].name;
-            string tilestatus = dataFromTiles[clickedTile].status;
+                print("At position " + gridPosition + "there is a " + tilename + " with " + tilestatus + " weather");
 
-            print("At position " + gridPosition + "there is a " + tilename + " with " + tilestatus + " weather");
-            map.SetTile(gridPosition, tileBases[0]);
+            }
+            else
+            {
+                if (conditions.HasTile(gridPosition))
+                {
+
+                    levelTile clickedTile = conditions.GetTile<levelTile>(gridPosition);
+
+                    string tilename = clickedTile.type.ToString();
+                    string tilestatus = clickedTile.status;
+
+                    print("At position " + gridPosition + "there is a " + tilename + " with " + tilestatus + " weather");
+                }
+                else
+                {
+                    if (map.HasTile(gridPosition))
+                    {
+                        levelTile clickedTile = map.GetTile<levelTile>(gridPosition);
+
+                        string tilename = clickedTile.type.ToString();
+                        string tilestatus = clickedTile.status;
+
+                        print("At position " + gridPosition + "there is a " + tilename + " with " + tilestatus + " weather");
+                        // An example to check the two tiles on the right
+                        //for (int i = 1; i < 3; i++)
+                        //{
+                        //    clickedTile = map.GetTile<levelTile>((gridPosition + new Vector3Int(i,0,0)));
+                        //    tilename = clickedTile.type.ToString();
+                        //    tilestatus = clickedTile.status;
+                        //    print("At the next position " + gridPosition + "there is a " + tilename + "with " + tilestatus + " weather");
+                        //}
+                    }
+
+                }
+            }
         }
         */
     }
-    public string Getname(Vector2 worldPosition)
-    {
-        Vector3Int gridPosition = map.WorldToCell(worldPosition);
 
-        TileBase tile = map.GetTile(gridPosition);
+    public Vector3Int gridPosition (Vector2 mouseposition)
+    {
+        Vector3Int gridposition = map.WorldToCell(mouseposition);
+        return gridposition;
+    }
+    public string Getname(Vector2 worldPosition, Tilemap tilemap)
+    {
+        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
+
+        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
 
         if (tile == null)
             return "null";
 
-        string tilename = dataFromTiles[tile].name;
+        string tilename = tile.type.ToString();
 
         return tilename;
     }
-    public int Getowner(Vector2 worldPosition)
-    {
-        Vector3Int gridPosition = map.WorldToCell(worldPosition);
 
-        TileBase tile = map.GetTile(gridPosition);
+    public int Getowner(Vector2 worldPosition, Tilemap tilemap)
+    {
+        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
+
+        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
 
         if (tile == null)
             return 0;
 
-        int tileowner = dataFromTiles[tile].owner;
+        int tileowner = tile.owner;
 
         return tileowner;
     }
 
-    public string Getstatus(Vector2 worldPosition)
+    public string Getstatus(Vector2 worldPosition, Tilemap tilemap)
     {
-        Vector3Int gridPosition = map.WorldToCell(worldPosition);
+        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
 
-        TileBase tile = map.GetTile(gridPosition);
+        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
 
         if (tile == null)
             return "null";
-        string tilestatus = dataFromTiles[tile].status;
+        string tilestatus = tile.status;
 
         return tilestatus;
+    }
+    public IEnumerator panel(float waitingtime)
+    {
+        playerstartpanel.SetActive(true);
+        yield return new WaitForSeconds(waitingtime);
+        playerstartpanel.SetActive(false);
+    }
+    public void OnTurnEnd()
+    {
+        foreach (var pos in units.cellBounds.allPositionsWithin)
+        {
+            state = BattleState.ENDTURN;
+            if (units.HasTile(pos))
+            {
+                var unit = units.GetTile<unitTile>(pos);
+                if(activeplayer == unit.owner)
+                {
+                    unit.turnEnd();
+                }
+            }
+        }
+
+        if (activeplayer < numberOfPlayers)
+        { activeplayer++; }
+        else
+        { activeplayer = 1; }
+        state = BattleState.START;
+        //making the turn start message pop up
+        //panel turns off the panel after f seconds
+        activeplayertext.text = "Player " + activeplayer.ToString();
+        StartCoroutine(panel(2f));
+
+        foreach (var pos in units.cellBounds.allPositionsWithin)
+        {
+            if (units.HasTile(pos))
+            {
+                var unit = units.GetTile<unitTile>(pos);
+                if (activeplayer == unit.owner)
+                {
+                    unit.turnStart();
+                }
+            }
+        }
     }
 }
