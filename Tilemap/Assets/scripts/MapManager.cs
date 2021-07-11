@@ -146,16 +146,15 @@ public class MapManager : MonoBehaviour
     }
     public void OnTurnEnd()
     {
-        foreach (var pos in units.cellBounds.allPositionsWithin)
+        state = BattleState.ENDTURN;
+        GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
+
+        foreach (GameObject unit in allunits)
         {
-            state = BattleState.ENDTURN;
-            if (units.HasTile(pos))
+            unitScript instanceofunit = unit.GetComponent<unitScript>();
+            if (instanceofunit.owner == activeplayer)
             {
-                var unit = units.GetTile<unitTile>(pos);
-                if(activeplayer == unit.owner)
-                {
-                    unit.turnEnd();
-                }
+                instanceofunit.turnEnd();
             }
         }
 
@@ -168,16 +167,12 @@ public class MapManager : MonoBehaviour
         //panel turns off the panel after f seconds
         activeplayertext.text = "Player " + activeplayer.ToString();
         StartCoroutine(panel(2f));
-
-        foreach (var pos in units.cellBounds.allPositionsWithin)
+        foreach (GameObject unit in allunits)
         {
-            if (units.HasTile(pos))
+            unitScript instanceofunit = unit.GetComponent<unitScript>();
+            if(instanceofunit.owner == activeplayer)
             {
-                var unit = units.GetTile<unitTile>(pos);
-                if (activeplayer == unit.owner)
-                {
-                    unit.turnStart();
-                }
+                instanceofunit.turnStart();
             }
         }
     }

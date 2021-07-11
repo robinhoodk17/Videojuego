@@ -155,6 +155,11 @@ MonoBehaviour:
   map: {fileID: 216623308}
   conditions: {fileID: 195826303}
   units: {fileID: 1469103447}
+  numberOfPlayers: 0
+  state: 0
+  activeplayer: 0
+  playerstartpanel: {fileID: 0}
+  activeplayertext: {fileID: 0}
 --- !u!4 &3172832
 Transform:
   m_ObjectHideFlags: 0
@@ -1985,7 +1990,7 @@ Grid:
   m_GameObject: {fileID: 1226015546}
   m_Enabled: 1
   m_CellSize: {x: 1, y: 1, z: 0}
-  m_CellGap: {x: 0.07, y: 0.07, z: 0}
+  m_CellGap: {x: 0.05, y: 0.05, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
 --- !u!4 &1226015548
@@ -2788,10 +2793,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 21bc8fa62f30e2041ac53bb63737409b, type: 2}
   - {fileID: 11400000, guid: f7681bff45e41414baee7cee0168e3a6, type: 2}
   - {fileID: 11400000, guid: 1f9135f0f7302c84a85d0cee87f17469, type: 2}
-  - {fileID: 11400000, guid: 6dc53c679cdc68741bec86e6d56f31a3, type: 2}
   map: {fileID: 216623308}
   conditions: {fileID: 195826303}
-  units: {fileID: 1469103447}
+  units: {fileID: -8499079708141301570, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
   CurrentButtonPressed: 0
   ItemImage:
   - {fileID: 5515451475161307035, guid: 8b61451ed863aca419085d0e25430032, type: 3}
@@ -2802,6 +2806,8 @@ MonoBehaviour:
   - {fileID: 3819505197595920097, guid: 00fe3307a9f9a594e996111635ed35a8, type: 3}
   - {fileID: 4460276563686714064, guid: 786b3273b7408a040a526471df1129a4, type: 3}
   - {fileID: 4768101424499773148, guid: 2793a398e2751004fb2c4267866dc009, type: 3}
+  Prefabs:
+  - {fileID: 1995410422367414607, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
 --- !u!4 &1787722952
 Transform:
   m_ObjectHideFlags: 0

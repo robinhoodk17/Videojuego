@@ -27,16 +27,30 @@ public class MapEditorManager : MonoBehaviour
     public int CurrentButtonPressed;
 
     public GameObject[] ItemImage;
+    public List<GameObject> Prefabs;
 
     private void Update()
     {
         //each time the frame is updated, we check the position of the mouse in the gridmap 
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int gridPosition = map.WorldToCell(mousePosition);
-        
-        
+
+
         //when the button gets pressed, we insert the appropriate tile in the tilemap.
-        if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked)
+        int numberoftiles = tileBases.Count;
+        if (Input.GetMouseButtonUp(0) && CurrentButtonPressed >= numberoftiles)
+        {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+            if (map.HasTile(gridPosition))
+            {
+                Vector3 where = getWorldPosition((Vector3)gridPosition);
+                GameObject.Instantiate(Prefabs[CurrentButtonPressed - numberoftiles], where, Quaternion.identity);
+            }
+        }
+        if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && CurrentButtonPressed < numberoftiles)
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {
@@ -47,10 +61,6 @@ public class MapEditorManager : MonoBehaviour
             if (typenumber<1000)
             {
                 map.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
-            }
-            if (typenumber >= 1000 && typenumber < 2000)
-            {
-                units.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
             }
             if (typenumber >= 2000)
             {
@@ -65,6 +75,13 @@ public class MapEditorManager : MonoBehaviour
             units.SetTile(gridPosition, null);
         }
 
+    }
+
+    private Vector3 getWorldPosition(Vector3 gridposition)
+    {
+        Vector3 worldPosition = new Vector3();
+        worldPosition = (gridposition*(map.cellGap.x+map.cellSize.x)) + new Vector3(map.cellSize.x / 2, map.cellSize.x / 2, 0);
+        return worldPosition;
     }
 
 }
