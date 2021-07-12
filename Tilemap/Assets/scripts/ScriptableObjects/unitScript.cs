@@ -35,6 +35,5 @@ public class unitScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 }

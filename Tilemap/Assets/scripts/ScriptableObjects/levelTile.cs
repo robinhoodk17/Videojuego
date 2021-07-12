@@ -12,7 +12,6 @@ public class levelTile : RuleTile
 
     public string status;
     public int owner;
-
 }
 
 [Serializable]
