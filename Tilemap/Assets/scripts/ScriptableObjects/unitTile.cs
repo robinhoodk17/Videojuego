@@ -12,7 +12,15 @@ public class unitTile : levelTile
     public int MP;
     public int maxHP;
     public int movement;
-    public string tag;
+    public string typeOfUnit;
+    public string movementtype;
+    public float moveSpeed = 5f;
+    public int attackrange = 1;
+    public bool attackandmove = true;
+    public int level = 0;
+    public int levelcounter = 0;
+    public int maxlevel = 10;
+    public Transform movepoint;
 
     public void turnEnd()
     {
@@ -25,8 +33,11 @@ public class unitTile : levelTile
     public void turnStart()
     {
         if(status == "recovered")
-        {
             status = "clear";
-        }
+
+        levelcounter++;
+        if(levelcounter >= 3)
+            if(level < maxlevel) { level++;levelcounter = 0; }
+
     }
 }

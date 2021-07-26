@@ -2795,7 +2795,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1f9135f0f7302c84a85d0cee87f17469, type: 2}
   map: {fileID: 216623308}
   conditions: {fileID: 195826303}
-  units: {fileID: -8499079708141301570, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
+  units: {fileID: 1469103447}
   CurrentButtonPressed: 0
   ItemImage:
   - {fileID: 5515451475161307035, guid: 8b61451ed863aca419085d0e25430032, type: 3}
@@ -2808,6 +2808,7 @@ MonoBehaviour:
   - {fileID: 4768101424499773148, guid: 2793a398e2751004fb2c4267866dc009, type: 3}
   Prefabs:
   - {fileID: 1995410422367414607, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
+  numberofunitsingame: 1
 --- !u!4 &1787722952
 Transform:
   m_ObjectHideFlags: 0

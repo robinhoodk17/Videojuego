@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 4845265526437741465}
   - component: {fileID: 311610742104055865}
   - component: {fileID: 126604838199790297}
-  - component: {fileID: 5492628559349924024}
+  - component: {fileID: 952414137493165439}
   m_Layer: 0
   m_Name: warrior
   m_TagString: Unit
@@ -123,7 +123,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.5, y: 0.5}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &311610742104055865
@@ -189,17 +189,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1356194f3eb8ea749b231e7a132890f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: 1
   status: clear
-  HP: 0
+  HP: 120
   MP: 0
-  maxHP: 0
-  movement: 0
+  maxHP: 120
+  movement: 6
   typeOfUnit: infantry
   movementtype: foot
-  moveSpeed: 5
-  owner: 1
-  movepoint: {fileID: 0}
---- !u!65 &5492628559349924024
+  attackrange: 1
+  attackandmove: 1
+--- !u!65 &952414137493165439
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

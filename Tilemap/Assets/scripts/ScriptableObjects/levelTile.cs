@@ -12,6 +12,30 @@ public class levelTile : RuleTile
 
     public string status;
     public int owner;
+    public int movecost(string movetype)
+    {
+        int cost = 1;
+        switch (movetype)
+        {
+            case ("foot"):
+                cost = footcost;
+                break;
+            case ("tread"):
+                cost = treadcost;
+                break;
+            case ("flying"):
+                cost = flyingcost;
+                break;
+            case ("wheel"):
+                cost = wheelcost;
+                break;
+        }
+        return cost;
+    }
+    public int treadcost;
+    public int footcost;
+    public int wheelcost;
+    public int flyingcost;
 }
 
 [Serializable]
@@ -31,5 +55,10 @@ public enum tileType
     warrior = 1000,
 
     //conditions
-    clear = 2000
+    clear = 2000,
+
+    //UI
+    movement = 3000,
+    attack = 3001,
+    attackandmove = 3002
 }

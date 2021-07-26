@@ -28,6 +28,7 @@ public class MapEditorManager : MonoBehaviour
 
     public GameObject[] ItemImage;
     public List<GameObject> Prefabs;
+    public int numberofunitsingame;
 
     private void Update()
     {
@@ -48,6 +49,7 @@ public class MapEditorManager : MonoBehaviour
             {
                 Vector3 where = getWorldPosition((Vector3)gridPosition);
                 GameObject.Instantiate(Prefabs[CurrentButtonPressed - numberoftiles], where, Quaternion.identity);
+                //units.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
             }
         }
         if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && CurrentButtonPressed < numberoftiles)

@@ -98,46 +98,6 @@ public class MapManager : MonoBehaviour
         Vector3Int gridposition = map.WorldToCell(mouseposition);
         return gridposition;
     }
-    public string Getname(Vector2 worldPosition, Tilemap tilemap)
-    {
-        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
-
-        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
-
-        if (tile == null)
-            return "null";
-
-        string tilename = tile.type.ToString();
-
-        return tilename;
-    }
-
-    public int Getowner(Vector2 worldPosition, Tilemap tilemap)
-    {
-        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
-
-        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
-
-        if (tile == null)
-            return 0;
-
-        int tileowner = tile.owner;
-
-        return tileowner;
-    }
-
-    public string Getstatus(Vector2 worldPosition, Tilemap tilemap)
-    {
-        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
-
-        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
-
-        if (tile == null)
-            return "null";
-        string tilestatus = tile.status;
-
-        return tilestatus;
-    }
     public IEnumerator panel(float waitingtime)
     {
         playerstartpanel.SetActive(true);
