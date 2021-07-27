@@ -19,3 +19,7 @@ MonoBehaviour:
   type: 1
   status: clear
   owner: 0
+  treadcost: 20
+  footcost: 3
+  wheelcost: 20
+  flyingcost: 1

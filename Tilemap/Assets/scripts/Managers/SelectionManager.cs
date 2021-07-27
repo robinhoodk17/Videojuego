@@ -9,7 +9,7 @@ public class SelectionManager : MonoBehaviour
     [SerializeField]
     private Tilemap map, conditions, units;
     int activeplayer = 1;
-    int playernumber = 2;
+    public int playernumber = 2;
     //this list holds the tile types with the UI elements of the units for easy accesibility
     /*
     movement: 0
@@ -32,18 +32,64 @@ public class SelectionManager : MonoBehaviour
     List<Vector3Int> selectableTiles = new List<Vector3Int>();
     Stack<Vector3Int> path = new Stack<Vector3Int>();
 
-    unitScript unit = new unitScript();
+    unitScript unit;
+    GameObject unitprefab;
     Vector3Int currentposition = new Vector3Int();
+    Vector3Int newposition = new Vector3Int();
+
     void Update()
     {
-        //this is the click to select a unit (can also select enemy units and see their movement)
-        if (Input.GetMouseButtonDown(0) && !unitselected)
+
+        if (unitselected)
         {
-            Vector3Int position = gridPosition(Input.mousePosition, true);
-            unitScript unit = getunit(Input.mousePosition);
+            if (unit.state == "moving")
+            {
+                if (path.Count > 0)
+                {
+                    Move(unitprefab.transform.position, path.Peek());
+                }
+                else
+                {
+                    unit.state = "idle";
+                    Reset();
+                }
+            }
+        }
+        //this is the click to move the unit
+        if (Input.GetMouseButtonUp(0) && unitselected)
+        {
+            if(unit.owner != activeplayer)
+            {
+                Reset();
+            }
+            else
+            {
+                newposition = gridPosition(Input.mousePosition, true);
+                if((getunit(newposition) != null && newposition != currentposition) || unit.exhausted || !units.HasTile(newposition))
+                {
+                    Reset();
+                }
+                else
+                {
+                    if (!unit.exhausted)
+                    {
+                        getPath(currentposition, newposition, unit);
+                        unit.exhausted = true;
+                        unit.state = "moving";
+                        path.Pop();
+                    }
+                }
+            }
+        }
+        //this is the click to select a unit (can also select enemy units and see their movement)
+        if (Input.GetMouseButtonUp(0) && !unitselected)
+        {
+            currentposition = gridPosition(Input.mousePosition, true);
+            unitprefab = getunitprefab(Input.mousePosition, true);
+            unit = getunit(currentposition);
             if(unit != null)
             {
-                findSelectabletiles(unit, position);
+                findSelectabletiles(unit, currentposition);
                 unitselected = true;
             }
         }
@@ -52,19 +98,29 @@ public class SelectionManager : MonoBehaviour
         {
             Reset();
         }
-        //this is the click to move the unit
-        if(Input.GetMouseButtonUp(0) && unitselected)
-        {
-            if(unit.owner == activeplayer)
-            {
-                Vector3Int position = gridPosition(Input.mousePosition, true);
-            }
-        }
 
     }
 
     private void Reset()
     {
+        neighborlist.Clear();
+        selectableTiles.Clear();
+        path.Clear();
+        distancelist.Clear();
+        unitselected = false;
+        foreach (var pos in units.cellBounds.allPositionsWithin)
+        {
+            Vector3Int localPlace = new Vector3Int(pos.x, pos.y, pos.z);
+            if (units.HasTile(localPlace))
+            {
+                units.SetTile(localPlace, null);
+            }
+        }
+    }
+
+    private void Reset(Vector3Int unitposition)
+    {
+        unitprefab.transform.SetPositionAndRotation(map.GetCellCenterWorld(unitposition), Quaternion.identity);
         neighborlist.Clear();
         selectableTiles.Clear();
         path.Clear();
@@ -163,7 +219,8 @@ public class SelectionManager : MonoBehaviour
     //tries to get the unit at screenposition "position" if screen = true
     public unitScript getunit(Vector3 position, bool screen = true)
     {
-        if(!screen)
+
+        if (!screen)
         {
             position = Camera.main.WorldToScreenPoint(position);
         }
@@ -171,12 +228,12 @@ public class SelectionManager : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            var selection = hit.transform;
-            var unit = selection.GetComponent<unitScript>();
+            var selection = hit.transform.gameObject;
+            unitScript unit = selection.GetComponent<unitScript>();
             return unit;
         }
-            //returns null if it did not find a unit
-            else
+        //returns null if it did not find a unit
+        else
         {
             return null;
         }
@@ -185,6 +242,26 @@ public class SelectionManager : MonoBehaviour
     public unitScript getunit(Vector3Int position)
     {
         return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+    }
+
+    public GameObject getunitprefab (Vector3 position, bool screen = true)
+    {
+        if (!screen)
+        {
+            position = Camera.main.WorldToScreenPoint(position);
+        }
+        var ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            return selection;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
     }
     //get the gridposition given a world position (if screen = true, it calculates given a screen position instead)
     public Vector3Int gridPosition(Vector3 position, bool screen = false)
@@ -227,7 +304,8 @@ public class SelectionManager : MonoBehaviour
         while (process.Count > 0)
         {
             Vector3Int pos = process.Dequeue();
-            selectableTiles.Add(pos);
+            if(getunit(pos) == null)
+            {selectableTiles.Add(pos);}
             foreach (Vector3Int vector in neighborlist[pos])
             {
                 if (!visitlist[vector] && (distancelist[pos] + distancelist[vector]) <= unit.movement)
@@ -236,6 +314,15 @@ public class SelectionManager : MonoBehaviour
                     visitlist[vector] = true;
                     distancelist[vector] = distancelist[pos] + distancelist[vector];
                     process.Enqueue(vector);
+                }
+                if(visitlist[vector])
+                {
+                    int tempdistance = map.GetTile<levelTile>(vector).movecost(unit.movementtype);
+                    if(tempdistance + distancelist[pos] < distancelist[vector])
+                    {
+                        parentlist[vector] = pos;
+                        distancelist[vector] = tempdistance + distancelist[pos];
+                    }
                 }
             }
         }
@@ -253,7 +340,16 @@ public class SelectionManager : MonoBehaviour
             }
         }
     }
-
+    public void getPath(Vector3Int previous, Vector3Int newposition, unitScript unit)
+    {
+        path.Clear();
+        Vector3Int next = newposition;
+        while(next != Vector3Int.zero)
+        {
+            path.Push(next);
+            next = parentlist[next];
+        }
+    }
     public void OnTurnEnd()
     {
         Reset();
@@ -263,8 +359,27 @@ public class SelectionManager : MonoBehaviour
         }
         else
         {
-            activeplayer = 0;
+            activeplayer = 1;
         }
     }
+
+    public void Move(Vector3 startposition, Vector3Int targetposition)
+    {
+        Vector3 target = map.GetCellCenterLocal(targetposition) + new Vector3(0,0,5);
+        if(Vector3.Distance(startposition,target)<=.1f)
+        {
+            path.Pop();
+            unitprefab.transform.position = map.GetCellCenterWorld(targetposition) + new Vector3(0, 0, 5);
+        }
+        else
+        {
+            Vector3 heading = target - startposition;
+            heading.Normalize();
+            Vector3 velocity = heading * unit.movespeedanimation;
+            unitprefab.transform.forward = heading;
+            unitprefab.transform.SetPositionAndRotation(unitprefab.transform.position + velocity * Time.fixedDeltaTime,Quaternion.identity);
+        }
+    }
+
 }
 

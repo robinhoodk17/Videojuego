@@ -18,8 +18,8 @@ MonoBehaviour:
   m_TilingRules: []
   type: 2
   status: clear
-  owner: 1
-  treadcost: 0
-  footcost: 0
-  wheelcost: 0
-  flyingcost: 0
+  owner: 0
+  treadcost: 1
+  footcost: 1
+  wheelcost: 2
+  flyingcost: 1

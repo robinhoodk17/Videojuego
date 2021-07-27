@@ -15,6 +15,12 @@ public class unitScript : MonoBehaviour
     public string movementtype;
     public int attackrange = 1;
     public bool attackandmove = true;
+    public bool exhausted = false;
+    public int level = 0;
+    public int levelcounter = 0;
+    public int maxlevel = 10;
+    public string state = "idle";
+    public float movespeedanimation = 20;
     //public Transform movepoint;
     //public float moveSpeed = 5f;
 
@@ -32,8 +38,12 @@ public class unitScript : MonoBehaviour
         {
             status = "clear";
         }
-    }
+        exhausted = false;
 
+        levelcounter++;
+        if (levelcounter >= 3)
+            if (level < maxlevel) { level++; levelcounter = 0; }
+    }
 
 
     // Update is called once per frame

@@ -130,9 +130,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1226015548}
     m_Modifications:
+    - target: {fileID: 126604838199790297, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
+      propertyPath: movespeedanimation
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 311610742104055865, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
       propertyPath: m_SortingOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1995410422367414607, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
       propertyPath: m_Name
@@ -208,7 +212,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845265526437741465, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 6.825
+      value: 7.96
       objectReference: {fileID: 0}
     - target: {fileID: 4845265526437741465, guid: 10d2d5734c0de5948a8e96690b73414e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3653,6 +3657,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2113467733}
   - component: {fileID: 2113467732}
+  - component: {fileID: 2113467734}
   m_Layer: 0
   m_Name: SelectionManager
   m_TagString: Untagged
@@ -3673,10 +3678,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 216623308}
-  conditions: {fileID: 0}
-  units: {fileID: 0}
-  movementUI: []
-  camera: {fileID: 519420031}
+  conditions: {fileID: 589999151}
+  units: {fileID: 1585076782}
+  playernumber: 2
+  movementUI:
+  - {fileID: 11400000, guid: 466805f28d1f8f342932a5643aed1232, type: 2}
+  - {fileID: 11400000, guid: 466805f28d1f8f342932a5643aed1232, type: 2}
+  - {fileID: 11400000, guid: 466805f28d1f8f342932a5643aed1232, type: 2}
   mask:
     serializedVersion: 2
     m_Bits: 0
@@ -3694,6 +3702,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2113467734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113467731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28eb834bcfcf1a84792b0faf85fe66c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 4c3bf28c710659648a267f9da3da338f, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2113467732}
+        m_TargetAssemblyTypeName: SelectionManager, Assembly-CSharp
+        m_MethodName: OnTurnEnd
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &7100610030953526810
 PrefabInstance:
   m_ObjectHideFlags: 0
