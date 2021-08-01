@@ -98,46 +98,6 @@ public class MapManager : MonoBehaviour
         Vector3Int gridposition = map.WorldToCell(mouseposition);
         return gridposition;
     }
-    public string Getname(Vector2 worldPosition, Tilemap tilemap)
-    {
-        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
-
-        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
-
-        if (tile == null)
-            return "null";
-
-        string tilename = tile.type.ToString();
-
-        return tilename;
-    }
-
-    public int Getowner(Vector2 worldPosition, Tilemap tilemap)
-    {
-        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
-
-        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
-
-        if (tile == null)
-            return 0;
-
-        int tileowner = tile.owner;
-
-        return tileowner;
-    }
-
-    public string Getstatus(Vector2 worldPosition, Tilemap tilemap)
-    {
-        Vector3Int gridPosition = tilemap.WorldToCell(worldPosition);
-
-        levelTile tile = tilemap.GetTile<levelTile>(gridPosition);
-
-        if (tile == null)
-            return "null";
-        string tilestatus = tile.status;
-
-        return tilestatus;
-    }
     public IEnumerator panel(float waitingtime)
     {
         playerstartpanel.SetActive(true);
@@ -146,16 +106,15 @@ public class MapManager : MonoBehaviour
     }
     public void OnTurnEnd()
     {
-        foreach (var pos in units.cellBounds.allPositionsWithin)
+        state = BattleState.ENDTURN;
+        GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
+
+        foreach (GameObject unit in allunits)
         {
-            state = BattleState.ENDTURN;
-            if (units.HasTile(pos))
+            unitScript instanceofunit = unit.GetComponent<unitScript>();
+            if (instanceofunit.owner == activeplayer)
             {
-                var unit = units.GetTile<unitTile>(pos);
-                if(activeplayer == unit.owner)
-                {
-                    unit.turnEnd();
-                }
+                instanceofunit.turnEnd();
             }
         }
 
@@ -168,16 +127,12 @@ public class MapManager : MonoBehaviour
         //panel turns off the panel after f seconds
         activeplayertext.text = "Player " + activeplayer.ToString();
         StartCoroutine(panel(2f));
-
-        foreach (var pos in units.cellBounds.allPositionsWithin)
+        foreach (GameObject unit in allunits)
         {
-            if (units.HasTile(pos))
+            unitScript instanceofunit = unit.GetComponent<unitScript>();
+            if(instanceofunit.owner == activeplayer)
             {
-                var unit = units.GetTile<unitTile>(pos);
-                if (activeplayer == unit.owner)
-                {
-                    unit.turnStart();
-                }
+                instanceofunit.turnStart();
             }
         }
     }

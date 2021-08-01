@@ -27,16 +27,32 @@ public class MapEditorManager : MonoBehaviour
     public int CurrentButtonPressed;
 
     public GameObject[] ItemImage;
+    public List<GameObject> Prefabs;
+    public int numberofunitsingame;
 
     private void Update()
     {
         //each time the frame is updated, we check the position of the mouse in the gridmap 
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int gridPosition = map.WorldToCell(mousePosition);
-        
-        
+
+
         //when the button gets pressed, we insert the appropriate tile in the tilemap.
-        if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked)
+        int numberoftiles = tileBases.Count;
+        if (Input.GetMouseButtonUp(0) && CurrentButtonPressed >= numberoftiles)
+        {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+            if (map.HasTile(gridPosition))
+            {
+                Vector3 where = getWorldPosition((Vector3)gridPosition);
+                GameObject.Instantiate(Prefabs[CurrentButtonPressed - numberoftiles], where, Quaternion.identity);
+                //units.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
+            }
+        }
+        if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && CurrentButtonPressed < numberoftiles)
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {
@@ -47,10 +63,6 @@ public class MapEditorManager : MonoBehaviour
             if (typenumber<1000)
             {
                 map.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
-            }
-            if (typenumber >= 1000 && typenumber < 2000)
-            {
-                units.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
             }
             if (typenumber >= 2000)
             {
@@ -63,8 +75,41 @@ public class MapEditorManager : MonoBehaviour
             map.SetTile(gridPosition, null);
             conditions.SetTile(gridPosition, null);
             units.SetTile(gridPosition, null);
+            if(getunitprefab(gridPosition) != null)
+            {
+                Destroy(getunitprefab(gridPosition));
+            }
         }
 
     }
 
+    private Vector3 getWorldPosition(Vector3 gridposition)
+    {
+        Vector3 worldPosition = new Vector3();
+        worldPosition = (gridposition*(map.cellGap.x+map.cellSize.x)) + new Vector3(map.cellSize.x / 2, map.cellSize.x / 2, 0);
+        return worldPosition;
+    }
+    public GameObject getunitprefab(Vector3 position, bool screen = true)
+    {
+        if (!screen)
+        {
+            position = Camera.main.WorldToScreenPoint(position);
+        }
+        var ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            return selection;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
+    }
+    public GameObject getunitprefab(Vector3Int position)
+    {
+        return getunitprefab(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+    }
 }
