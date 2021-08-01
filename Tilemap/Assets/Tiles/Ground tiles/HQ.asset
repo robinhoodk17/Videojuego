@@ -16,9 +16,9 @@ MonoBehaviour:
   m_DefaultGameObject: {fileID: 4879992593563287845, guid: c328eb3de7d4adf4b807091dd0f9f417, type: 3}
   m_DefaultColliderType: 1
   m_TilingRules: []
-  type: 7
-  controllable: 1
+  type: 8
   treadcost: 1
   footcost: 1
   wheelcost: 1
   flyingcost: 1
+  controllable: 1

@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 public class unitTile : levelTile
 {
     //To access this unit position, you have to do it from the Mapmanager
+    public string status = "clear";
     public int HP;
     public int MP;
     public int maxHP;

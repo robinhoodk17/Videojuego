@@ -75,6 +75,10 @@ public class MapEditorManager : MonoBehaviour
             map.SetTile(gridPosition, null);
             conditions.SetTile(gridPosition, null);
             units.SetTile(gridPosition, null);
+            if(getunitprefab(gridPosition) != null)
+            {
+                Destroy(getunitprefab(gridPosition));
+            }
         }
 
     }
@@ -85,5 +89,27 @@ public class MapEditorManager : MonoBehaviour
         worldPosition = (gridposition*(map.cellGap.x+map.cellSize.x)) + new Vector3(map.cellSize.x / 2, map.cellSize.x / 2, 0);
         return worldPosition;
     }
-
+    public GameObject getunitprefab(Vector3 position, bool screen = true)
+    {
+        if (!screen)
+        {
+            position = Camera.main.WorldToScreenPoint(position);
+        }
+        var ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            return selection;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
+    }
+    public GameObject getunitprefab(Vector3Int position)
+    {
+        return getunitprefab(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+    }
 }

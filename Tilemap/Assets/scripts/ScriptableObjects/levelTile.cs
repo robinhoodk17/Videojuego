@@ -10,8 +10,7 @@ public class levelTile : RuleTile
 {
     public tileType type;
 
-    public string status;
-    public int owner;
+    
     public int movecost(string movetype)
     {
         int cost = 1;
@@ -36,6 +35,7 @@ public class levelTile : RuleTile
     public int footcost;
     public int wheelcost;
     public int flyingcost;
+    public bool controllable = false;
 }
 
 [Serializable]
@@ -50,6 +50,8 @@ public enum tileType
     road = 4,
     farm = 5,
     bonfire = 6,
+    barracks = 7,
+    HQ = 8,
 
     //units
     warrior = 1000,

@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: bonfire
   m_EditorClassIdentifier: 
   m_DefaultSprite: {fileID: 21300000, guid: c4fbe60c885b2c84f98613decf4f031d, type: 3}
-  m_DefaultGameObject: {fileID: 0}
+  m_DefaultGameObject: {fileID: 4879992593563287845, guid: c328eb3de7d4adf4b807091dd0f9f417, type: 3}
   m_DefaultColliderType: 1
   m_TilingRules: []
   type: 6
-  status: clear
-  owner: 0
   treadcost: 1
   footcost: 1
   wheelcost: 1
   flyingcost: 1
+  controllable: 1

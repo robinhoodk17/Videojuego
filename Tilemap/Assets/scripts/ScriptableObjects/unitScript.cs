@@ -20,7 +20,8 @@ public class unitScript : MonoBehaviour
     public int levelcounter = 0;
     public int maxlevel = 10;
     public string state = "idle";
-    public float movespeedanimation = 20;
+    public float movespeedanimation = 10;
+    public string ability = "none";
     //public Transform movepoint;
     //public float moveSpeed = 5f;
 

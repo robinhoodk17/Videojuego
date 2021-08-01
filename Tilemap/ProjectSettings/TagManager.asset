@@ -8,6 +8,8 @@ TagManager:
   - MapManager
   - ItemImage
   - builtMap
+  - Unit
+  - Controllable
   layers:
   - Default
   - TransparentFX
@@ -44,4 +46,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 2196150221
     locked: 0
