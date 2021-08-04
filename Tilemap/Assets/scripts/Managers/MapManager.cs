@@ -1,11 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
-using UnityEditor;
 
 public enum BattleState { START, PLAYERTURN, ENDTURN, WON, LOST }
 //remember to add in the inspector the tiles in the tiledatas and the tilemap in "map" (for loading the map) and tilebases (for being able to edit)
@@ -132,6 +128,7 @@ public class MapManager : MonoBehaviour
             unitScript instanceofunit = unit.GetComponent<unitScript>();
             if(instanceofunit.owner == activeplayer)
             {
+                instanceofunit.trackactiveplayer(activeplayer);
                 instanceofunit.turnStart();
             }
         }

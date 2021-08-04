@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 
 [CreateAssetMenu]
@@ -11,13 +9,22 @@ public class eventsScript : ScriptableObject
     // Start is called before the first frame update
     private readonly List<GameEventListener> eventListeners =
         new List<GameEventListener>();
-    public void Raise()
+    public void Raise(Vector3Int attacker, Vector3Int defender)
     {
         for (int i = eventListeners.Count - 1; i >=0;i--)
         {
-            eventListeners[i].OnEventRaised();
+            eventListeners[i].OnEventRaised(attacker, defender);
         }
     }
+
+    public void Raise()
+    {
+        for (int i = eventListeners.Count - 1; i >= 0; i--)
+        {
+            eventListeners[i].OnEventRaised(Vector3Int.zero, Vector3Int.zero);
+        }
+    }
+
     public void RegisterListener(GameEventListener listener)
     {
         if (!eventListeners.Contains(listener))

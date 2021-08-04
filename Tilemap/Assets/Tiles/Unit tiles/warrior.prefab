@@ -100,8 +100,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -121,7 +121,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5818445102925162390}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5281203318140540718}
+        m_TargetAssemblyTypeName: capButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &5281203318140540718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,6 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8774965a08c97f34881f01ef75636b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Capture: {fileID: 11400000, guid: 33effa3960951d4418cc238e045c6ccd, type: 2}
 --- !u!1 &185737722403175301
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,8 +334,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -342,7 +355,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6281006240316293826}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7109158048896144785}
+        m_TargetAssemblyTypeName: atkButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7109158048896144785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,6 +380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172d1ee1fc74d574289bb60e5b5d972e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  combat: {fileID: 11400000, guid: 551026748855cc64cb3a32d511779a23, type: 2}
 --- !u!1 &235426779665117982
 GameObject:
   m_ObjectHideFlags: 0
@@ -1575,8 +1601,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -1596,7 +1622,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1699465002982544001}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3507882408418391383}
+        m_TargetAssemblyTypeName: capButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3507882408418391383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1609,6 +1647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8774965a08c97f34881f01ef75636b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Capture: {fileID: 11400000, guid: 33effa3960951d4418cc238e045c6ccd, type: 2}
 --- !u!1 &1995410422367414607
 GameObject:
   m_ObjectHideFlags: 0
@@ -1636,7 +1675,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1995410422367414607}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2516548257436668495}
@@ -1699,7 +1738,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 1
+  m_SpriteSortPoint: 0
 --- !u!114 &126604838199790297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2364,8 +2403,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -2385,7 +2424,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4951828220808435379}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2906358031175700876}
+        m_TargetAssemblyTypeName: atkButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2906358031175700876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2398,6 +2449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172d1ee1fc74d574289bb60e5b5d972e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  combat: {fileID: 11400000, guid: 551026748855cc64cb3a32d511779a23, type: 2}
 --- !u!1 &2876722091756744299
 GameObject:
   m_ObjectHideFlags: 0
@@ -2498,8 +2550,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -2519,7 +2571,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2932671103990247825}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 527056873767761144}
+        m_TargetAssemblyTypeName: capButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &527056873767761144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2532,6 +2596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8774965a08c97f34881f01ef75636b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Capture: {fileID: 11400000, guid: 33effa3960951d4418cc238e045c6ccd, type: 2}
 --- !u!1 &2922480247896337067
 GameObject:
   m_ObjectHideFlags: 0
@@ -2632,8 +2697,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -2653,7 +2718,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6286691928501146383}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3364339435400962351}
+        m_TargetAssemblyTypeName: atkButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3364339435400962351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2666,6 +2743,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172d1ee1fc74d574289bb60e5b5d972e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  combat: {fileID: 11400000, guid: 551026748855cc64cb3a32d511779a23, type: 2}
 --- !u!1 &3059436482348410667
 GameObject:
   m_ObjectHideFlags: 0
@@ -3603,8 +3681,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -3624,7 +3702,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1766251387156004971}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7860511167999480938}
+        m_TargetAssemblyTypeName: otherButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7860511167999480938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3637,6 +3727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495736ff6a9c28c4ebfc401bd881c3be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ability: {fileID: 11400000, guid: 9779f6c50dc2b894385f7e6b7f61271f, type: 2}
 --- !u!1 &4599477931792176593
 GameObject:
   m_ObjectHideFlags: 0
@@ -3737,8 +3828,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -3758,7 +3849,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4426632371826500758}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2542531967152318001}
+        m_TargetAssemblyTypeName: atkButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2542531967152318001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3771,6 +3874,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172d1ee1fc74d574289bb60e5b5d972e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  combat: {fileID: 11400000, guid: 551026748855cc64cb3a32d511779a23, type: 2}
 --- !u!1 &4761957240741938567
 GameObject:
   m_ObjectHideFlags: 0
@@ -4005,8 +4109,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -4026,7 +4130,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7507033940614598354}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5185472572418633112}
+        m_TargetAssemblyTypeName: otherButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &5185472572418633112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4039,6 +4155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495736ff6a9c28c4ebfc401bd881c3be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ability: {fileID: 11400000, guid: 9779f6c50dc2b894385f7e6b7f61271f, type: 2}
 --- !u!1 &5906069354867936904
 GameObject:
   m_ObjectHideFlags: 0
@@ -4688,7 +4805,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -4709,7 +4826,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2185372986728908430}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7762643409301097061}
+        m_TargetAssemblyTypeName: otherButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7762643409301097061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4722,6 +4851,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495736ff6a9c28c4ebfc401bd881c3be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ability: {fileID: 11400000, guid: 9779f6c50dc2b894385f7e6b7f61271f, type: 2}
 --- !u!1 &6765038796496309440
 GameObject:
   m_ObjectHideFlags: 0
@@ -4969,8 +5099,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -4990,7 +5120,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5867050810455565947}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8425228793869103339}
+        m_TargetAssemblyTypeName: capButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8425228793869103339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5003,6 +5145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8774965a08c97f34881f01ef75636b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Capture: {fileID: 11400000, guid: 33effa3960951d4418cc238e045c6ccd, type: 2}
 --- !u!1 &7003288247268623696
 GameObject:
   m_ObjectHideFlags: 0
@@ -5237,8 +5380,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -5258,7 +5401,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8003273639903650411}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1317402002442263882}
+        m_TargetAssemblyTypeName: otherButtonScript, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1317402002442263882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5271,6 +5426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495736ff6a9c28c4ebfc401bd881c3be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ability: {fileID: 11400000, guid: 9779f6c50dc2b894385f7e6b7f61271f, type: 2}
 --- !u!1 &7438643745794365024
 GameObject:
   m_ObjectHideFlags: 0
@@ -6201,6 +6357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8774965a08c97f34881f01ef75636b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Capture: {fileID: 0}
 --- !u!1 &8807416517581521345
 GameObject:
   m_ObjectHideFlags: 0

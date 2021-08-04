@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,7 +7,7 @@ public class GameEventListener : MonoBehaviour
     public eventsScript Event;
 
     [Tooltip("Response to invoke when Event is raised.")]
-    public UnityEvent Response;
+    public UnityEvent<Vector3Int, Vector3Int> Response;
 
 
     private void OnEnable()
@@ -22,9 +20,9 @@ public class GameEventListener : MonoBehaviour
         Event.UnregisterListener(this);
     }
 
-    public void OnEventRaised()
+    public void OnEventRaised(Vector3Int attacker, Vector3Int defender)
     {
-        Response.Invoke();
+        Response.Invoke(attacker, defender);
     }
 
 

@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class atkButtonScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public eventsScript combat;
+    public void OnClick()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        combat.Raise();
     }
 }

@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class capButtonScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public eventsScript Capture;
+    public void OnClick()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Capture.Raise();
     }
 }

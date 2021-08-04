@@ -1,13 +1,17 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.EventSystems;
+using Unity;
+
 
 public class SelectionManager : MonoBehaviour
 {
     //the tilemaps (units has the UI elements for the units)
     [SerializeField]
     private Tilemap map, conditions, units;
+
     int activeplayer = 1;
     public int playernumber = 2;
     //this list holds the tile types with the UI elements of the units for easy accesibility
@@ -29,6 +33,7 @@ public class SelectionManager : MonoBehaviour
     private Dictionary<Vector3Int, Vector3Int> parentlist = new Dictionary<Vector3Int, Vector3Int>();
     private Dictionary<Vector3Int, int> distancelist = new Dictionary<Vector3Int, int>();
     private Dictionary<Vector3Int, bool> visitlist = new Dictionary<Vector3Int, bool>();
+    private bool usingability = false;
     List<Vector3Int> selectableTiles = new List<Vector3Int>();
     Stack<Vector3Int> path = new Stack<Vector3Int>();
 
@@ -38,61 +43,50 @@ public class SelectionManager : MonoBehaviour
     Vector3Int newposition = new Vector3Int();
     int turnoff = 0;
 
+    public event Action<Vector3Int, Vector3Int> Oncombatstart;
+    private void Start()
+    {
+        Oncombatstart += Oncombat;
+    }
     void Update()
     {
 
-        if (unitselected)
-        {
-            if (unit.state == "moving")
-            {
-                if (path.Count > 0)
-                {
-                    Move(unitprefab.transform.position, path.Peek());
-                }
-                else
-                {
-                    clearUnitsTiles();
-                    unit.state = "thinking";
-                    if (newposition == currentposition || unit.attackandmove)
-                    {
-                        findattackables(newposition,unit);
-                    }
-
-                    turnoff = showUnitPanel(unitprefab, unit, newposition);
-                }
-            }
-        }
+        
         //this is the click to move the unit
-        if (Input.GetMouseButtonUp(0) && unitselected)
+        if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject())
         {
             if (unit.owner != activeplayer) { Reset(); }
             else
             {
-                //these ifs set the unit in motion (works even if you press its own position) only if you are clicking on a movement UI tile while the
-                //unit is not exhausted an while the target position has no units.
-                newposition = gridPosition(Input.mousePosition, true);
-                if (((getunit(newposition) != null && newposition != currentposition) && unit.state != "thinking") || (unit.exhausted || !units.HasTile(newposition)))
+                if(unit.state == "idle")
                 {
-                    Reset();
-                }
-                else
-                {
-                    if (!unit.exhausted && units.HasTile(newposition) && unit.state == "idle")
+                    //these ifs set the unit in motion (works even if you press its own position) only if you are clicking on a movement UI tile while the
+                    //unit is not exhausted an while the target position has no units.
+                    newposition = gridPosition(Input.mousePosition, true);
+                    if (((getunit(newposition) != null && newposition != currentposition) && unit.state != "thinking") || (unit.exhausted || !units.HasTile(newposition)))
                     {
-                        getPath(currentposition, newposition, unit);
-                        unit.state = "moving";
-                        path.Pop();
+                        Reset();
                     }
                     else
                     {
-                        if(unit.state != "thinking")
-                            Reset(); 
+                        if (!unit.exhausted && units.HasTile(newposition))
+                        {
+                            getPath(currentposition, newposition, unit);
+                            unit.state = "moving";
+                            path.Pop();
+                        }
+                        else
+                        {
+                            if (unit.state != "thinking")
+                                Reset();
+                        }
                     }
+
                 }
             }
         }
         //this is the click to select a unit (can also select enemy units and see their movement)
-        if (Input.GetMouseButtonUp(0) && !unitselected)
+        if (Input.GetMouseButtonUp(0) && !unitselected && !EventSystem.current.IsPointerOverGameObject())
         {
             currentposition = gridPosition(Input.mousePosition, true);
             unitprefab = getunitprefab(Input.mousePosition, true);
@@ -108,15 +102,66 @@ public class SelectionManager : MonoBehaviour
         {
             Reset();
         }
+        if (unitselected)
+        {
+            //Here we check if there is an attackable unit,and if it is clicked,
+            // we initiate combat (the selected unit is on "newposition" and the attacked unit is on "clickedtile")
+            if (Input.GetMouseButtonUp(0) && unit.state == "thinking" && !usingability)
+            {
+                Vector3Int clickedtile = gridPosition(Input.mousePosition, true);
+                if (units.HasTile(clickedtile) && getunit(clickedtile) != null)
+                {
+                    if (getunit(clickedtile).owner != activeplayer)
+                    {
+                        Oncombatstart?.Invoke(newposition, clickedtile);
+                        //raise combat starting
+                    }
+                }
+            }
+            if (unit.state == "moving")
+            {
+                if (path.Count > 0)
+                {
+                    Move(unitprefab.transform.position, path.Peek());
+                }
+                else
+                {
+                    clearUnitsTiles();
+                    unit.state = "thinking";
+                    if (newposition == currentposition || unit.attackandmove)
+                    {
+                        findattackables(newposition, unit);
+                    }
 
+                    turnoff = showUnitPanel(unitprefab, unit, newposition);
+                }
+            }
+        }
     }
 
     
-    public void onWait ()
+    public void onWait()
     {
         currentposition = newposition;
         unit.exhausted = true;
+        unitprefab.GetComponent<SpriteRenderer>().color = new Color(.6f, .6f, .6f);
         Reset();
+    }
+
+    public void onCap()
+    {
+        map.GetInstantiatedObject(newposition).GetComponent<controllable_script>().owner = activeplayer;
+        onWait();
+    }
+
+    public void onAttackButtonClicked()
+    {
+        turnpanel(unitprefab, false, turnoff);
+    }
+    public void onAbilityclicked()
+    {
+        turnpanel(unitprefab, false, turnoff);
+        usingability = true;
     }
     public void OnTurnEnd()
     {
@@ -178,30 +223,57 @@ public class SelectionManager : MonoBehaviour
             case "flying":
                 if (map.HasTile(position + left))
                 {
-                    if (getunit(position + left) == null || getunit(position + left).owner == unit.owner)
+                    levelTile checkedTile = map.GetTile<levelTile>(position + left);
+                    int tileowner = 0;
+                    if(checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(position + left).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(position + left) == null || getunit(position + left).owner == unit.owner || getunit(position + left).status == "downed") && (tileowner == 0|| tileowner == unit.owner))
                     {
                         adjacencyList.Add(position + left);
                     }
                 }
                 if (map.HasTile(position + up))
                 {
-                    if (getunit(position + up) == null || getunit(position + up).owner == unit.owner)
+                    Vector3Int checkedposition = position + up;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
                     {
-                        adjacencyList.Add(position + up);
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
                     }
                 }
                 if (map.HasTile(position + down))
                 {
-                    if (getunit(position + down) == null || getunit(position + down).owner == unit.owner)
+                    Vector3Int checkedposition = position + down;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
                     {
-                        adjacencyList.Add(position + down);
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
                     }
                 }
                 if (map.HasTile(position + right))
                 {
-                    if (getunit(position + right) == null || getunit(position + right).owner == unit.owner)
+                    Vector3Int checkedposition = position + right;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
                     {
-                        adjacencyList.Add(position + right);
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
                     }
                 }
                 neighborlist[position] = adjacencyList;
@@ -211,23 +283,59 @@ public class SelectionManager : MonoBehaviour
             case "foot":
                 if (map.HasTile(position + left) && map.GetTile<levelTile>(position + left).type.ToString() != "lava")
                 {
-                    if (getunit(position + left) == null || getunit(position + left).owner == unit.owner)
-                        adjacencyList.Add(position + left);
+                    Vector3Int checkedposition = position + left;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
+                    }
                 }
                 if (map.HasTile(position + up) && map.GetTile<levelTile>(position + up).type.ToString() != "lava")
                 {
-                    if (getunit(position + up) == null || getunit(position + up).owner == unit.owner)
-                        adjacencyList.Add(position + up);
+                    Vector3Int checkedposition = position + up;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
+                    }
                 }
                 if (map.HasTile(position + down) && map.GetTile<levelTile>(position + down).type.ToString() != "lava")
                 {
-                    if (getunit(position + down) == null || getunit(position + down).owner == unit.owner)
-                        adjacencyList.Add(position + down);
+                    Vector3Int checkedposition = position + down;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
+                    }
                 }
                 if (map.HasTile(position + right) && map.GetTile<levelTile>(position + right).type.ToString() != "lava")
                 {
-                    if (getunit(position + right) == null || getunit(position + right).owner == unit.owner)
-                        adjacencyList.Add(position + right);
+                    Vector3Int checkedposition = position + right;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
+                    }
                 }
 
                 neighborlist[position] = adjacencyList;
@@ -549,6 +657,14 @@ public class SelectionManager : MonoBehaviour
     public void turnpanel(GameObject unitobject, bool onoroff, int child)
     {
         unitobject.transform.GetChild(1).transform.GetChild(child).gameObject.SetActive(onoroff);
+    }
+
+    public void Oncombat(Vector3Int attacker, Vector3Int defender)
+    {
+        currentposition = attacker; 
+        unit.exhausted = true;
+        unitprefab.GetComponent<SpriteRenderer>().color = new Color(.6f, .6f, .6f);
+        Reset();
     }
 }
 
