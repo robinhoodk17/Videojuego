@@ -48,7 +48,7 @@ public enum tileType
     planes = 2,
     river = 3,
     road = 4,
-    farm = 5,
+    market = 5,
     bonfire = 6,
     barracks = 7,
     HQ = 8,

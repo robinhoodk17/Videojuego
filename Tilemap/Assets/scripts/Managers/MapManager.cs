@@ -26,16 +26,29 @@ public class MapManager : MonoBehaviour
     private Tilemap map, conditions, units;
     public int numberOfPlayers;
     public BattleState state;
-    public int activeplayer;
+    public int activeplayer = 1;
     public GameObject playerstartpanel;
     public TextMeshProUGUI activeplayertext;
+    public GameObject[] resourcePanels;
+    int[] food;
+    int[] SUP;
+    int turnnumber = 0;
     void Start()
     {
-        activeplayer = 1;
+        food = new int[numberOfPlayers];
+        SUP = new int[numberOfPlayers];
         state = BattleState.PLAYERTURN;
     }
     void Update()
     {
+        if(turnnumber == 0)
+        {
+            int[] foodSUP = CalculateIncome();
+            food[activeplayer - 1] = foodSUP[0];
+            SUP[activeplayer - 1] = foodSUP[1];
+            turnnumber = 1;
+            resourceshow(foodSUP);
+        }
         /*an example to make sure that the tiles are working: (it prints the tile you click and the 2 tiles on its right)
         if(Input.GetMouseButtonDown(0))
         {
@@ -113,16 +126,23 @@ public class MapManager : MonoBehaviour
                 instanceofunit.turnEnd();
             }
         }
-
+        resourcePanels[activeplayer - 1].SetActive(false);
         if (activeplayer < numberOfPlayers)
         { activeplayer++; }
         else
-        { activeplayer = 1; }
+        { activeplayer = 1; turnnumber++; }
         state = BattleState.START;
         //making the turn start message pop up
         //panel turns off the panel after f seconds
         activeplayertext.text = "Player " + activeplayer.ToString();
         StartCoroutine(panel(2f));
+
+        int[] foodSUP = CalculateIncome();
+        food[activeplayer - 1] += foodSUP[0];
+        SUP[activeplayer - 1] += foodSUP[1];
+        foodSUP[0] = food[activeplayer - 1];
+        foodSUP[1] = SUP[activeplayer - 1];
+        resourceshow(foodSUP);
         foreach (GameObject unit in allunits)
         {
             unitScript instanceofunit = unit.GetComponent<unitScript>();
@@ -132,5 +152,43 @@ public class MapManager : MonoBehaviour
                 instanceofunit.turnStart();
             }
         }
+    }
+
+    public int[] CalculateIncome()
+    {
+        int[] foodSUP = new int[2];
+        foodSUP[0] = 0;
+        foodSUP[1] = 0;
+        foreach (var posi in map.cellBounds.allPositionsWithin)
+        {
+            Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
+            if (map.HasTile(localPlace))
+            {
+                levelTile Tile = map.GetTile<levelTile>(localPlace);
+                if(Tile.controllable)
+                {
+                    int owner = map.GetInstantiatedObject(localPlace).GetComponent<controllable_script>().owner;
+                    if(owner == activeplayer)
+                    {
+                        if(Tile.type == tileType.market)
+                        {
+                            foodSUP[0] += 100;
+                        }
+                        if(Tile.type == tileType.bonfire)
+                        {
+                            foodSUP[1] += 1;
+                        }
+                    }
+                }
+            }
+        }
+        return foodSUP;
+    }
+
+    public void resourceshow(int[] resources)
+    {
+        resourcePanels[activeplayer - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = resources[0].ToString();
+        resourcePanels[activeplayer - 1].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = resources[1].ToString();
+        resourcePanels[activeplayer - 1].SetActive(true);
     }
 }

@@ -10,6 +10,7 @@ TagManager:
   - builtMap
   - Unit
   - Controllable
+  - SelectionManager
   layers:
   - Default
   - TransparentFX
