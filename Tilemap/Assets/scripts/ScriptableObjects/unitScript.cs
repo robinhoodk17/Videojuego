@@ -25,7 +25,15 @@ public class unitScript : MonoBehaviour
     public string[] advantages = null;
     public string[] resistances = null;
     public string[] vulnerabilities = null;
+
     private int activeplayer = 1;
+
+
+    private int initialattack;
+    private int initialmaxHP;
+
+    [SerializeField]
+    GameObject healthbar;
     //public Transform movepoint;
     //public float moveSpeed = 5f;
 
@@ -55,7 +63,12 @@ public class unitScript : MonoBehaviour
 
         levelcounter++;
         if (levelcounter >= 3)
-            if (level < maxlevel) { level++; levelcounter = 0; }
+            if (level < maxlevel) 
+            {
+                level++; 
+                levelcounter = 0;
+                levelUp();
+            }
 
         if(status == "clear")
         {
@@ -81,8 +94,27 @@ public class unitScript : MonoBehaviour
     {
         Destroy(gameObject);
     }
-    // Update is called once per frame
-    void Update()
+    
+    public void healthChanged()
     {
+        if(HP < 0)
+        {
+            HP = 0;
+        }
+        healthbar.GetComponent<healthBar>().SetHealth(HP, maxHP);
+    }
+
+    public void levelUp()
+    {
+        attackdamage += (initialattack / 10);
+        maxHP += (initialmaxHP / 10);
+        HP += (initialmaxHP / 10);
+        healthChanged();
+    }
+    public void Awake()
+    {
+        healthbar.GetComponent<healthBar>().SetMaxHealth();
+        initialattack = attackdamage;
+        initialmaxHP = maxHP;
     }
 }

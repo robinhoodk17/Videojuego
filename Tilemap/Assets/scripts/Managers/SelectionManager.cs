@@ -656,7 +656,7 @@ public class SelectionManager : MonoBehaviour
 
     public void turnpanel(GameObject unitobject, bool onoroff, int child)
     {
-        unitobject.transform.GetChild(1).transform.GetChild(child).gameObject.SetActive(onoroff);
+        unitobject.transform.GetChild(0).transform.GetChild(child).gameObject.SetActive(onoroff);
     }
 
     public void Oncombat(Vector3Int attacker, Vector3Int defender)

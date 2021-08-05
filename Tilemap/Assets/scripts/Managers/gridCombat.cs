@@ -21,10 +21,16 @@ public class gridCombat : MonoBehaviour
         defender = getunitprefab(worldPosition(defendposition), false);
         attackerScript = getunit(attackposition);
         defenderScript = getunit(defendposition);
+
+
         defenderScript.HP -= calculateDamage(attackerScript, defenderScript);
+        defenderScript.healthChanged();
+
+
         if(defenderScript.HP > 0 && defenderScript.attacktype == "melee" && checkifneighbors(attackposition, defendposition))
         {
             attackerScript.HP -= calculateDamage(defenderScript, attackerScript);
+            attackerScript.healthChanged();
             if(attackerScript.HP <= 0)
             {
                 attackerScript.Downed();
