@@ -27,7 +27,7 @@ public class gridCombat : MonoBehaviour
         defenderScript.healthChanged();
 
 
-        if(defenderScript.HP > 0 && defenderScript.attacktype == "melee" && checkifneighbors(attackposition, defendposition))
+        if(defenderScript.HP > 0 && defenderScript._attacktype == "melee" && checkifneighbors(attackposition, defendposition))
         {
             attackerScript.HP -= calculateDamage(defenderScript, attackerScript);
             attackerScript.healthChanged();
@@ -125,21 +125,21 @@ public class gridCombat : MonoBehaviour
         }
         foreach(string adv in attackingadv)
         {
-            if(adv == defendingunit.typeOfUnit || adv == defendingunit.movementtype || adv == defendingunit.attacktype)
+            if(adv == defendingunit.typeOfUnit || adv == defendingunit.movementtype || adv == defendingunit._attacktype)
             {
                 damage *= 2;
             }
         }
         foreach(string vul in defendingvul)
         {
-            if(vul == attackingunit.typeOfUnit || vul == attackingunit.movementtype || vul == attackingunit.attacktype)
+            if(vul == attackingunit.typeOfUnit || vul == attackingunit.movementtype || vul == attackingunit._attacktype)
             {
                 damage *= 2;
             }
         }
         foreach(string res in defendingresist)
         {
-            if(attackingunit.typeOfUnit == res || attackingunit.movementtype == res || attackingunit.attacktype == res)
+            if(attackingunit.typeOfUnit == res || attackingunit.movementtype == res || attackingunit._attacktype == res)
             damage /= 2;
         }
         damage = damage * attackingunit.HP / attackingunit.maxHP * (attackingunit.level + 1);

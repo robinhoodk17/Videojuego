@@ -44,6 +44,8 @@ public class SelectionManager : MonoBehaviour
     int turnoff = 0;
 
     public event Action<Vector3Int, Vector3Int> Oncombatstart;
+    public event Action<GameObject> OnUnitSelected;
+    public event Action OnUnitDeselected;
     private void Start()
     {
         Oncombatstart += Oncombat;
@@ -95,6 +97,7 @@ public class SelectionManager : MonoBehaviour
             {
                 findSelectabletiles(unit, currentposition);
                 unitselected = true;
+                OnUnitSelected?.Invoke(unitprefab);
             }
         }
         //the right click resets the selection
@@ -206,6 +209,7 @@ public class SelectionManager : MonoBehaviour
             clearUnitsTiles();
         }
         unitselected = false;
+        OnUnitDeselected?.Invoke();
     }
 
     //finds the neighbors of a tile in gridposition "position" using the unit's movement
@@ -636,18 +640,18 @@ public class SelectionManager : MonoBehaviour
         //here we select which panel we want to show
         if(unitcancapture || unithasability || attackablewithinrange)
         {
-            if(!unithasability && !unitcancapture) { childtoactivate = 1; }
-            if(!unithasability && !attackablewithinrange) { childtoactivate = 2; }
-            if(!unitcancapture && !attackablewithinrange) { childtoactivate = 3; }
-            if (!unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 4; }
-            if (unithasability && attackablewithinrange && !unitcancapture) { childtoactivate = 5; }
-            if (unithasability && !attackablewithinrange && unitcancapture) { childtoactivate = 6; }
-            if (unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 7; }
+            if(!unithasability && !unitcancapture) { childtoactivate = 3; }
+            if(!unithasability && !attackablewithinrange) { childtoactivate = 4; }
+            if(!unitcancapture && !attackablewithinrange) { childtoactivate = 5; }
+            if (!unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 6; }
+            if (unithasability && attackablewithinrange && !unitcancapture) { childtoactivate = 7; }
+            if (unithasability && !attackablewithinrange && unitcancapture) { childtoactivate = 8; }
+            if (unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 9; }
         }
 
         else
         {
-            childtoactivate = 0;
+            childtoactivate = 2;
         }
 
         turnpanel(unitobject, true, childtoactivate);

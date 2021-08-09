@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEngine.EventSystems;
 
 public enum BattleState { START, PLAYERTURN, ENDTURN, WON, LOST }
 //remember to add in the inspector the tiles in the tiledatas and the tilemap in "map" (for loading the map) and tilebases (for being able to edit)
@@ -24,6 +26,9 @@ public class MapManager : MonoBehaviour
      */
     [SerializeField]
     private Tilemap map, conditions, units;
+    [SerializeField]
+    public List<GameObject> Buildables;
+    public bool clicked;
     public int numberOfPlayers;
     public BattleState state;
     public int activeplayer = 1;
@@ -33,11 +38,20 @@ public class MapManager : MonoBehaviour
     int[] food;
     int[] SUP;
     int turnnumber = 0;
+    bool barracksSelected = false;
+    Vector3Int currentposition;
+    bool unitselected = false;
+    private SelectionManager eventraiser;
+
+    public int CurrentButtonPressed;
     void Start()
     {
         food = new int[numberOfPlayers];
         SUP = new int[numberOfPlayers];
         state = BattleState.PLAYERTURN;
+        eventraiser = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
+        eventraiser.OnUnitSelected += OnUnitSelected;
+        eventraiser.OnUnitDeselected += OnUnitDeselected;
     }
     void Update()
     {
@@ -49,57 +63,55 @@ public class MapManager : MonoBehaviour
             turnnumber = 1;
             resourceshow(foodSUP);
         }
-        /*an example to make sure that the tiles are working: (it prints the tile you click and the 2 tiles on its right)
-        if(Input.GetMouseButtonDown(0))
+
+        if ((Input.GetMouseButtonDown(0) && barracksSelected && !EventSystem.current.IsPointerOverGameObject()) || Input.GetMouseButtonDown(1))
         {
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3Int gridPosition = map.WorldToCell(mousePosition);
-            if (units.HasTile(gridPosition))
+            if(barracksSelected)
             {
-                levelTile clickedTile = units.GetTile<levelTile>(gridPosition);
+                map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
+            }
+            barracksSelected = false;
+        }
+        if (Input.GetMouseButtonDown(0) && !barracksSelected && !unitselected)
+        {
+            currentposition = gridPosition(Input.mousePosition, true);
+            if(getunit(currentposition) ==null)
+            {
+                if (map.HasTile(currentposition))
+                {
+                    levelTile Tile = map.GetTile<levelTile>(currentposition);
+                    if (Tile.controllable)
+                    {
+                        if (Tile.type == tileType.barracks)
+                        {
+                            GameObject barracks = map.GetInstantiatedObject(currentposition);
+                            barracks.transform.GetChild(0).gameObject.SetActive(true);
+                            barracksSelected = true;
+                        }
+                    }
+                }
 
-                string tilename = clickedTile.type.ToString();
-                string tilestatus = clickedTile.status;
-
-                print("At position " + gridPosition + "there is a " + tilename + " with " + tilestatus + " weather");
-
+            }
+        }
+        if(clicked)
+        {
+            Debug.Log(clicked);
+            int[] costs = new int[2];
+            unitScript spawnedUnit = Buildables[CurrentButtonPressed].GetComponent<unitScript>();
+            costs[0] = spawnedUnit.foodCost;
+            costs[1] = spawnedUnit.SUPCost;
+            if (costs[0] <= food[activeplayer-1] && costs[1] <= SUP[activeplayer - 1])
+            {
+                GameObject.Instantiate(Buildables[CurrentButtonPressed], map.GetCellCenterWorld(currentposition), Quaternion.identity);
+                spawnedUnit = getunit(currentposition);
+                spawnedUnit.exhausted = true;
+                clicked = false;
             }
             else
             {
-                if (conditions.HasTile(gridPosition))
-                {
-
-                    levelTile clickedTile = conditions.GetTile<levelTile>(gridPosition);
-
-                    string tilename = clickedTile.type.ToString();
-                    string tilestatus = clickedTile.status;
-
-                    print("At position " + gridPosition + "there is a " + tilename + " with " + tilestatus + " weather");
-                }
-                else
-                {
-                    if (map.HasTile(gridPosition))
-                    {
-                        levelTile clickedTile = map.GetTile<levelTile>(gridPosition);
-
-                        string tilename = clickedTile.type.ToString();
-                        string tilestatus = clickedTile.status;
-
-                        print("At position " + gridPosition + "there is a " + tilename + " with " + tilestatus + " weather");
-                        // An example to check the two tiles on the right
-                        //for (int i = 1; i < 3; i++)
-                        //{
-                        //    clickedTile = map.GetTile<levelTile>((gridPosition + new Vector3Int(i,0,0)));
-                        //    tilename = clickedTile.type.ToString();
-                        //    tilestatus = clickedTile.status;
-                        //    print("At the next position " + gridPosition + "there is a " + tilename + "with " + tilestatus + " weather");
-                        //}
-                    }
-
-                }
+                clicked = false;
             }
         }
-        */
     }
 
     public Vector3Int gridPosition (Vector2 mouseposition)
@@ -184,11 +196,62 @@ public class MapManager : MonoBehaviour
         }
         return foodSUP;
     }
-
     public void resourceshow(int[] resources)
     {
         resourcePanels[activeplayer - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = resources[0].ToString();
         resourcePanels[activeplayer - 1].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = resources[1].ToString();
         resourcePanels[activeplayer - 1].SetActive(true);
+    }
+    //get the gridposition given a world position (if screen = true, it calculates given a screen position instead)
+    public Vector3Int gridPosition(Vector3 position, bool screen = false)
+    {
+        if (screen)
+        {
+            position = Camera.main.ScreenToWorldPoint(position);
+        }
+
+        Vector3Int gridposition = map.WorldToCell(position);
+        return gridposition;
+    }
+    public Vector3 worldPosition(Vector3Int gridposition)
+    {
+        return map.CellToWorld(gridposition);
+    }
+
+    private void OnUnitSelected(GameObject unit)
+    {
+        unitselected = true;
+    }
+    private void OnUnitDeselected()
+    {
+        unitselected = false;
+    }
+
+    //tries to get the unit at screenposition "position" if screen = true
+    public unitScript getunit(Vector3 position, bool screen = true)
+    {
+
+        if (!screen)
+        {
+            position = Camera.main.WorldToScreenPoint(position);
+        }
+        var ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            unitScript unit = selection.GetComponent<unitScript>();
+            return unit;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
+    }
+    //tries to get a unit given a gridposition
+    public unitScript getunit(Vector3Int position)
+    {
+        return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
     }
 }

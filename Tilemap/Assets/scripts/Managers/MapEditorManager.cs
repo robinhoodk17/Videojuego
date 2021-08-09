@@ -28,7 +28,7 @@ public class MapEditorManager : MonoBehaviour
     public GameObject[] ItemImage;
     public List<GameObject> Prefabs;
     public int numberofunitsingame;
-
+    public int activeplayer = 0;
     private void Update()
     {
         //each time the frame is updated, we check the position of the mouse in the gridmap 
@@ -48,6 +48,7 @@ public class MapEditorManager : MonoBehaviour
             {
                 Vector3 where = getWorldPosition((Vector3)gridPosition);
                 GameObject.Instantiate(Prefabs[CurrentButtonPressed - numberoftiles], where, Quaternion.identity);
+                getunit(gridPosition).owner = activeplayer;
                 //units.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
             }
         }
@@ -62,6 +63,10 @@ public class MapEditorManager : MonoBehaviour
             if (typenumber<1000)
             {
                 map.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
+                if(tileBases[CurrentButtonPressed].controllable)
+                {
+                    map.GetInstantiatedObject(gridPosition).GetComponent<controllable_script>().owner = activeplayer;
+                }
             }
             if (typenumber >= 2000)
             {
@@ -110,5 +115,31 @@ public class MapEditorManager : MonoBehaviour
     public GameObject getunitprefab(Vector3Int position)
     {
         return getunitprefab(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+    }
+    public unitScript getunit(Vector3 position, bool screen = true)
+    {
+
+        if (!screen)
+        {
+            position = Camera.main.WorldToScreenPoint(position);
+        }
+        var ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            unitScript unit = selection.GetComponent<unitScript>();
+            return unit;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
+    }
+    //tries to get a unit given a gridposition
+    public unitScript getunit(Vector3Int position)
+    {
+        return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
     }
 }
