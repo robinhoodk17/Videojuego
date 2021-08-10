@@ -48,7 +48,8 @@ public class MapEditorManager : MonoBehaviour
             {
                 Vector3 where = getWorldPosition((Vector3)gridPosition);
                 GameObject.Instantiate(Prefabs[CurrentButtonPressed - numberoftiles], where, Quaternion.identity);
-                getunit(gridPosition).owner = activeplayer;
+                unitScript spawnedUnit = getunit(gridPosition);
+                spawnedUnit.ownerChange(activeplayer);
                 //units.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
             }
         }
@@ -65,7 +66,7 @@ public class MapEditorManager : MonoBehaviour
                 map.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
                 if(tileBases[CurrentButtonPressed].controllable)
                 {
-                    map.GetInstantiatedObject(gridPosition).GetComponent<controllable_script>().owner = activeplayer;
+                    map.GetInstantiatedObject(gridPosition).GetComponent<controllable_script>().ownerchange(activeplayer);
                 }
             }
             if (typenumber >= 2000)

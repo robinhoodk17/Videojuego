@@ -130,6 +130,11 @@ public class unitScript : MonoBehaviour
         HP += (initialmaxHP / 10);
         healthChanged();
     }
+    public void ownerChange(int newowner)
+    {
+        owner = newowner;
+        ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
+    }
     public void Awake()
     {
         healthbar.GetComponent<healthBar>().SetMaxHealth();

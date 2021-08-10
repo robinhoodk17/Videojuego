@@ -35,6 +35,7 @@ public class levelTile : RuleTile
     public int footcost;
     public int wheelcost;
     public int flyingcost;
+    public int defense;
     public bool controllable = false;
 }
 

@@ -46,6 +46,7 @@ public class SelectionManager : MonoBehaviour
     public event Action<Vector3Int, Vector3Int> Oncombatstart;
     public event Action<GameObject> OnUnitSelected;
     public event Action OnUnitDeselected;
+    public event Action<Vector3Int, Vector3Int> Oncombathover;
     private void Start()
     {
         Oncombatstart += Oncombat;
@@ -111,6 +112,15 @@ public class SelectionManager : MonoBehaviour
             // we initiate combat (the selected unit is on "newposition" and the attacked unit is on "clickedtile")
             if (Input.GetMouseButtonUp(0) && unit.state == "thinking" && !usingability)
             {
+                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3Int mousePosition = map.WorldToCell(mousePos);
+                if(getunit(mousePosition) != null)
+                {
+                    if(getunit(mousePosition).owner != activeplayer)
+                    {
+                        Oncombathover?.Invoke(newposition, mousePosition);
+                    }
+                }
                 Vector3Int clickedtile = gridPosition(Input.mousePosition, true);
                 if (units.HasTile(clickedtile) && getunit(clickedtile) != null)
                 {
@@ -153,7 +163,7 @@ public class SelectionManager : MonoBehaviour
 
     public void onCap()
     {
-        map.GetInstantiatedObject(newposition).GetComponent<controllable_script>().owner = activeplayer;
+        map.GetInstantiatedObject(newposition).GetComponent<controllable_script>().ownerchange(activeplayer);
         onWait();
     }
 
@@ -669,6 +679,50 @@ public class SelectionManager : MonoBehaviour
         unit.exhausted = true;
         unitprefab.GetComponent<SpriteRenderer>().color = new Color(.6f, .6f, .6f);
         Reset();
+    }
+
+    public int calculateDamage(unitScript attackingunit, unitScript defendingunit, Vector3Int defendposition)
+    {
+        string[] attackingadv = null;
+        string[] defendingresist = null;
+        string[] defendingvul = null;
+        int damage = attackingunit.attackdamage;
+        if (attackingunit.advantages != null)
+        {
+            attackingadv = attackingunit.advantages;
+        }
+        if (defendingunit.resistances != null)
+        {
+            defendingresist = defendingunit.resistances;
+        }
+        if (defendingunit.vulnerabilities != null)
+        {
+            defendingvul = defendingunit.vulnerabilities;
+        }
+        foreach (string adv in attackingadv)
+        {
+            if (adv == defendingunit.typeOfUnit || adv == defendingunit.movementtype || adv == defendingunit._attacktype)
+            {
+                damage *= 2;
+            }
+        }
+        foreach (string vul in defendingvul)
+        {
+            if (vul == attackingunit.typeOfUnit || vul == attackingunit.movementtype || vul == attackingunit._attacktype)
+            {
+                damage *= 2;
+            }
+        }
+        foreach (string res in defendingresist)
+        {
+            if (attackingunit.typeOfUnit == res || attackingunit.movementtype == res || attackingunit._attacktype == res)
+                damage /= 2;
+        }
+        levelTile Tile = map.GetTile<levelTile>(defendposition);
+        int tiledefense = Tile.defense;
+        damage = damage * attackingunit.HP / attackingunit.maxHP * (1 + (attackingunit.level - 1) / 10);
+        damage -= tiledefense;
+        return damage;
     }
 }
 

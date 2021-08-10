@@ -17,9 +17,9 @@ MonoBehaviour:
   m_DefaultColliderType: 1
   m_TilingRules: []
   type: 3
-  status: clear
-  owner: 0
   treadcost: 3
   footcost: 2
   wheelcost: 20
   flyingcost: 1
+  defense: -20
+  controllable: 0

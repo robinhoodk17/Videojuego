@@ -57,6 +57,13 @@ public class MapManager : MonoBehaviour
     {
         if(turnnumber == 0)
         {
+            GameObject[] owners = GameObject.FindGameObjectsWithTag("Player");
+            foreach(GameObject assign in owners)
+            {
+                GameObject controllable = map.GetInstantiatedObject(gridPosition(assign.transform.position));
+                controllable.GetComponent<controllable_script>().ownerchange(assign.GetComponent<ownerAssginScript>().owner);
+                Destroy(assign);
+            }
             int[] foodSUP = CalculateIncome();
             food[activeplayer - 1] = foodSUP[0];
             SUP[activeplayer - 1] = foodSUP[1];
@@ -95,7 +102,6 @@ public class MapManager : MonoBehaviour
         }
         if(clicked)
         {
-            Debug.Log(clicked);
             int[] costs = new int[2];
             unitScript spawnedUnit = Buildables[CurrentButtonPressed].GetComponent<unitScript>();
             costs[0] = spawnedUnit.foodCost;
@@ -105,6 +111,17 @@ public class MapManager : MonoBehaviour
                 GameObject.Instantiate(Buildables[CurrentButtonPressed], map.GetCellCenterWorld(currentposition), Quaternion.identity);
                 spawnedUnit = getunit(currentposition);
                 spawnedUnit.exhausted = true;
+                spawnedUnit.ownerChange(activeplayer);
+                GameObject unitprefab = spawnedUnit.gameObject;
+                unitprefab.GetComponent<SpriteRenderer>().color = new Color(.6f, .6f, .6f);
+                food[activeplayer - 1] -= costs[0];
+                SUP[activeplayer - 1] -= costs[1];
+                clicked = false;
+                int[] foodSUP = new int[2];
+                foodSUP[0] = food[activeplayer - 1];
+                foodSUP[1] = SUP[activeplayer - 1];
+                resourceshow(foodSUP);
+                map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
                 clicked = false;
             }
             else
@@ -147,7 +164,7 @@ public class MapManager : MonoBehaviour
         //making the turn start message pop up
         //panel turns off the panel after f seconds
         activeplayertext.text = "Player " + activeplayer.ToString();
-        StartCoroutine(panel(2f));
+        StartCoroutine(panel(.7f));
 
         int[] foodSUP = CalculateIncome();
         food[activeplayer - 1] += foodSUP[0];
@@ -254,4 +271,21 @@ public class MapManager : MonoBehaviour
     {
         return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
     }
+    public GameObject getunitprefab(Vector3Int position, bool screen = true)
+    {
+        Vector3 worldposition = worldPosition(position);
+        var ray = Camera.main.ScreenPointToRay(worldposition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            return selection;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
+    }
+
 }
