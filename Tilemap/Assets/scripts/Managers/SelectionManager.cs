@@ -12,6 +12,9 @@ public class SelectionManager : MonoBehaviour
     [SerializeField]
     private Tilemap map, conditions, units;
 
+    public float timeBetweenClicks = 0.5f;
+    float lastClick;
+
     int activeplayer = 1;
     public int playernumber = 2;
     //this list holds the tile types with the UI elements of the units for easy accesibility
@@ -66,7 +69,7 @@ public class SelectionManager : MonoBehaviour
                     //these ifs set the unit in motion (works even if you press its own position) only if you are clicking on a movement UI tile while the
                     //unit is not exhausted an while the target position has no units.
                     newposition = gridPosition(Input.mousePosition, true);
-                    if (((getunit(newposition) != null && newposition != currentposition) && unit.state != "thinking") || (unit.exhausted || !units.HasTile(newposition)))
+                    if (((getunit(newposition) != null && newposition != currentposition) && unit.state != "thinking") || (unit.exhausted || !units.HasTile(newposition) || unit.status == "stunned" || unit.status == "recovered"))
                     {
                         Reset();
                     }
@@ -110,24 +113,29 @@ public class SelectionManager : MonoBehaviour
         {
             //Here we check if there is an attackable unit,and if it is clicked,
             // we initiate combat (the selected unit is on "newposition" and the attacked unit is on "clickedtile")
-            if (Input.GetMouseButtonUp(0) && unit.state == "thinking" && !usingability)
+            if (Input.GetMouseButtonUp(0) && unit.state == "thinking"&& Time.time - lastClick > timeBetweenClicks)
             {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3Int mousePosition = map.WorldToCell(mousePos);
-                if(getunit(mousePosition) != null)
-                {
-                    if(getunit(mousePosition).owner != activeplayer)
-                    {
-                        Oncombathover?.Invoke(newposition, mousePosition);
-                    }
-                }
                 Vector3Int clickedtile = gridPosition(Input.mousePosition, true);
-                if (units.HasTile(clickedtile) && getunit(clickedtile) != null)
+                if (units.HasTile(clickedtile) && getunit(clickedtile) != null && !usingability)
                 {
                     if (getunit(clickedtile).owner != activeplayer)
                     {
                         Oncombatstart?.Invoke(newposition, clickedtile);
                         //raise combat starting
+                    }
+                }
+                if(units.HasTile(clickedtile) && getunit(clickedtile) != null && usingability)
+                {
+                    if(unit.ability == "res")
+                    {
+                        unitScript resUnit = getunit(clickedtile);
+                        resUnit.HP = 10;
+                        resUnit.exhausted = false;
+                        resUnit.status = "clear";
+                        resUnit.healthChanged();
+                        resUnit.gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+                        onWait();
                     }
                 }
             }
@@ -163,18 +171,23 @@ public class SelectionManager : MonoBehaviour
 
     public void onCap()
     {
-        map.GetInstantiatedObject(newposition).GetComponent<controllable_script>().ownerchange(activeplayer);
+        map.GetInstantiatedObject(newposition).GetComponent<controllable_script>().ownerchange(activeplayer, (int)(unit.HP/unit.maxHP));
+        unit.onCap();
         onWait();
     }
 
     public void onAttackButtonClicked()
     {
         turnpanel(unitprefab, false, turnoff);
+
+        lastClick = Time.time;
     }
     public void onAbilityclicked()
     {
         turnpanel(unitprefab, false, turnoff);
         usingability = true;
+
+        lastClick = Time.time;
     }
     public void OnTurnEnd()
     {
@@ -219,6 +232,7 @@ public class SelectionManager : MonoBehaviour
             clearUnitsTiles();
         }
         unitselected = false;
+        usingability = false;
         OnUnitDeselected?.Invoke();
     }
 
@@ -615,10 +629,7 @@ public class SelectionManager : MonoBehaviour
             }
         }
         //to select if the unit has an ability
-        if(unitscript.ability != "none")
-        {
-            unithasability = true;
-        }
+        unithasability = unit.abilityCheck(newposition);
         //to select if the unit can attack anything
         if(unitscript.attackandmove || newposition == currentposition)
         {
@@ -681,48 +692,6 @@ public class SelectionManager : MonoBehaviour
         Reset();
     }
 
-    public int calculateDamage(unitScript attackingunit, unitScript defendingunit, Vector3Int defendposition)
-    {
-        string[] attackingadv = null;
-        string[] defendingresist = null;
-        string[] defendingvul = null;
-        int damage = attackingunit.attackdamage;
-        if (attackingunit.advantages != null)
-        {
-            attackingadv = attackingunit.advantages;
-        }
-        if (defendingunit.resistances != null)
-        {
-            defendingresist = defendingunit.resistances;
-        }
-        if (defendingunit.vulnerabilities != null)
-        {
-            defendingvul = defendingunit.vulnerabilities;
-        }
-        foreach (string adv in attackingadv)
-        {
-            if (adv == defendingunit.typeOfUnit || adv == defendingunit.movementtype || adv == defendingunit._attacktype)
-            {
-                damage *= 2;
-            }
-        }
-        foreach (string vul in defendingvul)
-        {
-            if (vul == attackingunit.typeOfUnit || vul == attackingunit.movementtype || vul == attackingunit._attacktype)
-            {
-                damage *= 2;
-            }
-        }
-        foreach (string res in defendingresist)
-        {
-            if (attackingunit.typeOfUnit == res || attackingunit.movementtype == res || attackingunit._attacktype == res)
-                damage /= 2;
-        }
-        levelTile Tile = map.GetTile<levelTile>(defendposition);
-        int tiledefense = Tile.defense;
-        damage = damage * attackingunit.HP / attackingunit.maxHP * (1 + (attackingunit.level - 1) / 10);
-        damage -= tiledefense;
-        return damage;
-    }
+
 }
 

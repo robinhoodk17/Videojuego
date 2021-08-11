@@ -27,7 +27,7 @@ public class gridCombat : MonoBehaviour
         defenderScript.healthChanged();
 
 
-        if(defenderScript.HP > 0 && defenderScript._attacktype == "melee" && checkifneighbors(attackposition, defendposition))
+        if(defenderScript.HP > 0 && defenderScript._attacktype == "melee" && checkifneighbors(attackposition, defendposition) && defenderScript.status != "stunned")
         {
             attackerScript.HP -= calculateDamage(defenderScript, attackerScript, defendposition);
             attackerScript.healthChanged();
@@ -106,6 +106,9 @@ public class gridCombat : MonoBehaviour
     public int calculateDamage(unitScript attackingunit, unitScript defendingunit, Vector3Int defendposition)
     {
 
+        if (attackingunit.status == "stunned")
+            return 0;
+
         string[] attackingadv = null;
         string[] defendingresist = null;
         string[] defendingvul = null;
@@ -145,7 +148,17 @@ public class gridCombat : MonoBehaviour
         int tiledefense = Tile.defense;
         damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + (attackingunit.level - 1)/10) * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
         damage -= tiledefense;
+
+        changeStatus(attackingunit, defendingunit);
         return damage;
+    }
+
+    public void changeStatus(unitScript attackingunit, unitScript defendingunit)
+    {
+        if(attackingunit.gameObject.name =="sniper" && defendingunit.typeOfUnit == "infantry")
+        {
+            defendingunit.status = "stunned";
+        }
     }
 
     //on [0] returns global damage (bonfires, etc), and on [1] returns defense. For now, only bonfires are implemented.

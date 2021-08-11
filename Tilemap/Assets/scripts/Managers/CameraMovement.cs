@@ -15,7 +15,8 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     Tilemap map;
 
-    float lastStep, timeBetweenSteps = 0.05f;
+    float lastStep;
+    public float timeBetweenSteps = 0.08f;
 
     private float mapminx, mapmaxx, mapminy, mapmaxy;
     // Update is called once per frame

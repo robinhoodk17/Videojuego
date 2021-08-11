@@ -61,7 +61,7 @@ public class MapManager : MonoBehaviour
             foreach(GameObject assign in owners)
             {
                 GameObject controllable = map.GetInstantiatedObject(gridPosition(assign.transform.position));
-                controllable.GetComponent<controllable_script>().ownerchange(assign.GetComponent<ownerAssginScript>().owner);
+                controllable.GetComponent<controllable_script>().ownerchange(assign.GetComponent<ownerAssginScript>().owner, 100);
                 Destroy(assign);
             }
             int[] foodSUP = CalculateIncome();

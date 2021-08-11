@@ -1,12 +1,14 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.Tilemaps;
 public class unitScript : MonoBehaviour
 {
     //To access this unit position, you have to do it from the Mapmanager
-    public string name;
+    public string barracksname;
     public int owner = 1;
     public int foodCost = 100;
     public int SUPCost = 1;
+    //possible status: downed, clear, stunned, recovered 
     public string status;
     public int HP;
     public int MP;
@@ -38,7 +40,7 @@ public class unitScript : MonoBehaviour
     public string state = "idle";
     public float movespeedanimation = 10;
 
-
+    
     private int activeplayer = 1;
     private int initialattack;
     private int initialmaxHP;
@@ -51,8 +53,12 @@ public class unitScript : MonoBehaviour
 
     [SerializeField]
     public GameObject ownerUI;
+
+    [SerializeField]
+    private Tilemap map;
     //public Transform movepoint;
     //public float moveSpeed = 5f;
+
 
     public void trackactiveplayer(int player)
     {
@@ -154,6 +160,70 @@ public class unitScript : MonoBehaviour
             attack.transform.GetChild(1).gameObject.SetActive(true);
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
         healthChanged();
+        map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
     }
 
+    public void onCap()
+    {
+        switch (name)
+        {
+            case "warrior":
+                levelcounter++;
+                if (levelcounter >= 3)
+                    levelUp();
+                break;
+        }
+    }
+
+    public void onCombat()
+    {
+    }
+
+
+    public unitScript getunit(Vector3 position, bool screen = true)
+    {
+
+        if (!screen)
+        {
+            position = Camera.main.WorldToScreenPoint(position);
+        }
+        var ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            unitScript unit = selection.GetComponent<unitScript>();
+            return unit;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
+    }
+    //tries to get a unit given a gridposition
+    public unitScript getunit(Vector3Int position)
+    {
+        return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+    }
+
+    public bool abilityCheck(Vector3Int position)
+    {
+        switch (ability)
+        {
+            case "none":
+                return false;
+            case "res":
+                if (getunit(position + Vector3Int.left)?.status == "downed")
+                    return true;
+                if (getunit(position + Vector3Int.right)?.status == "downed")
+                    return true;
+                if (getunit(position + Vector3Int.up)?.status == "downed")
+                    return true;
+                if (getunit(position + Vector3Int.down)?.status == "downed")
+                    return true;
+                return false;
+        }
+        return false;
+    }
 }
