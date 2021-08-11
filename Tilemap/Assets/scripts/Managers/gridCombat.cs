@@ -17,28 +17,54 @@ public class gridCombat : MonoBehaviour
     }
     public void OncombatHappening(Vector3Int attackposition, Vector3Int defendposition)
     {
-        attacker = getunitprefab(worldPosition(attackposition), false);
-        defender = getunitprefab(worldPosition(defendposition), false);
-        attackerScript = getunit(attackposition);
-        defenderScript = getunit(defendposition);
-
-
-        defenderScript.HP -= calculateDamage(attackerScript, defenderScript, defendposition);
-        defenderScript.healthChanged();
-
-
-        if(defenderScript.HP > 0 && defenderScript._attacktype == "melee" && checkifneighbors(attackposition, defendposition) && defenderScript.status != "stunned")
+        //This if happens if the unit is attacking a tile
+        if(getunit(defendposition) == null)
         {
-            attackerScript.HP -= calculateDamage(defenderScript, attackerScript, defendposition);
-            attackerScript.healthChanged();
-            if(attackerScript.HP <= 0)
+            attackerScript = getunit(attackposition);
+            int damage = attackerScript.attackdamage;
+            damage = (int)(damage * attackerScript.HP / attackerScript.maxHP * (1 + attackerScript.level / 10) * (1 + GlobalModifiers(attackerScript.owner)[0]));
+            controllable_script attackedTile = map.GetInstantiatedObject(defendposition).GetComponent<controllable_script>();
+            attackedTile.HP -= damage;
+            if(attackedTile.HP <= 0)
             {
-                attackerScript.Downed();
+                attackedTile.ownerloss();
+            }
+            else
+            {
+                attackedTile.healthChanged();
+                if(checkifneighbors(attackposition,defendposition))
+                {
+                    attackerScript.HP -= 30;
+                    attackerScript.healthChanged();
+                }
             }
         }
-        if(defenderScript.HP <= 0)
+        //This if happens if the unit is attacking another unit
+        else
         {
-            defenderScript.Downed();
+            attacker = getunitprefab(worldPosition(attackposition), false);
+            defender = getunitprefab(worldPosition(defendposition), false);
+            attackerScript = getunit(attackposition);
+            defenderScript = getunit(defendposition);
+
+
+            defenderScript.HP -= calculateDamage(attackerScript, defenderScript, defendposition);
+            defenderScript.healthChanged();
+
+
+            if (defenderScript.HP > 0 && defenderScript._attacktype == "melee" && checkifneighbors(attackposition, defendposition) && defenderScript.status != "stunned")
+            {
+                attackerScript.HP -= calculateDamage(defenderScript, attackerScript, defendposition);
+                attackerScript.healthChanged();
+                if (attackerScript.HP <= 0)
+                {
+                    attackerScript.Downed();
+                }
+            }
+            if (defenderScript.HP <= 0)
+            {
+                defenderScript.Downed();
+            }
         }
     }
 
@@ -146,7 +172,7 @@ public class gridCombat : MonoBehaviour
         }
         levelTile Tile = map.GetTile<levelTile>(defendposition);
         int tiledefense = Tile.defense;
-        damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + (attackingunit.level - 1)/10) * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
+        damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + attackingunit.level/10) * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
         damage -= tiledefense;
 
         changeStatus(attackingunit, defendingunit);

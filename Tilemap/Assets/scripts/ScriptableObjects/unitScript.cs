@@ -101,7 +101,7 @@ public class unitScript : MonoBehaviour
 
     public void Downed()
     {
-        state = "downed";
+        state = "idle";
         status = "downed";
         GetComponent<SpriteRenderer>().color = new Color(.5f, .5f, .5f);
     }
@@ -120,9 +120,11 @@ public class unitScript : MonoBehaviour
     
     public void healthChanged()
     {
-        if(HP < 0)
+        healthbar.SetActive(true);
+        if (HP <= 0)
         {
             HP = 0;
+            healthbar.SetActive(false);
         }
         healthbar.GetComponent<healthBar>().SetHealth(HP, maxHP);
         attack.GetComponent<TextMeshProUGUI>().text = ((int)(attackdamage * HP / maxHP)).ToString();
@@ -138,6 +140,7 @@ public class unitScript : MonoBehaviour
     }
     public void ownerChange(int newowner)
     {
+        ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(false);
         owner = newowner;
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
     }

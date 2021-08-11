@@ -117,6 +117,7 @@ public class SelectionManager : MonoBehaviour
             {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector3Int clickedtile = gridPosition(Input.mousePosition, true);
+                //this if invokes combat
                 if (units.HasTile(clickedtile) && getunit(clickedtile) != null && !usingability)
                 {
                     if (getunit(clickedtile).owner != activeplayer)
@@ -125,6 +126,7 @@ public class SelectionManager : MonoBehaviour
                         //raise combat starting
                     }
                 }
+                //this if uses the ability of the unit
                 if(units.HasTile(clickedtile) && getunit(clickedtile) != null && usingability)
                 {
                     if(unit.ability == "res")
@@ -136,6 +138,18 @@ public class SelectionManager : MonoBehaviour
                         resUnit.healthChanged();
                         resUnit.gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
                         onWait();
+                    }
+                }
+                //this if attacks a controllable tile
+                if(units.HasTile(clickedtile) && getunit(clickedtile) == null && !usingability)
+                {
+                    if(map.GetTile<levelTile>(clickedtile).controllable)
+                    {
+                        GameObject attackedproperty = map.GetInstantiatedObject(clickedtile);
+                        if(attackedproperty.GetComponent<controllable_script>().owner != activeplayer)
+                        {
+                            Oncombatstart?.Invoke(newposition, clickedtile);
+                        }
                     }
                 }
             }
@@ -171,7 +185,7 @@ public class SelectionManager : MonoBehaviour
 
     public void onCap()
     {
-        map.GetInstantiatedObject(newposition).GetComponent<controllable_script>().ownerchange(activeplayer, (int)(unit.HP/unit.maxHP));
+        map.GetInstantiatedObject(newposition).GetComponent<controllable_script>().ownerchange(activeplayer, (double)((double) unit.HP/ (double)unit.maxHP));
         unit.onCap();
         onWait();
     }
@@ -222,7 +236,8 @@ public class SelectionManager : MonoBehaviour
         if (unitselected)
         {
             unit.state = "idle";
-            unitprefab.transform.SetPositionAndRotation(map.GetCellCenterWorld(currentposition), Quaternion.identity);
+            unitprefab.transform.position = (map.GetCellCenterWorld(currentposition));
+                //SetPositionAndRotation(map.GetCellCenterWorld(currentposition), Quaternion.identity);
             turnpanel(unitprefab, false, turnoff);
             neighborlist.Clear();
             selectableTiles.Clear();
@@ -230,6 +245,8 @@ public class SelectionManager : MonoBehaviour
             distancelist.Clear();
             unitselected = false;
             clearUnitsTiles();
+            //there was a weird bug happening. I hope this fixes it.
+            unit.healthChanged();
         }
         unitselected = false;
         usingability = false;

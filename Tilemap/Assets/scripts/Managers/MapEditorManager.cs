@@ -66,7 +66,7 @@ public class MapEditorManager : MonoBehaviour
                 map.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
                 if(tileBases[CurrentButtonPressed].controllable)
                 {
-                    map.GetInstantiatedObject(gridPosition).GetComponent<controllable_script>().ownerchange(activeplayer, 100);
+                    map.GetInstantiatedObject(gridPosition).GetComponent<controllable_script>().ownerchange(activeplayer, 1);
                 }
             }
             if (typenumber >= 2000)

@@ -61,7 +61,7 @@ public class MapManager : MonoBehaviour
             foreach(GameObject assign in owners)
             {
                 GameObject controllable = map.GetInstantiatedObject(gridPosition(assign.transform.position));
-                controllable.GetComponent<controllable_script>().ownerchange(assign.GetComponent<ownerAssginScript>().owner, 100);
+                controllable.GetComponent<controllable_script>().ownerchange(assign.GetComponent<ownerAssginScript>().owner, 1);
                 Destroy(assign);
             }
             int[] foodSUP = CalculateIncome();
@@ -89,7 +89,7 @@ public class MapManager : MonoBehaviour
                     levelTile Tile = map.GetTile<levelTile>(currentposition);
                     if (Tile.controllable)
                     {
-                        if (Tile.type == tileType.barracks)
+                        if (Tile.type == tileType.barracks && map.GetInstantiatedObject(currentposition).GetComponent<controllable_script>().owner == activeplayer)
                         {
                             GameObject barracks = map.GetInstantiatedObject(currentposition);
                             barracks.transform.GetChild(0).gameObject.SetActive(true);
