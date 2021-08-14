@@ -1645,7 +1645,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5985169642593169639}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5403215015282966228}
+        m_TargetAssemblyTypeName: unitProduction, Assembly-CSharp
+        m_MethodName: ButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &5403215015282966228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2119,7 +2131,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: tank
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2865,6 +2877,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HP: 0
+  maxHP: 175
   owner: 0
   flagCanvas: {fileID: 1984087254407324515}
   healthbar: {fileID: 7036604602141593025}
@@ -4123,7 +4136,7 @@ GameObject:
   - component: {fileID: 2263859791480301531}
   - component: {fileID: 6307693302392199055}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Buttons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4918,8 +4931,9 @@ GameObject:
   - component: {fileID: 3396391633997611565}
   - component: {fileID: 2673915826752397080}
   - component: {fileID: 4035370718629470542}
+  - component: {fileID: 780116333189348634}
   m_Layer: 5
-  m_Name: Button (3)
+  m_Name: tank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5026,7 +5040,33 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2673915826752397080}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 780116333189348634}
+        m_TargetAssemblyTypeName: unitProduction, Assembly-CSharp
+        m_MethodName: ButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &780116333189348634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7191586854579598846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24500350a94046f49991c9555fdd605d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 3
+  Clicked: 0
 --- !u!1 &7192449026008400871
 GameObject:
   m_ObjectHideFlags: 0

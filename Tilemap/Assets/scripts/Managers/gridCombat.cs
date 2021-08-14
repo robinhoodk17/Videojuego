@@ -49,17 +49,24 @@ public class gridCombat : MonoBehaviour
 
 
             defenderScript.HP -= calculateDamage(attackerScript, defenderScript, defendposition);
-            defenderScript.healthChanged();
-
-
+            
+            
             if (defenderScript.HP > 0 && defenderScript._attacktype == "melee" && checkifneighbors(attackposition, defendposition) && defenderScript.status != "stunned")
             {
                 attackerScript.HP -= calculateDamage(defenderScript, attackerScript, defendposition);
-                attackerScript.healthChanged();
+
+                //add a counterattack on the combat
+                attackerScript.onCombat(defenderScript);
+
                 if (attackerScript.HP <= 0)
                 {
                     attackerScript.Downed();
                 }
+            }
+            //no counterattack
+            else
+            {
+                attackerScript.onCombatWOCA(defenderScript);
             }
             if (defenderScript.HP <= 0)
             {
@@ -181,9 +188,9 @@ public class gridCombat : MonoBehaviour
 
     public void changeStatus(unitScript attackingunit, unitScript defendingunit)
     {
-        if(attackingunit.gameObject.name =="sniper" && defendingunit.typeOfUnit == "infantry")
+        if(attackingunit.unitname =="sniper" && defendingunit.typeOfUnit == "infantry")
         {
-            defendingunit.status = "stunned";
+            defendingunit.statusChange("stunned");
         }
     }
 

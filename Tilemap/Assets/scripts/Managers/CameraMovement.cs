@@ -16,7 +16,7 @@ public class CameraMovement : MonoBehaviour
     Tilemap map;
 
     float lastStep;
-    public float timeBetweenSteps = 0.08f;
+    public float timeBetweenSteps = 0.15f;
 
     private float mapminx, mapmaxx, mapminy, mapmaxy;
     // Update is called once per frame
@@ -43,7 +43,7 @@ public class CameraMovement : MonoBehaviour
             if (Time.time - lastStep > timeBetweenSteps)
             {
                 lastStep = Time.time;
-                Vector3 up = new Vector3(0, 1, 0);
+                Vector3 up = new Vector3(0, .5f, 0);
                 cam.transform.position = ClampCamera(cam.transform.position + up);
             }
             
@@ -54,7 +54,7 @@ public class CameraMovement : MonoBehaviour
             if (Time.time - lastStep > timeBetweenSteps)
             {
                 lastStep = Time.time;
-                Vector3 down = new Vector3(0, -1, 0);
+                Vector3 down = new Vector3(0, -.5f, 0);
                 cam.transform.position = ClampCamera(cam.transform.position + down);
             }
         }
@@ -64,7 +64,7 @@ public class CameraMovement : MonoBehaviour
             if (Time.time - lastStep > timeBetweenSteps)
             {
                 lastStep = Time.time;
-                Vector3 right = new Vector3(1, 0, 0);
+                Vector3 right = new Vector3(.5f, 0, 0);
                 cam.transform.position = ClampCamera(cam.transform.position + right);
             }
         }
@@ -74,7 +74,7 @@ public class CameraMovement : MonoBehaviour
             if (Time.time - lastStep > timeBetweenSteps)
             {
                 lastStep = Time.time;
-                Vector3 left = new Vector3(-1, 0, 0);
+                Vector3 left = new Vector3(-.5f, 0, 0);
                 cam.transform.position = ClampCamera(cam.transform.position + left);
             }
         }

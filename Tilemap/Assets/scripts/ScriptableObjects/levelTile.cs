@@ -19,7 +19,7 @@ public class levelTile : RuleTile
             case ("foot"):
                 cost = footcost;
                 break;
-            case ("tread"):
+            case ("treads"):
                 cost = treadcost;
                 break;
             case ("flying"):

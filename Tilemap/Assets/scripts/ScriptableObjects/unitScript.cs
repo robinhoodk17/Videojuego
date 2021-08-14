@@ -5,6 +5,7 @@ public class unitScript : MonoBehaviour
 {
     //To access this unit position, you have to do it from the Mapmanager
     public string barracksname;
+    public string unitname;
     public int owner = 1;
     public int foodCost = 100;
     public int SUPCost = 1;
@@ -40,7 +41,7 @@ public class unitScript : MonoBehaviour
     public string state = "idle";
     public float movespeedanimation = 10;
 
-    
+
     private int activeplayer = 1;
     private int initialattack;
     private int initialmaxHP;
@@ -48,18 +49,38 @@ public class unitScript : MonoBehaviour
     [SerializeField]
     public GameObject healthbar;
 
+    public Animator animator;
+
     [SerializeField]
     public GameObject attack;
+
+    public GameObject statusSprite;
 
     [SerializeField]
     public GameObject ownerUI;
 
     [SerializeField]
     private Tilemap map;
+
+    private unitScript enemy;
+    private string previousStatus = "clear";
     //public Transform movepoint;
     //public float moveSpeed = 5f;
 
+    public void statusChange(string newstatus)
+    {
+        if (previousStatus == "stunned" || previousStatus == "recovered")
+        {
+            statusSprite.transform.GetChild(0).gameObject.SetActive(false);
+        }
 
+        if (newstatus == "stunned" || newstatus == "recovered")
+        {
+            statusSprite.transform.GetChild(0).gameObject.SetActive(true);
+        }
+        previousStatus = status;
+        status = newstatus;
+    }
     public void trackactiveplayer(int player)
     {
         activeplayer = player;
@@ -68,9 +89,9 @@ public class unitScript : MonoBehaviour
     {
         if (status == "stunned")
         {
-            status = "recovered";
+            statusChange("recovered");
         }
-        if(status == "downed" && activeplayer == owner)
+        if (status == "downed" && activeplayer == owner)
         {
             Destroyed();
         }
@@ -80,44 +101,30 @@ public class unitScript : MonoBehaviour
     {
         if (status == "recovered")
         {
-            status = "clear";
+            statusChange("clear");
         }
         exhausted = false;
 
         levelcounter++;
         if (levelcounter >= 3)
-            if (level < maxlevel) 
+            if (level < maxlevel)
             {
-                level++; 
+                level++;
                 levelcounter = 0;
                 levelUp();
             }
 
-        if(status == "clear")
+        if (status == "clear")
         {
             GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
         }
-    }
-
-    public void Downed()
-    {
-        state = "idle";
-        status = "downed";
-        GetComponent<SpriteRenderer>().color = new Color(.5f, .5f, .5f);
-    }
-
-    public void recoverFromDowned()
-    {
-        state = "idle";
-        status = "recovered";
-        exhausted = true;
     }
 
     public void Destroyed()
     {
         Destroy(gameObject);
     }
-    
+
     public void healthChanged()
     {
         healthbar.SetActive(true);
@@ -129,14 +136,6 @@ public class unitScript : MonoBehaviour
         healthbar.GetComponent<healthBar>().SetHealth(HP, maxHP);
         attack.GetComponent<TextMeshProUGUI>().text = ((int)(attackdamage * HP / maxHP)).ToString();
         healthbar.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = HP.ToString();
-    }
-
-    public void levelUp()
-    {
-        attackdamage += (initialattack / 10);
-        maxHP += (initialmaxHP / 10);
-        HP += (initialmaxHP / 10);
-        healthChanged();
     }
     public void ownerChange(int newowner)
     {
@@ -151,11 +150,11 @@ public class unitScript : MonoBehaviour
         initialattack = attackdamage;
         initialmaxHP = maxHP;
         attack.GetComponent<TextMeshProUGUI>().text = ((int)(attackdamage * HP / maxHP)).ToString();
-        if(attackrange > 1)
+        if (attackrange > 1)
         {
             attacktype = "ranged";
         }
-        if(attacktype == "melee")
+        if (attacktype == "melee")
         {
             attack.transform.GetChild(0).gameObject.SetActive(true);
         }
@@ -164,6 +163,14 @@ public class unitScript : MonoBehaviour
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
         healthChanged();
         map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
+    }
+
+    public void levelUp()
+    {
+        attackdamage += (initialattack / 10);
+        maxHP += (initialmaxHP / 10);
+        HP += (initialmaxHP / 10);
+        healthChanged();
     }
 
     public void onCap()
@@ -178,9 +185,52 @@ public class unitScript : MonoBehaviour
         }
     }
 
-    public void onCombat()
+    public void onCombat(unitScript defender)
     {
+        animator.Play("shoot");
+        enemy = defender;
+        enemy.counterAttack(this);
+        enemy.healthChanged();
     }
+
+    public void counterAttack(unitScript attacker)
+    {
+        animator.Play("counterAttack");
+        enemy = attacker;
+    }
+    public void damageEnemy()
+    {
+        enemy.onDamage();
+    }
+    public void onCombatWOCA(unitScript defender)
+    {
+        animator.Play("shoot");
+        enemy = defender;
+        enemy.animator.Play("damage");
+        enemy.healthChanged();
+    }
+
+    public void Downed()
+    {
+        state = "idle";
+        status = "downed";
+        GetComponent<SpriteRenderer>().color = new Color(.5f, .5f, .5f);
+        animator.Play("downed");
+    }
+
+    public void recoverFromDowned()
+    {
+        state = "idle";
+        status = "recovered";
+        exhausted = true;
+        animator.Play("idle");
+    }
+    public void onDamage()
+    {
+        animator.Play("damage");
+        healthChanged();
+    }
+
 
 
     public unitScript getunit(Vector3 position, bool screen = true)
