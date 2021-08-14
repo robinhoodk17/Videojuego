@@ -49,5 +49,5 @@ MonoBehaviour:
   footcost: 3
   wheelcost: 20
   flyingcost: 1
-  defense: 30
+  defense: 15
   controllable: 0

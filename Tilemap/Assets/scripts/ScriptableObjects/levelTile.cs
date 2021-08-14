@@ -25,7 +25,7 @@ public class levelTile : RuleTile
             case ("flying"):
                 cost = flyingcost;
                 break;
-            case ("wheel"):
+            case ("wheels"):
                 cost = wheelcost;
                 break;
         }

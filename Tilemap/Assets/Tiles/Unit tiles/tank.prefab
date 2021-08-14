@@ -2419,7 +2419,6 @@ GameObject:
   - component: {fileID: 5108976887766988443}
   - component: {fileID: -6175439830314501783}
   - component: {fileID: 1030977830288318774}
-  - component: {fileID: -2790253953766391299}
   - component: {fileID: 8670951946730710322}
   m_Layer: 0
   m_Name: tank
@@ -2516,7 +2515,7 @@ MonoBehaviour:
   barracksname: 
   unitname: tank
   owner: 1
-  foodCost: 700
+  foodCost: 900
   SUPCost: 0
   status: clear
   HP: 100
@@ -2526,7 +2525,7 @@ MonoBehaviour:
   typeOfUnit: vehicle
   movementtype: treads
   attackrange: 1
-  attackdamage: 30
+  attackdamage: 45
   attackandmove: 1
   ability: none
   advantages:
@@ -2559,26 +2558,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!111 &-2790253953766391299
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2820340550956069843}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations:
-  - {fileID: 7400000, guid: e7517f45027b33c4e88228c9d1212e3d, type: 2}
-  - {fileID: 7400000, guid: 253e702822df03e4fbed2b8aafde5181, type: 2}
-  - {fileID: 7400000, guid: c44a4f946ca28c64f9ba9e20cccd57f8, type: 2}
-  - {fileID: 7400000, guid: 8bbbb297fc65c974c8544fdac6ee4a4b, type: 2}
-  - {fileID: 7400000, guid: 0e6ca1e87e5dbb64383e38f87a56179d, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!95 &8670951946730710322
 Animator:
   serializedVersion: 3

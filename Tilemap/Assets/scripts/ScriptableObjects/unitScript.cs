@@ -267,13 +267,13 @@ public class unitScript : MonoBehaviour
             case "none":
                 return false;
             case "res":
-                if (getunit(position + Vector3Int.left)?.status == "downed")
+                if (getunit(position + Vector3Int.left)?.status == "downed" && getunit(position + Vector3Int.left)?.typeOfUnit == "infantry")
                     return true;
-                if (getunit(position + Vector3Int.right)?.status == "downed")
+                if (getunit(position + Vector3Int.right)?.status == "downed" && getunit(position + Vector3Int.right)?.typeOfUnit == "infantry")
                     return true;
-                if (getunit(position + Vector3Int.up)?.status == "downed")
+                if (getunit(position + Vector3Int.up)?.status == "downed" && getunit(position + Vector3Int.up)?.typeOfUnit == "infantry")
                     return true;
-                if (getunit(position + Vector3Int.down)?.status == "downed")
+                if (getunit(position + Vector3Int.down)?.status == "downed" && getunit(position + Vector3Int.down)?.typeOfUnit == "infantry")
                     return true;
                 return false;
         }

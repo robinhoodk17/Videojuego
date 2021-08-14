@@ -451,6 +451,64 @@ public class SelectionManager : MonoBehaviour
             #endregion
             #region case wheels
             case "wheels":
+                if (map.HasTile(position + left))
+                {
+                    Vector3Int checkedposition = position + left;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
+                    }
+                }
+                if (map.HasTile(position + up))
+                {
+                    Vector3Int checkedposition = position + up;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
+                    }
+                }
+                if (map.HasTile(position + down))
+                {
+                    Vector3Int checkedposition = position + down;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
+                    }
+                }
+                if (map.HasTile(position + right))
+                {
+                    Vector3Int checkedposition = position + right;
+                    levelTile checkedTile = map.GetTile<levelTile>(checkedposition);
+                    int tileowner = 0;
+                    if (checkedTile.controllable)
+                    {
+                        tileowner = map.GetInstantiatedObject(checkedposition).GetComponent<controllable_script>().owner;
+                    }
+                    if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
+                    {
+                        adjacencyList.Add(checkedposition);
+                    }
+                }
+
+                neighborlist[position] = adjacencyList;
                 break;
                 #endregion
         }

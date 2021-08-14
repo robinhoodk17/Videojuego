@@ -4494,7 +4494,7 @@ MonoBehaviour:
   typeOfUnit: infantry
   movementtype: foot
   attackrange: 3
-  attackdamage: 50
+  attackdamage: 40
   attackandmove: 1
   ability: none
   advantages: []
