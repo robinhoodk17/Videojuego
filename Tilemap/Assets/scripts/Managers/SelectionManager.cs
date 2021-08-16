@@ -77,9 +77,12 @@ public class SelectionManager : MonoBehaviour
                     {
                         if (!unit.exhausted && units.HasTile(newposition))
                         {
-                            getPath(currentposition, newposition, unit);
-                            unit.state = "moving";
-                            path.Pop();
+                            if(units.GetTile<levelTile>(newposition) == movementUI[0] || units.GetTile<levelTile>(newposition) == movementUI[2])
+                            {
+                                getPath(currentposition, newposition, unit);
+                                unit.state = "moving";
+                                path.Pop();
+                            }
                         }
                         else
                         {
@@ -113,7 +116,7 @@ public class SelectionManager : MonoBehaviour
         {
             //Here we check if there is an attackable unit,and if it is clicked,
             // we initiate combat (the selected unit is on "newposition" and the attacked unit is on "clickedtile")
-            if (Input.GetMouseButtonUp(0) && unit.state == "thinking"&& Time.time - lastClick > timeBetweenClicks)
+            if (Input.GetMouseButtonUp(0) && unit.state == "thinking" && Time.time - lastClick > timeBetweenClicks)
             {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector3Int clickedtile = gridPosition(Input.mousePosition, true);
@@ -598,42 +601,151 @@ public class SelectionManager : MonoBehaviour
         distancelist[position] = 0;
         process.Enqueue(position);
         selectableTiles.Add(position);
-        while (process.Count > 0)
+        if (unit.attackandmove)
         {
-            Vector3Int pos = process.Dequeue();
-            if (getunit(pos) == null)
-            { selectableTiles.Add(pos); }
-            foreach (Vector3Int vector in neighborlist[pos])
+            while (process.Count > 0)
             {
-                if (!visitlist[vector] && (distancelist[pos] + distancelist[vector]) <= unit.movement)
+                Vector3Int pos = process.Dequeue();
+                if (getunit(pos) == null)
+                { selectableTiles.Add(pos); }
+                foreach (Vector3Int vector in neighborlist[pos])
                 {
-                    parentlist[vector] = pos;
-                    visitlist[vector] = true;
-                    distancelist[vector] = distancelist[pos] + distancelist[vector];
-                    process.Enqueue(vector);
-                }
-                if (visitlist[vector])
-                {
-                    int tempdistance = map.GetTile<levelTile>(vector).movecost(unit.movementtype);
-                    if (tempdistance + distancelist[pos] < distancelist[vector])
+                    if (!visitlist[vector] && (distancelist[pos] + distancelist[vector]) <= unit.movement)
                     {
                         parentlist[vector] = pos;
-                        distancelist[vector] = tempdistance + distancelist[pos];
+                        visitlist[vector] = true;
+                        distancelist[vector] = distancelist[pos] + distancelist[vector];
+                        process.Enqueue(vector);
                     }
+                    if (visitlist[vector])
+                    {
+                        int tempdistance = map.GetTile<levelTile>(vector).movecost(unit.movementtype);
+                        if (tempdistance + distancelist[pos] < distancelist[vector])
+                        {
+                            parentlist[vector] = pos;
+                            distancelist[vector] = tempdistance + distancelist[pos];
+                        }
+                    }
+                }
+            }
+            foreach (Vector3Int selectable in selectableTiles)
+            {
+                findinnerattackables(selectable, unit);
+            }
+            foreach (Vector3Int selectable in selectableTiles)
+            {
+                if(units.HasTile(selectable))
+                {
+                    units.SetTile(selectable, movementUI[2]);
                 }
             }
         }
 
-        //this foreach sets the UI elements to show where the unit can move
-        foreach (Vector3Int selectable in selectableTiles)
+        else
         {
-            if (unit.attackandmove)
+
+            while (process.Count > 0)
             {
-                units.SetTile(selectable, movementUI[2]);
+                Vector3Int pos = process.Dequeue();
+                if (getunit(pos) == null)
+                { selectableTiles.Add(pos); }
+                foreach (Vector3Int vector in neighborlist[pos])
+                {
+                    if (!visitlist[vector] && (distancelist[pos] + distancelist[vector]) <= unit.movement)
+                    {
+                        parentlist[vector] = pos;
+                        visitlist[vector] = true;
+                        distancelist[vector] = distancelist[pos] + distancelist[vector];
+                        process.Enqueue(vector);
+                    }
+                    if (visitlist[vector])
+                    {
+                        int tempdistance = map.GetTile<levelTile>(vector).movecost(unit.movementtype);
+                        if (tempdistance + distancelist[pos] < distancelist[vector])
+                        {
+                            parentlist[vector] = pos;
+                            distancelist[vector] = tempdistance + distancelist[pos];
+                        }
+                    }
+                }
             }
-            else
+            findinnerattackables(position, unit);
+            foreach(Vector3Int selectable in selectableTiles)
             {
-                units.SetTile(selectable, movementUI[0]);
+                if(units.HasTile(selectable))
+                {
+                    units.SetTile(selectable, movementUI[2]);
+                }
+                else
+                {
+                    units.SetTile(selectable, movementUI[0]);
+                }
+            }
+        }
+
+        void findinnerattackables(Vector3Int position, unitScript unit)
+        {
+            Dictionary<Vector3Int, List<Vector3Int>> newneighborlist = new Dictionary<Vector3Int, List<Vector3Int>>();
+            Dictionary<Vector3Int, Vector3Int> newparentlist = new Dictionary<Vector3Int, Vector3Int>();
+            Dictionary<Vector3Int, int> newdistancelist = new Dictionary<Vector3Int, int>();
+            Dictionary<Vector3Int, bool> newvisitlist = new Dictionary<Vector3Int, bool>();
+            List<Vector3Int> newselectableTiles = new List<Vector3Int>();
+            foreach (var posi in map.cellBounds.allPositionsWithin)
+            {
+                Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
+                if (map.HasTile(localPlace))
+                {
+                    List<Vector3Int> adjacencyList = new List<Vector3Int>();
+                    Vector3Int left = new Vector3Int(-1, 0, 0);
+                    Vector3Int right = new Vector3Int(1, 0, 0);
+                    Vector3Int up = new Vector3Int(0, 1, 0);
+                    Vector3Int down = new Vector3Int(0, -1, 0);
+                    if (map.HasTile(localPlace + left))
+                    {
+                        adjacencyList.Add(localPlace + left);
+                    }
+                    if (map.HasTile(localPlace + up))
+                    {
+                        adjacencyList.Add(localPlace + up);
+                    }
+                    if (map.HasTile(localPlace + down))
+                    {
+                        adjacencyList.Add(localPlace + down);
+                    }
+                    if (map.HasTile(localPlace + right))
+                    {
+                        adjacencyList.Add(localPlace + right);
+                    }
+                    newneighborlist[localPlace] = adjacencyList;
+                    newvisitlist[localPlace] = false;
+                    newparentlist[localPlace] = Vector3Int.zero;
+                    newdistancelist[localPlace] = 1;
+                }
+            }
+
+            Queue<Vector3Int> process = new Queue<Vector3Int>();
+            newvisitlist[position] = true;
+            newdistancelist[position] = 0;
+            process.Enqueue(position);
+            while (process.Count > 0)
+            {
+                Vector3Int pos = process.Dequeue();
+                newselectableTiles.Add(pos);
+                foreach (Vector3Int vector in newneighborlist[pos])
+                {
+                    if (!newvisitlist[vector] && (newdistancelist[pos] + newdistancelist[vector]) <= unit.attackrange)
+                    {
+                        newparentlist[vector] = pos;
+                        newvisitlist[vector] = true;
+                        newdistancelist[vector] = newdistancelist[pos] + newdistancelist[vector];
+                        process.Enqueue(vector);
+                    }
+                }
+            }
+
+            foreach (Vector3Int selectable in newselectableTiles)
+            {
+                units.SetTile(selectable, movementUI[1]);
             }
         }
     }
