@@ -56,6 +56,8 @@ public class unitScript : MonoBehaviour
 
     public GameObject statusSprite;
 
+    public SpriteRenderer sprite;
+
     [SerializeField]
     public GameObject ownerUI;
 
@@ -116,7 +118,7 @@ public class unitScript : MonoBehaviour
 
         if (status == "clear")
         {
-            GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+            sprite.color = new Color(1, 1, 1);
         }
     }
 
@@ -214,15 +216,14 @@ public class unitScript : MonoBehaviour
     {
         state = "idle";
         status = "downed";
-        GetComponent<SpriteRenderer>().color = new Color(.5f, .5f, .5f);
+        sprite.color = new Color(.5f, .5f, .5f);
         animator.Play("downed");
     }
 
     public void recoverFromDowned()
     {
         state = "idle";
-        status = "recovered";
-        exhausted = true;
+        status = "clear";
         animator.Play("idle");
     }
     public void onDamage()

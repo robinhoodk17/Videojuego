@@ -139,7 +139,7 @@ public class SelectionManager : MonoBehaviour
                         resUnit.exhausted = false;
                         resUnit.status = "clear";
                         resUnit.healthChanged();
-                        resUnit.gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+                        resUnit.sprite.color = new Color(1, 1, 1);
                         resUnit.recoverFromDowned();
                         onWait();
                     }
@@ -183,7 +183,7 @@ public class SelectionManager : MonoBehaviour
     {
         currentposition = newposition;
         unit.exhausted = true;
-        unitprefab.GetComponent<SpriteRenderer>().color = new Color(.6f, .6f, .6f);
+        unit.sprite.color = new Color(.6f, .6f, .6f);
         Reset();
     }
 
@@ -934,7 +934,7 @@ public class SelectionManager : MonoBehaviour
     {
         currentposition = attacker; 
         unit.exhausted = true;
-        unitprefab.GetComponent<SpriteRenderer>().color = new Color(.6f, .6f, .6f);
+        unit.sprite.color = new Color(.6f, .6f, .6f);
         Reset();
     }
 
