@@ -54,6 +54,8 @@ public class SelectionManager : MonoBehaviour
     {
         Oncombatstart += Oncombat;
     }
+
+
     void Update()
     {
 
@@ -104,6 +106,7 @@ public class SelectionManager : MonoBehaviour
             {
                 findSelectabletiles(unit, currentposition);
                 unitselected = true;
+                unit.onMove();
                 OnUnitSelected?.Invoke(unitprefab);
             }
         }
@@ -240,6 +243,7 @@ public class SelectionManager : MonoBehaviour
         if (unitselected)
         {
             unit.state = "idle";
+            unit.animator.Play("idle");
             unitprefab.transform.position = (map.GetCellCenterWorld(currentposition));
                 //SetPositionAndRotation(map.GetCellCenterWorld(currentposition), Quaternion.identity);
             turnpanel(unitprefab, false, turnoff);

@@ -39,7 +39,7 @@ public class unitScript : MonoBehaviour
     public int levelcounter = 0;
     public int maxlevel = 10;
     public string state = "idle";
-    public float movespeedanimation = 10;
+    public float movespeedanimation = 20;
 
 
     private int activeplayer = 1;
@@ -66,9 +66,8 @@ public class unitScript : MonoBehaviour
 
     private unitScript enemy;
     private string previousStatus = "clear";
-    //public Transform movepoint;
-    //public float moveSpeed = 5f;
-
+    private int previousOwner;
+    private AudioSource[] audios;
     public void statusChange(string newstatus)
     {
         if (previousStatus == "stunned" || previousStatus == "recovered")
@@ -96,6 +95,11 @@ public class unitScript : MonoBehaviour
         if (status == "downed" && activeplayer == owner)
         {
             Destroyed();
+        }
+        if(status == "captured")
+        {
+            statusChange("downed");
+            ownerChange(previousOwner);
         }
     }
 
@@ -165,6 +169,8 @@ public class unitScript : MonoBehaviour
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
         healthChanged();
         map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
+
+        audios = GetComponentsInChildren<AudioSource>();
     }
 
     public void levelUp()
@@ -232,7 +238,11 @@ public class unitScript : MonoBehaviour
         healthChanged();
     }
 
-
+    public void onMove()
+    {
+        animator.Play("move");
+        audios[0].Play();
+    }
 
     public unitScript getunit(Vector3 position, bool screen = true)
     {
@@ -268,16 +278,25 @@ public class unitScript : MonoBehaviour
             case "none":
                 return false;
             case "res":
-                if (getunit(position + Vector3Int.left)?.status == "downed" && getunit(position + Vector3Int.left)?.typeOfUnit == "infantry")
+                if ((getunit(position + Vector3Int.left)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.left)?.typeOfUnit == "infantry")
                     return true;
-                if (getunit(position + Vector3Int.right)?.status == "downed" && getunit(position + Vector3Int.right)?.typeOfUnit == "infantry")
+                if ((getunit(position + Vector3Int.right)?.status == "downed" || getunit(position + Vector3Int.right)?.status == "captured") && getunit(position + Vector3Int.right)?.typeOfUnit == "infantry")
                     return true;
-                if (getunit(position + Vector3Int.up)?.status == "downed" && getunit(position + Vector3Int.up)?.typeOfUnit == "infantry")
+                if ((getunit(position + Vector3Int.up)?.status == "downed" || getunit(position + Vector3Int.up)?.status == "captured") && getunit(position + Vector3Int.up)?.typeOfUnit == "infantry")
                     return true;
-                if (getunit(position + Vector3Int.down)?.status == "downed" && getunit(position + Vector3Int.down)?.typeOfUnit == "infantry")
+                if ((getunit(position + Vector3Int.down)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.down)?.typeOfUnit == "infantry")
                     return true;
                 return false;
         }
         return false;
+    }
+
+    public void unitCaptured(int newowner)
+    {
+        ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(false);
+        previousOwner = owner;
+        owner = newowner;
+        ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
+        status = "captured";
     }
 }
