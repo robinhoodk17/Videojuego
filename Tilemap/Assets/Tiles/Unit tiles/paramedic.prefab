@@ -339,6 +339,7 @@ MonoBehaviour:
   attackrange: 1
   attackdamage: 15
   attackandmove: 1
+  firstStrike: 0
   ability: res
   advantages: []
   resistances: []
@@ -348,7 +349,7 @@ MonoBehaviour:
   levelcounter: 0
   maxlevel: 10
   state: idle
-  movespeedanimation: 10
+  movespeedanimation: 25
   healthbar: {fileID: 1077598371700567081}
   animator: {fileID: 7243488008901196377}
   attack: {fileID: 652285251755487}
@@ -3786,7 +3787,7 @@ Animator:
   m_GameObject: {fileID: 3924070800033591528}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 34fcbea768ffce845848edd9f7b351d8, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7994b77a7d6b7ec49a557d637e1b9af1, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5536,12 +5537,12 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_TargetDisplay: 0
 --- !u!114 &5008788192223608939
 MonoBehaviour:

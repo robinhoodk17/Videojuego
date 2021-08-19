@@ -4660,6 +4660,7 @@ MonoBehaviour:
   attackrange: 3
   attackdamage: 40
   attackandmove: 1
+  firstStrike: 0
   ability: none
   advantages: []
   resistances: []
@@ -4671,7 +4672,7 @@ MonoBehaviour:
   levelcounter: 0
   maxlevel: 10
   state: idle
-  movespeedanimation: 10
+  movespeedanimation: 25
   healthbar: {fileID: 7440821635272645672}
   animator: {fileID: 2040298851543830992}
   attack: {fileID: 2528060254320560606}
@@ -7876,12 +7877,12 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_TargetDisplay: 0
 --- !u!114 &5779363046179506367
 MonoBehaviour:

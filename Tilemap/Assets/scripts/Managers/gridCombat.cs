@@ -39,23 +39,42 @@ public class gridCombat : MonoBehaviour
                 }
             }
         }
+
+        ////////////////////
         //This if happens if the unit is attacking another unit
         else
         {
-            attacker = getunitprefab(worldPosition(attackposition), false);
-            defender = getunitprefab(worldPosition(defendposition), false);
             attackerScript = getunit(attackposition);
             defenderScript = getunit(defendposition);
+            bool canCounterAttack = false;
 
+            //we check if the units have first strike. If the defender does, it deals damage first. Also, we check if the 
+            //defender can counterattack in case it survives.
 
+            if ((defenderScript._attacktype == "melee" || defenderScript.firstStrike) && checkifneighbors(attackposition,defendposition))
+            {
+                canCounterAttack = true;
+                if (defenderScript.firstStrike && !attackerScript.firstStrike)
+                {
+                    attackerScript = getunit(defendposition);
+                    defenderScript = getunit(attackposition);
+                    Vector3Int temporal = attackposition;
+                    attackposition = defendposition;
+                    defendposition = temporal;
+                }
+            }
+
+            //the attacker deals damage to the defender (status changes also happen here)
             defenderScript.HP -= calculateDamage(attackerScript, defenderScript, defendposition);
-            
-            
-            if (defenderScript.HP > 0 && defenderScript._attacktype == "melee" && checkifneighbors(attackposition, defendposition) && defenderScript.status != "stunned")
+
+
+
+            //if the defender survives, and can counterattack, here we add a counterattack on the combat
+            if (defenderScript.HP > 0 && canCounterAttack && defenderScript.status != "stunned")
             {
                 attackerScript.HP -= calculateDamage(defenderScript, attackerScript, defendposition);
-
-                //add a counterattack on the combat
+                //Here we add the animation of the shooting from the attacker, who then calls the counterattack on its enemy.
+                //The counterattack plays and then calls the damage animation on the attackerscript
                 attackerScript.onCombat(defenderScript);
 
                 if (attackerScript.HP <= 0)
@@ -139,7 +158,7 @@ public class gridCombat : MonoBehaviour
     public int calculateDamage(unitScript attackingunit, unitScript defendingunit, Vector3Int defendposition)
     {
 
-        if (attackingunit.status == "stunned")
+        if (attackingunit.status == "stunned" || attackingunit.status == "recovered")
             return 0;
 
         string[] attackingadv = null;

@@ -28,6 +28,7 @@ public class unitScript : MonoBehaviour
         }
     }
     public bool attackandmove = true;
+    public bool firstStrike = false;
     public string ability = "none";
     public string[] advantages = null;
     public string[] resistances = null;
@@ -39,7 +40,7 @@ public class unitScript : MonoBehaviour
     public int levelcounter = 0;
     public int maxlevel = 10;
     public string state = "idle";
-    public float movespeedanimation = 20;
+    public float movespeedanimation = 25;
 
 
     private int activeplayer = 1;
@@ -68,6 +69,29 @@ public class unitScript : MonoBehaviour
     private string previousStatus = "clear";
     private int previousOwner;
     private AudioSource[] audios;
+    public void Awake()
+    {
+        healthbar.GetComponent<healthBar>().SetMaxHealth();
+        healthbar.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = HP.ToString();
+        initialattack = attackdamage;
+        initialmaxHP = maxHP;
+        attack.GetComponent<TextMeshProUGUI>().text = ((int)(attackdamage * HP / maxHP)).ToString();
+        if (attackrange > 1)
+        {
+            attacktype = "ranged";
+        }
+        if (attacktype == "melee")
+        {
+            attack.transform.GetChild(0).gameObject.SetActive(true);
+        }
+        else
+            attack.transform.GetChild(1).gameObject.SetActive(true);
+        ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
+        healthChanged();
+        map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
+
+        audios = GetComponentsInChildren<AudioSource>();
+    }
     public void statusChange(string newstatus)
     {
         if (previousStatus == "stunned" || previousStatus == "recovered")
@@ -111,14 +135,7 @@ public class unitScript : MonoBehaviour
         }
         exhausted = false;
 
-        levelcounter++;
-        if (levelcounter >= 3)
-            if (level < maxlevel)
-            {
-                level++;
-                levelcounter = 0;
-                levelUp();
-            }
+        gainXP();
 
         if (status == "clear")
         {
@@ -149,36 +166,27 @@ public class unitScript : MonoBehaviour
         owner = newowner;
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
     }
-    public void Awake()
+    /// <summary>
+    /// ///////////////////////////////////////////
+    /// </summary>
+    //animations
+    public void gainXP()
     {
-        healthbar.GetComponent<healthBar>().SetMaxHealth();
-        healthbar.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = HP.ToString();
-        initialattack = attackdamage;
-        initialmaxHP = maxHP;
-        attack.GetComponent<TextMeshProUGUI>().text = ((int)(attackdamage * HP / maxHP)).ToString();
-        if (attackrange > 1)
+        if (status != "downed")
         {
-            attacktype = "ranged";
+            levelcounter++;
         }
-        if (attacktype == "melee")
-        {
-            attack.transform.GetChild(0).gameObject.SetActive(true);
-        }
-        else
-            attack.transform.GetChild(1).gameObject.SetActive(true);
-        ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
-        healthChanged();
-        map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
 
-        audios = GetComponentsInChildren<AudioSource>();
-    }
-
-    public void levelUp()
-    {
-        attackdamage += (initialattack / 10);
-        maxHP += (initialmaxHP / 10);
-        HP += (initialmaxHP / 10);
-        healthChanged();
+        if (levelcounter >= 5)
+            if (level < maxlevel)
+            {
+                level++;
+                levelcounter = 0;
+                attackdamage += (initialattack / 10);
+                maxHP += (initialmaxHP / 10);
+                HP += (initialmaxHP / 10);
+                healthChanged();
+            }
     }
 
     public void onCap()
@@ -186,24 +194,29 @@ public class unitScript : MonoBehaviour
         switch (name)
         {
             case "warrior":
-                levelcounter++;
-                if (levelcounter >= 3)
-                    levelUp();
+                gainXP();
                 break;
         }
     }
 
     public void onCombat(unitScript defender)
     {
-        animator.Play("shoot");
+        animator.SetTrigger("shoot");
         enemy = defender;
         enemy.counterAttack(this);
         enemy.healthChanged();
+
+        switch (name)
+        {
+            case "sniper":
+                gainXP();
+                break;
+        }
     }
 
     public void counterAttack(unitScript attacker)
     {
-        animator.Play("counterAttack");
+        animator.SetTrigger("counterAttack");
         enemy = attacker;
     }
     public void damageEnemy()
@@ -212,7 +225,7 @@ public class unitScript : MonoBehaviour
     }
     public void onCombatWOCA(unitScript defender)
     {
-        animator.Play("shoot");
+        animator.SetTrigger("shoot");
         enemy = defender;
         enemy.animator.Play("damage");
         enemy.healthChanged();
@@ -220,27 +233,27 @@ public class unitScript : MonoBehaviour
 
     public void Downed()
     {
-        state = "idle";
+        state = "downed";
         status = "downed";
         sprite.color = new Color(.5f, .5f, .5f);
-        animator.Play("downed");
+        animator.SetTrigger("downed");
     }
 
     public void recoverFromDowned()
     {
         state = "idle";
         status = "clear";
-        animator.Play("idle");
+        animator.SetTrigger("idle");
     }
     public void onDamage()
     {
-        animator.Play("damage");
+        animator.SetTrigger("damage");
         healthChanged();
     }
 
     public void onMove()
     {
-        animator.Play("move");
+        animator.SetTrigger("move");
         audios[0].Play();
     }
 
@@ -278,13 +291,13 @@ public class unitScript : MonoBehaviour
             case "none":
                 return false;
             case "res":
-                if ((getunit(position + Vector3Int.left)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.left)?.typeOfUnit == "infantry")
+                if ((getunit(position + Vector3Int.left)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.left)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.left)?.owner == owner)
                     return true;
-                if ((getunit(position + Vector3Int.right)?.status == "downed" || getunit(position + Vector3Int.right)?.status == "captured") && getunit(position + Vector3Int.right)?.typeOfUnit == "infantry")
+                if ((getunit(position + Vector3Int.right)?.status == "downed" || getunit(position + Vector3Int.right)?.status == "captured") && getunit(position + Vector3Int.right)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.right)?.owner == owner)
                     return true;
-                if ((getunit(position + Vector3Int.up)?.status == "downed" || getunit(position + Vector3Int.up)?.status == "captured") && getunit(position + Vector3Int.up)?.typeOfUnit == "infantry")
+                if ((getunit(position + Vector3Int.up)?.status == "downed" || getunit(position + Vector3Int.up)?.status == "captured") && getunit(position + Vector3Int.up)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.up)?.owner == owner)
                     return true;
-                if ((getunit(position + Vector3Int.down)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.down)?.typeOfUnit == "infantry")
+                if ((getunit(position + Vector3Int.down)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.down)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.down)?.owner == owner)
                     return true;
                 return false;
         }

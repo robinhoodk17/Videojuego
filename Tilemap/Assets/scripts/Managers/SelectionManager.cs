@@ -55,13 +55,38 @@ public class SelectionManager : MonoBehaviour
         Oncombatstart += Oncombat;
     }
 
+    private void FixedUpdate()
+    {
+        if(unitselected)
+        {
+            if (unit.state == "moving")
+            {
+                if (path.Count > 0)
+                {
+                    Move(unitprefab.transform.position, path.Peek());
+                }
+                else
+                {
+                    clearUnitsTiles();
+                    unit.state = "thinking";
+                    if (newposition == currentposition || unit.attackandmove)
+                    {
+                        findattackables(newposition, unit);
+                    }
 
+                    turnoff = showUnitPanel(unitprefab, unit, newposition);
+                }
+            }
+
+        }
+
+    }
     void Update()
     {
 
         
         //this is the click to move the unit
-        if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject() && unit.state != "moving")
         {
             if (unit.owner != activeplayer) { Reset(); }
             else
@@ -104,10 +129,13 @@ public class SelectionManager : MonoBehaviour
             unit = getunit(currentposition);
             if (unit != null)
             {
-                findSelectabletiles(unit, currentposition);
-                unitselected = true;
-                unit.onMove();
-                OnUnitSelected?.Invoke(unitprefab);
+                if(unit.state =="idle")
+                {
+                    findSelectabletiles(unit, currentposition);
+                    unitselected = true;
+                    unit.onMove();
+                    OnUnitSelected?.Invoke(unitprefab);
+                }
             }
         }
         //the right click resets the selection
@@ -115,6 +143,7 @@ public class SelectionManager : MonoBehaviour
         {
             Reset();
         }
+        //after the unit is done moving
         if (unitselected)
         {
             //Here we check if there is an attackable unit,and if it is clicked,
@@ -158,24 +187,6 @@ public class SelectionManager : MonoBehaviour
                             Oncombatstart?.Invoke(newposition, clickedtile);
                         }
                     }
-                }
-            }
-            if (unit.state == "moving")
-            {
-                if (path.Count > 0)
-                {
-                    Move(unitprefab.transform.position, path.Peek());
-                }
-                else
-                {
-                    clearUnitsTiles();
-                    unit.state = "thinking";
-                    if (newposition == currentposition || unit.attackandmove)
-                    {
-                        findattackables(newposition, unit);
-                    }
-
-                    turnoff = showUnitPanel(unitprefab, unit, newposition);
                 }
             }
         }
@@ -243,7 +254,7 @@ public class SelectionManager : MonoBehaviour
         if (unitselected)
         {
             unit.state = "idle";
-            unit.animator.Play("idle");
+            unit.animator.SetTrigger("idle");
             unitprefab.transform.position = (map.GetCellCenterWorld(currentposition));
                 //SetPositionAndRotation(map.GetCellCenterWorld(currentposition), Quaternion.identity);
             turnpanel(unitprefab, false, turnoff);
@@ -767,7 +778,7 @@ public class SelectionManager : MonoBehaviour
     public void Move(Vector3 startposition, Vector3Int targetposition)
     {
         Vector3 target = map.GetCellCenterLocal(targetposition) + new Vector3(0, 0, 5);
-        if (Vector3.Distance(startposition, target) <= .1f)
+        if (Vector3.Distance(startposition, target) <= .11f)
         {
             path.Pop();
             unitprefab.transform.position = map.GetCellCenterWorld(targetposition) + new Vector3(0, 0, 5);

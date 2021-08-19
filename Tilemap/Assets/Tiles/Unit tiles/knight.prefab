@@ -3539,6 +3539,7 @@ MonoBehaviour:
   attackrange: 1
   attackdamage: 40
   attackandmove: 1
+  firstStrike: 0
   ability: none
   advantages:
   - infantry
@@ -3550,7 +3551,7 @@ MonoBehaviour:
   levelcounter: 0
   maxlevel: 10
   state: idle
-  movespeedanimation: 10
+  movespeedanimation: 25
   healthbar: {fileID: 1510057612909548881}
   animator: {fileID: 5235016795251325414}
   attack: {fileID: 7938109068720583073}
@@ -6924,7 +6925,7 @@ Animator:
   m_GameObject: {fileID: 8115997400570332677}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 06ce6088d061ec542b9cb02ac9d0f8b7, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7ec79ed4a3ca6af418f47c1b48e85253, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

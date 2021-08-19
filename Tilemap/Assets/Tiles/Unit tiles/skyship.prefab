@@ -5946,6 +5946,7 @@ MonoBehaviour:
   attackrange: 1
   attackdamage: 60
   attackandmove: 1
+  firstStrike: 0
   ability: none
   advantages: []
   resistances: []
@@ -5955,7 +5956,7 @@ MonoBehaviour:
   levelcounter: 0
   maxlevel: 10
   state: idle
-  movespeedanimation: 10
+  movespeedanimation: 25
   healthbar: {fileID: 8745865157842004838}
   animator: {fileID: 9040840229027347521}
   attack: {fileID: 5258657104057736778}

@@ -2936,7 +2936,7 @@ Animator:
   m_GameObject: {fileID: 4043211315087462833}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f4a3e4775a1370c43bd740f910c924b1, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -6034,6 +6034,7 @@ MonoBehaviour:
   attackrange: 1
   attackdamage: 60
   attackandmove: 1
+  firstStrike: 0
   ability: none
   advantages: []
   resistances: []
