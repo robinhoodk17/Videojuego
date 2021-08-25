@@ -26,6 +26,12 @@ public class SelectionManager : MonoBehaviour
     public List<levelTile> movementUI;
 
     bool unitselected = false;
+    unitScript unit;
+    GameObject unitprefab;
+    Vector3Int currentposition = new Vector3Int();
+    Vector3Int newposition = new Vector3Int();
+    //The unit panel to turn off after moving it
+    int turnoff = 0;
 
     //for selecting the tiles in the tilemap
     [SerializeField]
@@ -40,26 +46,31 @@ public class SelectionManager : MonoBehaviour
     List<Vector3Int> selectableTiles = new List<Vector3Int>();
     Stack<Vector3Int> path = new Stack<Vector3Int>();
 
-    unitScript unit;
-    GameObject unitprefab;
-    Vector3Int currentposition = new Vector3Int();
-    Vector3Int newposition = new Vector3Int();
-    int turnoff = 0;
 
     public event Action<Vector3Int, Vector3Int> Oncombatstart;
     public event Action<GameObject> OnUnitSelected;
     public event Action OnUnitDeselected;
     public event Action<Vector3Int, Vector3Int> Oncombathover;
+    private Camera _mainCamera;
+    //for the animations
+    string unitstate ="idle";
+    //for the tooltip
+    infoPanel unitToolTip;
+    bool showingtooltip = false;
+    private float hoverTimer = 1.5f;
+    private float hoverStart;
+
     private void Start()
     {
         Oncombatstart += Oncombat;
+        _mainCamera = Camera.main;
     }
 
     private void FixedUpdate()
     {
         if(unitselected)
         {
-            if (unit.state == "moving")
+            if (unitstate == "moving")
             {
                 if (path.Count > 0)
                 {
@@ -67,8 +78,8 @@ public class SelectionManager : MonoBehaviour
                 }
                 else
                 {
-                    clearUnitsTiles();
-                    unit.state = "thinking";
+                    units.ClearAllTiles();
+                    unitstate = "thinking";
                     if (newposition == currentposition || unit.attackandmove)
                     {
                         findattackables(newposition, unit);
@@ -83,20 +94,18 @@ public class SelectionManager : MonoBehaviour
     }
     void Update()
     {
-
-        
         //this is the click to move the unit
-        if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject() && unit.state != "moving")
+        if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject() && unitstate != "moving")
         {
             if (unit.owner != activeplayer) { Reset(); }
             else
             {
-                if(unit.state == "idle")
+                if(unitstate == "idle")
                 {
                     //these ifs set the unit in motion (works even if you press its own position) only if you are clicking on a movement UI tile while the
                     //unit is not exhausted an while the target position has no units.
                     newposition = gridPosition(Input.mousePosition, true);
-                    if (((getunit(newposition) != null && newposition != currentposition) && unit.state != "thinking") || (unit.exhausted || !units.HasTile(newposition) || unit.status == "stunned" || unit.status == "recovered"))
+                    if (((getunit(newposition) != null && newposition != currentposition) && unitstate != "thinking") || (unit.exhausted || !units.HasTile(newposition) || unit.status == "stunned" || unit.status == "recovered"))
                     {
                         Reset();
                     }
@@ -107,13 +116,13 @@ public class SelectionManager : MonoBehaviour
                             if(units.GetTile<levelTile>(newposition) == movementUI[0] || units.GetTile<levelTile>(newposition) == movementUI[2])
                             {
                                 getPath(currentposition, newposition, unit);
-                                unit.state = "moving";
+                                unitstate = "moving";
                                 path.Pop();
                             }
                         }
                         else
                         {
-                            if (unit.state != "thinking")
+                            if (unitstate != "thinking")
                                 Reset();
                         }
                     }
@@ -129,7 +138,7 @@ public class SelectionManager : MonoBehaviour
             unit = getunit(currentposition);
             if (unit != null)
             {
-                if(unit.state =="idle")
+                if(unitstate =="idle")
                 {
                     findSelectabletiles(unit, currentposition);
                     unitselected = true;
@@ -142,29 +151,36 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             Reset();
+            if (getunit(Input.mousePosition, true) != null && !showingtooltip && !unitselected)
+            {
+                showingtooltip = true;
+                unitToolTip = getunitprefab(Input.mousePosition, true).GetComponent<infoPanel>();
+                unitToolTip.showPanel();
+
+            }
         }
         //after the unit is done moving
         if (unitselected)
         {
             //Here we check if there is an attackable unit,and if it is clicked,
             // we initiate combat (the selected unit is on "newposition" and the attacked unit is on "clickedtile")
-            if (Input.GetMouseButtonUp(0) && unit.state == "thinking" && Time.time - lastClick > timeBetweenClicks)
+            //We also check for abilities, such as heals
+            if (Input.GetMouseButtonUp(0) && unitstate == "thinking" && Time.time - lastClick > timeBetweenClicks)
             {
-                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 mousePos = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
                 Vector3Int clickedtile = gridPosition(Input.mousePosition, true);
-                //this if invokes combat
+                //this if invokes combat against another unit
                 if (units.HasTile(clickedtile) && getunit(clickedtile) != null && !usingability)
                 {
                     if (getunit(clickedtile).owner != activeplayer)
                     {
                         Oncombatstart?.Invoke(newposition, clickedtile);
-                        //raise combat starting
                     }
                 }
                 //this if uses the ability of the unit
                 if(units.HasTile(clickedtile) && getunit(clickedtile) != null && usingability)
                 {
-                    if(unit.ability == "res")
+                    if(unit.ability == "heal")
                     {
                         unitScript resUnit = getunit(clickedtile);
                         resUnit.HP = 10;
@@ -233,27 +249,15 @@ public class SelectionManager : MonoBehaviour
             activeplayer = 1;
         }
     }
-    private void clearUnitsTiles()
-    {
-        foreach (var pos in units.cellBounds.allPositionsWithin)
-        {
-            Vector3Int localPlace = new Vector3Int(pos.x, pos.y, pos.z);
-            if (units.HasTile(localPlace))
-            {
-                units.SetTile(localPlace, null);
-            }
-        }
-    }
     private void Reset()
     {
         neighborlist.Clear();
         selectableTiles.Clear();
         path.Clear();
         distancelist.Clear();
-        clearUnitsTiles();
         if (unitselected)
         {
-            unit.state = "idle";
+            unitstate = "idle";
             unit.animator.SetTrigger("idle");
             unitprefab.transform.position = (map.GetCellCenterWorld(currentposition));
                 //SetPositionAndRotation(map.GetCellCenterWorld(currentposition), Quaternion.identity);
@@ -263,13 +267,18 @@ public class SelectionManager : MonoBehaviour
             path.Clear();
             distancelist.Clear();
             unitselected = false;
-            clearUnitsTiles();
+            units.ClearAllTiles();
             //there was a weird bug happening. I hope this fixes it.
             unit.healthChanged();
         }
         unitselected = false;
         usingability = false;
         OnUnitDeselected?.Invoke();
+        if(showingtooltip)
+        {
+            unitToolTip.hidePanel();
+            showingtooltip = false;
+        }
     }
 
     //finds the neighbors of a tile in gridposition "position" using the unit's movement
@@ -537,9 +546,9 @@ public class SelectionManager : MonoBehaviour
 
         if (!screen)
         {
-            position = Camera.main.WorldToScreenPoint(position);
+            position = _mainCamera.WorldToScreenPoint(position);
         }
-        var ray = Camera.main.ScreenPointToRay(position);
+        var ray = _mainCamera.ScreenPointToRay(position);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
@@ -556,16 +565,16 @@ public class SelectionManager : MonoBehaviour
     //tries to get a unit given a gridposition
     public unitScript getunit(Vector3Int position)
     {
-        return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+        return getunit(_mainCamera.WorldToScreenPoint(map.GetCellCenterWorld(position)));
     }
 
     public GameObject getunitprefab(Vector3 position, bool screen = true)
     {
         if (!screen)
         {
-            position = Camera.main.WorldToScreenPoint(position);
+            position = _mainCamera.WorldToScreenPoint(position);
         }
-        var ray = Camera.main.ScreenPointToRay(position);
+        var ray = _mainCamera.ScreenPointToRay(position);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
@@ -583,7 +592,7 @@ public class SelectionManager : MonoBehaviour
     {
         if (screen)
         {
-            position = Camera.main.ScreenToWorldPoint(position);
+            position = _mainCamera.ScreenToWorldPoint(position);
         }
 
         Vector3Int gridposition = map.WorldToCell(position);
@@ -801,7 +810,7 @@ public class SelectionManager : MonoBehaviour
         selectableTiles.Clear();
         path.Clear();
         distancelist.Clear();
-        clearUnitsTiles();
+        units.ClearAllTiles();
 
 
         //getting the attackable tiles

@@ -33,13 +33,13 @@ public class unitScript : MonoBehaviour
     public string[] advantages = null;
     public string[] resistances = null;
     public string[] vulnerabilities = null;
+    public string[] stuns = null;
 
     //do not touch
     public bool exhausted = false;
     public int level = 0;
     public int levelcounter = 0;
     public int maxlevel = 10;
-    public string state = "idle";
     public float movespeedanimation = 25;
 
 
@@ -233,7 +233,6 @@ public class unitScript : MonoBehaviour
 
     public void Downed()
     {
-        state = "downed";
         status = "downed";
         sprite.color = new Color(.5f, .5f, .5f);
         animator.SetTrigger("downed");
@@ -241,7 +240,6 @@ public class unitScript : MonoBehaviour
 
     public void recoverFromDowned()
     {
-        state = "idle";
         status = "clear";
         animator.SetTrigger("idle");
     }
@@ -290,7 +288,7 @@ public class unitScript : MonoBehaviour
         {
             case "none":
                 return false;
-            case "res":
+            case "heal":
                 if ((getunit(position + Vector3Int.left)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.left)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.left)?.owner == owner)
                     return true;
                 if ((getunit(position + Vector3Int.right)?.status == "downed" || getunit(position + Vector3Int.right)?.status == "captured") && getunit(position + Vector3Int.right)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.right)?.owner == owner)

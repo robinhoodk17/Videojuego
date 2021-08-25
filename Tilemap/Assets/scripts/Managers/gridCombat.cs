@@ -207,9 +207,12 @@ public class gridCombat : MonoBehaviour
 
     public void changeStatus(unitScript attackingunit, unitScript defendingunit)
     {
-        if(attackingunit.unitname =="sniper" && defendingunit.typeOfUnit == "infantry")
+        foreach(string stun in attackingunit.stuns)
         {
-            defendingunit.statusChange("stunned");
+            if (stun == defendingunit.typeOfUnit || stun == defendingunit.movementtype || stun == defendingunit._attacktype)
+            {
+                defendingunit.statusChange("stunned");
+            }
         }
     }
 
