@@ -112,8 +112,7 @@ public class MapManager : MonoBehaviour
                 spawnedUnit = getunit(currentposition);
                 spawnedUnit.exhausted = true;
                 spawnedUnit.ownerChange(activeplayer);
-                GameObject unitprefab = spawnedUnit.gameObject;
-                unitprefab.GetComponent<SpriteRenderer>().color = new Color(.6f, .6f, .6f);
+                spawnedUnit.sprite.color = new Color(.6f, .6f, .6f);
                 food[activeplayer - 1] -= costs[0];
                 SUP[activeplayer - 1] -= costs[1];
                 clicked = false;
