@@ -115,5 +115,9 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7917006714009911421, guid: 6f206c0fd8f19704f84b3698ffb6ecc0, type: 3}
+      propertyPath: m_text
+      value: Can heal downed infantry
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f206c0fd8f19704f84b3698ffb6ecc0, type: 3}
