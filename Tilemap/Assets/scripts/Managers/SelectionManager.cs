@@ -57,8 +57,6 @@ public class SelectionManager : MonoBehaviour
     //for the tooltip
     infoPanel unitToolTip;
     bool showingtooltip = false;
-    private float hoverTimer = 1.5f;
-    private float hoverStart;
 
     private void Start()
     {

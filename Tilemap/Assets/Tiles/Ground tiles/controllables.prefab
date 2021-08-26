@@ -892,8 +892,9 @@ GameObject:
   - component: {fileID: 9039448830477868622}
   - component: {fileID: 1217087814652177877}
   - component: {fileID: 3297017039538759199}
+  - component: {fileID: 2476853696959185074}
   m_Layer: 5
-  m_Name: Button (9)
+  m_Name: shaman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1001,6 +1002,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2476853696959185074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2164499227580530992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24500350a94046f49991c9555fdd605d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 9
+  Clicked: 0
 --- !u!1 &2360122848289155918
 GameObject:
   m_ObjectHideFlags: 0
@@ -1415,8 +1430,9 @@ GameObject:
   - component: {fileID: 3151311164687053261}
   - component: {fileID: 9152026997805026231}
   - component: {fileID: 6097811099279765284}
+  - component: {fileID: 4071035023055502645}
   m_Layer: 5
-  m_Name: Button (11)
+  m_Name: chupacabras
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1524,6 +1540,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4071035023055502645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2557481967014604547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24500350a94046f49991c9555fdd605d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 11
+  Clicked: 0
 --- !u!1 &2804957612486389198
 GameObject:
   m_ObjectHideFlags: 0
@@ -2737,8 +2767,9 @@ GameObject:
   - component: {fileID: 350578643540276587}
   - component: {fileID: 4935014302061270006}
   - component: {fileID: 858938753161824517}
+  - component: {fileID: 8424967695898380003}
   m_Layer: 5
-  m_Name: Button (6)
+  m_Name: snake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2846,6 +2877,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8424967695898380003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4734104428504746370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24500350a94046f49991c9555fdd605d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 6
+  Clicked: 0
 --- !u!1 &4879992593563287845
 GameObject:
   m_ObjectHideFlags: 0
@@ -3036,7 +3081,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: chupacabras
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3572,8 +3617,9 @@ GameObject:
   - component: {fileID: 2303762501792549764}
   - component: {fileID: 224228742719146741}
   - component: {fileID: 2722681276544941796}
+  - component: {fileID: 1294511338617161830}
   m_Layer: 5
-  m_Name: Button (8)
+  m_Name: "pi\xF1ata"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3681,6 +3727,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1294511338617161830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6185222568139943726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24500350a94046f49991c9555fdd605d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 8
+  Clicked: 0
 --- !u!1 &6201026206529617097
 GameObject:
   m_ObjectHideFlags: 0
@@ -3693,8 +3753,9 @@ GameObject:
   - component: {fileID: 5373187390564612953}
   - component: {fileID: 8890731109853589812}
   - component: {fileID: 2138371023176599810}
+  - component: {fileID: 3475567355967115019}
   m_Layer: 5
-  m_Name: Button (10)
+  m_Name: scholar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3802,6 +3863,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3475567355967115019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6201026206529617097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24500350a94046f49991c9555fdd605d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 10
+  Clicked: 0
 --- !u!1 &6294027765411083131
 GameObject:
   m_ObjectHideFlags: 0
@@ -3988,7 +4063,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: scholar
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5174,7 +5249,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: snake
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5563,7 +5638,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: ocelot
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5697,7 +5772,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: "pi\xF1ata"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6315,8 +6390,9 @@ GameObject:
   - component: {fileID: 2860263178603144481}
   - component: {fileID: 1597312050284836840}
   - component: {fileID: 7108823002036715907}
+  - component: {fileID: 6081509650011829857}
   m_Layer: 5
-  m_Name: Button (7)
+  m_Name: ocelot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6424,6 +6500,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6081509650011829857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8767279911633488983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24500350a94046f49991c9555fdd605d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 7
+  Clicked: 0
 --- !u!1 &8915290429682476703
 GameObject:
   m_ObjectHideFlags: 0
@@ -6610,7 +6700,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: shaman
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
