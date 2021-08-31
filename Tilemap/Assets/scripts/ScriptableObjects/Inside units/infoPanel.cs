@@ -78,12 +78,14 @@ public class infoPanel : MonoBehaviour
         if(unit.attackrange == 1)
         {
             attack.transform.GetChild(0).gameObject.SetActive(true);
+            attack.GetComponentInChildren<TextMeshProUGUI>().text = ((int)(unit.attackdamage * unit.HP / unit.maxHP)).ToString();
         }
         else
         {
             attack.transform.GetChild(1).gameObject.SetActive(true);
+            string attdamage = ((int)(unit.attackdamage * unit.HP / unit.maxHP)).ToString();
+            attack.GetComponentInChildren<TextMeshProUGUI>().text = attdamage + ": " + unit.attackrange;
         }
-        attack.GetComponentInChildren<TextMeshProUGUI>().text = ((int)(unit.attackdamage * unit.HP / unit.maxHP)).ToString();
 
         //movement type and distance
         movement.GetComponentInChildren<TextMeshProUGUI>().text = unit.movement.ToString();

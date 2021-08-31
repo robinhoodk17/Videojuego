@@ -300,7 +300,7 @@ public class MapManager : MonoBehaviour
 
     public void destroyedunit(unitScript destroyedunit)
     {
-        commanders[destroyedunit.owner].HP -= commanders[destroyedunit.owner - 1].maxHP / 10;
+        commanders[destroyedunit.owner].HP -= commanders[destroyedunit.owner].maxHP / 10;
         commanders[destroyedunit.owner].healthChanged();
     }
 }

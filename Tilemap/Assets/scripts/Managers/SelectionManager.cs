@@ -154,7 +154,6 @@ public class SelectionManager : MonoBehaviour
                 showingtooltip = true;
                 unitToolTip = getunitprefab(Input.mousePosition, true).GetComponent<infoPanel>();
                 unitToolTip.showPanel();
-
             }
         }
         //after the unit is done moving

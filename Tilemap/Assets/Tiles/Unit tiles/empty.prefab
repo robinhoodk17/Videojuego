@@ -3107,7 +3107,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8203719394550143338
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6695,7 +6695,7 @@ GameObject:
   - component: {fileID: -2230824891736526225}
   - component: {fileID: -1515820753854698214}
   m_Layer: 0
-  m_Name: Empty
+  m_Name: empty
   m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6764,7 +6764,7 @@ MonoBehaviour:
   statusSprite: {fileID: 4420391549025479914}
   sprite: {fileID: 6648368384991546076}
   ownerUI: {fileID: 5168077080579501171}
-  map: {fileID: 0}
+  iscommander: 0
 --- !u!114 &-2230824891736526225
 MonoBehaviour:
   m_ObjectHideFlags: 0
