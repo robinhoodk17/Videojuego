@@ -57,8 +57,6 @@ public class SelectionManager : MonoBehaviour
     //for the tooltip
     infoPanel unitToolTip;
     bool showingtooltip = false;
-    private float hoverTimer = 1.5f;
-    private float hoverStart;
 
     private void Start()
     {
@@ -156,7 +154,6 @@ public class SelectionManager : MonoBehaviour
                 showingtooltip = true;
                 unitToolTip = getunitprefab(Input.mousePosition, true).GetComponent<infoPanel>();
                 unitToolTip.showPanel();
-
             }
         }
         //after the unit is done moving

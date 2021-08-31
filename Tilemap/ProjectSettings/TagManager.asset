@@ -11,6 +11,7 @@ TagManager:
   - Unit
   - Controllable
   - SelectionManager
+  - CardPoolManager
   layers:
   - Default
   - TransparentFX

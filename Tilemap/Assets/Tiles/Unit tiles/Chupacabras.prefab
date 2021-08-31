@@ -17,7 +17,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: ability
-      value: gains life when killing
+      value: drain
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: foodCost
@@ -45,19 +45,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: advantages.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: resistances.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: advantages.Array.data[0]
-      value: knight
+      value: infantry
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: advantages.Array.data[1]
-      value: sniper
+      value: warrior
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: advantages.Array.data[2]
@@ -65,7 +65,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: resistances.Array.data[0]
-      value: paramedic
+      value: wheels
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: resistances.Array.data[1]
@@ -77,7 +77,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: vulnerabilities.Array.data[0]
-      value: Tank
+      value: vehicle
       objectReference: {fileID: 0}
     - target: {fileID: 2206158221000434103, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_AnchorMax.x
@@ -86,6 +86,14 @@ PrefabInstance:
     - target: {fileID: 2206158221000434103, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713998934071829946, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611542902272961919, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_text
+      value: When this downs a unit, heal back to maxHP.
       objectReference: {fileID: 0}
     - target: {fileID: 5411712942504186916, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Name
@@ -137,11 +145,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Size.x
-      value: 10.24
-      objectReference: {fileID: 0}
-    - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: m_Size.y
-      value: 6.4
       objectReference: {fileID: 0}
     - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Sprite
@@ -151,9 +154,5 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6714182283360120625, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 1b3f7ede64cfb184e90dda066f0bea58, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}

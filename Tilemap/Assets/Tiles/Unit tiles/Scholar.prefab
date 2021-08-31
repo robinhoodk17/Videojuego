@@ -33,11 +33,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: advantages.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: resistances.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: advantages.Array.data[0]
@@ -61,7 +61,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: vulnerabilities.Array.size
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: vulnerabilities.Array.data[0]
@@ -86,6 +86,10 @@ PrefabInstance:
     - target: {fileID: 2206158221000434103, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611542902272961919, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5411712942504186916, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Name
@@ -137,11 +141,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Size.x
-      value: 7.0099998
-      objectReference: {fileID: 0}
-    - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: m_Size.y
-      value: 5.695625
       objectReference: {fileID: 0}
     - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Sprite
@@ -151,9 +150,5 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6714182283360120625, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 5ebe8983bf36cac418ad1457497490c1, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}

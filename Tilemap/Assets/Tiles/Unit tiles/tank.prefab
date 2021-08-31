@@ -45,7 +45,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: advantages.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: resistances.Array.size
@@ -53,7 +53,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: advantages.Array.data[0]
-      value: vehicle
+      value: wheelsvehicle
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.data[1]
+      value: treadsvehicle
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: resistances.Array.data[0]
@@ -69,7 +73,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4611542902272961919, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_text
-      value: Advantage against vehicles, resistance against infantry
+      value: Advantage vs. ground vehicles, resistance vs. infantry
       objectReference: {fileID: 0}
     - target: {fileID: 5411712942504186916, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Name

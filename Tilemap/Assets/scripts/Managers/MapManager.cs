@@ -42,6 +42,7 @@ public class MapManager : MonoBehaviour
     Vector3Int currentposition;
     bool unitselected = false;
     private SelectionManager eventraiser;
+    private Dictionary<int, unitScript> commanders = new Dictionary<int, unitScript>();
 
     public int CurrentButtonPressed;
     void Start()
@@ -52,6 +53,16 @@ public class MapManager : MonoBehaviour
         eventraiser = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
         eventraiser.OnUnitSelected += OnUnitSelected;
         eventraiser.OnUnitDeselected += OnUnitDeselected;
+
+        GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
+        foreach (var unit in allunits)
+        {
+            unitScript instanceofunit = unit.GetComponent<unitScript>();
+            if(instanceofunit.iscommander)
+            {
+                commanders[instanceofunit.owner] = instanceofunit;
+            }    
+        }
     }
     void Update()
     {
@@ -287,4 +298,9 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    public void destroyedunit(unitScript destroyedunit)
+    {
+        commanders[destroyedunit.owner].HP -= commanders[destroyedunit.owner].maxHP / 10;
+        commanders[destroyedunit.owner].healthChanged();
+    }
 }

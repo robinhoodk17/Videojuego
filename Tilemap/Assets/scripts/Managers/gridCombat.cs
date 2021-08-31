@@ -79,7 +79,7 @@ public class gridCombat : MonoBehaviour
 
                 if (attackerScript.HP <= 0)
                 {
-                    attackerScript.Downed();
+                    attackerScript.Downed(defenderScript);
                 }
             }
             //no counterattack
@@ -89,7 +89,7 @@ public class gridCombat : MonoBehaviour
             }
             if (defenderScript.HP <= 0)
             {
-                defenderScript.Downed();
+                defenderScript.Downed(attackerScript);
             }
         }
     }
@@ -179,21 +179,21 @@ public class gridCombat : MonoBehaviour
         }
         foreach(string adv in attackingadv)
         {
-            if(adv == defendingunit.typeOfUnit || adv == defendingunit.movementtype || adv == defendingunit._attacktype)
+            if(adv == defendingunit.typeOfUnit || adv == defendingunit.movementtype || adv == defendingunit._attacktype || adv == (defendingunit._attacktype + defendingunit.movementtype) || adv == (defendingunit._attacktype + defendingunit.typeOfUnit) || adv == (defendingunit.movementtype + defendingunit.typeOfUnit))
             {
                 damage *= 2;
             }
         }
         foreach(string vul in defendingvul)
         {
-            if(vul == attackingunit.typeOfUnit || vul == attackingunit.movementtype || vul == attackingunit._attacktype)
+            if(vul == attackingunit.typeOfUnit || vul == attackingunit.movementtype || vul == attackingunit._attacktype || vul == (attackingunit._attacktype + attackingunit.movementtype) || vul == (attackingunit._attacktype + attackingunit.typeOfUnit) || vul == (attackingunit.movementtype + attackingunit.typeOfUnit))
             {
                 damage *= 2;
             }
         }
         foreach(string res in defendingresist)
         {
-            if(attackingunit.typeOfUnit == res || attackingunit.movementtype == res || attackingunit._attacktype == res)
+            if(attackingunit.typeOfUnit == res || attackingunit.movementtype == res || attackingunit._attacktype == res || res == (attackingunit._attacktype + attackingunit.movementtype) || res == (attackingunit._attacktype + attackingunit.typeOfUnit) || res == (attackingunit.movementtype + attackingunit.typeOfUnit))
             damage /= 2;
         }
         levelTile Tile = map.GetTile<levelTile>(defendposition);

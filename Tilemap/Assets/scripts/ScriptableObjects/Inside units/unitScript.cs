@@ -62,8 +62,10 @@ public class unitScript : MonoBehaviour
     [SerializeField]
     public GameObject ownerUI;
 
-    [SerializeField]
+    public bool iscommander = false;
+
     private Tilemap map;
+    private MapManager manager;
 
     private unitScript enemy;
     private string previousStatus = "clear";
@@ -89,7 +91,7 @@ public class unitScript : MonoBehaviour
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
         healthChanged();
         map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
-
+        manager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         audios = GetComponentsInChildren<AudioSource>();
     }
     public void statusChange(string newstatus)
@@ -145,6 +147,7 @@ public class unitScript : MonoBehaviour
 
     public void Destroyed()
     {
+        manager.destroyedunit(this);
         Destroy(gameObject);
     }
 
@@ -231,11 +234,16 @@ public class unitScript : MonoBehaviour
         enemy.healthChanged();
     }
 
-    public void Downed()
+    public void Downed(unitScript attacker)
     {
         status = "downed";
         sprite.color = new Color(.5f, .5f, .5f);
         animator.SetTrigger("downed");
+
+        if(attacker.ability == "drain")
+        {
+            attacker.HP = attacker.maxHP;
+        }
     }
 
     public void recoverFromDowned()
