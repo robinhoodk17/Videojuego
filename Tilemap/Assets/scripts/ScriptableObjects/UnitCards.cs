@@ -68,7 +68,14 @@ public class UnitCards : MonoBehaviour
 
     public void onClick()
     {
-        manager.onClick(unitName.text, this.gameObject);
-        this.gameObject.SetActive(false);
+        if(manager.selectedunits.Count < manager.decklimit)
+        {
+            manager.onClick(unitName.text, this.gameObject);
+            this.gameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("you reached the deck limit");
+        }
     }
 }

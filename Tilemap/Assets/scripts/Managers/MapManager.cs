@@ -24,10 +24,12 @@ public class MapManager : MonoBehaviour
     map.SetTile(gridPosition, levelTile[y]);
 
      */
+    public string deckname = "deck";
     [SerializeField]
     private Tilemap map, conditions, units;
     [SerializeField]
     public List<GameObject> Buildables;
+    public List<GameObject> selectedbuildables;
     public bool clicked;
     public int numberOfPlayers;
     public BattleState state;
@@ -62,6 +64,19 @@ public class MapManager : MonoBehaviour
             {
                 commanders[instanceofunit.owner] = instanceofunit;
             }    
+        }
+        int decklimit = PlayerPrefs.GetInt("decklimit");
+        for(int i = 0; i < decklimit; i++)
+        {
+            string currentUnitName = PlayerPrefs.GetString(deckname + i.ToString());
+            foreach(GameObject unitprefab in Buildables)
+            {
+                if(unitprefab.GetComponent<unitScript>().unitname == currentUnitName)
+                {
+                    selectedbuildables.Add(unitprefab);
+                    Debug.Log(currentUnitName + " " + unitprefab.GetComponent<unitScript>().owner + " decknumber: " + i.ToString());
+                }
+            }
         }
     }
     void Update()
