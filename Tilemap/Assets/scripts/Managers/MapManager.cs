@@ -29,7 +29,7 @@ public class MapManager : MonoBehaviour
     private Tilemap map, conditions, units;
     [SerializeField]
     public List<GameObject> Buildables;
-    public List<GameObject> selectedbuildables;
+    public Dictionary<string, GameObject> selectedbuildables = new Dictionary<string, GameObject>();
     public bool clicked;
     public int numberOfPlayers;
     public BattleState state;
@@ -45,8 +45,7 @@ public class MapManager : MonoBehaviour
     bool unitselected = false;
     private SelectionManager eventraiser;
     private Dictionary<int, unitScript> commanders = new Dictionary<int, unitScript>();
-
-    public int CurrentButtonPressed;
+    public string CurrentButtonPressed;
     void Start()
     {
         food = new int[numberOfPlayers];
@@ -73,8 +72,7 @@ public class MapManager : MonoBehaviour
             {
                 if(unitprefab.GetComponent<unitScript>().unitname == currentUnitName)
                 {
-                    selectedbuildables.Add(unitprefab);
-                    Debug.Log(currentUnitName + " " + unitprefab.GetComponent<unitScript>().owner + " decknumber: " + i.ToString());
+                    selectedbuildables[currentUnitName] = unitprefab;
                 }
             }
         }
@@ -119,6 +117,7 @@ public class MapManager : MonoBehaviour
                         {
                             GameObject barracks = map.GetInstantiatedObject(currentposition);
                             barracks.transform.GetChild(0).gameObject.SetActive(true);
+                            barracks.GetComponent<barracks_script>().onActivation();
                             barracksSelected = true;
                         }
                     }
@@ -129,12 +128,12 @@ public class MapManager : MonoBehaviour
         if(clicked)
         {
             int[] costs = new int[2];
-            unitScript spawnedUnit = Buildables[CurrentButtonPressed].GetComponent<unitScript>();
+            unitScript spawnedUnit = selectedbuildables[CurrentButtonPressed].GetComponent<unitScript>();
             costs[0] = spawnedUnit.foodCost;
             costs[1] = spawnedUnit.SUPCost;
             if (costs[0] <= food[activeplayer-1] && costs[1] <= SUP[activeplayer - 1])
             {
-                GameObject.Instantiate(Buildables[CurrentButtonPressed], map.GetCellCenterWorld(currentposition), Quaternion.identity);
+                GameObject.Instantiate(selectedbuildables[CurrentButtonPressed], map.GetCellCenterWorld(currentposition), Quaternion.identity);
                 spawnedUnit = getunit(currentposition);
                 spawnedUnit.exhausted = true;
                 spawnedUnit.ownerChange(activeplayer);

@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class unitProduction : MonoBehaviour
 {
-    public int ID;
+    public string ID;
     public bool Clicked = false;
     private MapManager manager;
-
+    public Image sprite;
     // This script controls the buttons in the mapmanager
     void Awake()
     {
@@ -14,6 +15,10 @@ public class unitProduction : MonoBehaviour
         manager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
     }
 
+    public void customAwake(GameObject unit)
+    {
+        sprite.sprite = unit.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite;
+    }
     public void ButtonClicked()
     {
         Clicked = true;

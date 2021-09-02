@@ -2281,7 +2281,7 @@ MonoBehaviour:
   buttons: {fileID: 5385060074152242421, guid: fc1c2285d6bfafc43a32593a52aedcd8, type: 3}
   selectedunits: []
   deckname: deck
-  decklimit: 10
+  decklimit: 12
 --- !u!4 &1768631967
 Transform:
   m_ObjectHideFlags: 0
