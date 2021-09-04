@@ -7,7 +7,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     Camera cam;
     [SerializeField]
-    float zoomStep;
+    float zoomStep = .25f;
     [SerializeField]
     float minCamSize = 1;
     [SerializeField]
@@ -85,15 +85,23 @@ public class CameraMovement : MonoBehaviour
 
     private void Zoom()
     {
-        if(Input.GetKeyDown(KeyCode.Z))
+        if(Input.GetKey(KeyCode.Z))
         {
-            float newSize = cam.orthographicSize - zoomStep;
-            cam.orthographicSize = Mathf.Clamp(newSize, minCamSize, maxCamSize);
+            if (Time.time - lastStep > timeBetweenSteps)
+            {
+                lastStep = Time.time;
+                float newSize = cam.orthographicSize - zoomStep;
+                cam.orthographicSize = Mathf.Clamp(newSize, minCamSize, maxCamSize);
+            }
         }
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKey(KeyCode.X))
         {
-            float newSize = cam.orthographicSize + zoomStep;
-            cam.orthographicSize = Mathf.Clamp(newSize, minCamSize, maxCamSize);
+            if (Time.time - lastStep > timeBetweenSteps)
+            {
+                lastStep = Time.time;
+                float newSize = cam.orthographicSize + zoomStep;
+                cam.orthographicSize = Mathf.Clamp(newSize, minCamSize, maxCamSize);
+            }
         }
         cam.transform.position = ClampCamera(cam.transform.position);
     }

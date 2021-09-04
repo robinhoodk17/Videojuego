@@ -26,7 +26,7 @@ public class MapManager : MonoBehaviour
      */
     public string deckname = "deck";
     [SerializeField]
-    private Tilemap map, conditions, units;
+    public Tilemap map, conditions, units;
     [SerializeField]
     public List<GameObject> Buildables;
     public Dictionary<string, GameObject> selectedbuildables = new Dictionary<string, GameObject>();
