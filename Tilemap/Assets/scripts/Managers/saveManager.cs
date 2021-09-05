@@ -22,6 +22,8 @@ public class saveManager : MonoBehaviour
      */
     public List<levelTile> tileBases;
     private Dictionary<string, levelTile> tileDictionary = new Dictionary<string, levelTile>();
+    public List<GameObject> Buildables;
+    private Dictionary<string, GameObject> unitDictionary = new Dictionary<string, GameObject>();
     [SerializeField]
     public Tilemap map, conditions;
     private int z;
@@ -32,6 +34,11 @@ public class saveManager : MonoBehaviour
         foreach (levelTile tile in tileBases)
         {
             tileDictionary[tile.type.ToString()] = tile;
+        }
+        foreach (GameObject unitprefab in Buildables)
+        {
+            Debug.Log(unitprefab);
+            unitDictionary[unitprefab.GetComponent<unitScript>().unitname] = unitprefab;
         }
         z = gridPosition(new Vector3(0, 0, 0)).z;
     }
@@ -87,7 +94,32 @@ public class saveManager : MonoBehaviour
                 alltiles.Add(savestring);
             }
         }
+        GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
+        foreach (var unit in allunits)
+        {
+            unitScript instanceofunit = unit.GetComponent<unitScript>();
+            Vector3 localPlace = gridPosition(unit.transform.position);
+            contents = new string[] {
+                        "unit",
+                        "" + localPlace.x,
+                        "" + localPlace.y,
+                        "" + instanceofunit.owner,
+                        "" + instanceofunit.maxHP,
+                        "" + instanceofunit.HP,
+                        "" + instanceofunit.level,
+                        "" + instanceofunit.levelcounter,
+                        "" + instanceofunit.previousStatus,
+                        "" + instanceofunit.status,
+                        "" + instanceofunit.unitname,
+                        "" + instanceofunit.barracksname,
+                        "" + instanceofunit.attackdamage,
+                        "" + instanceofunit.MP
+                    };
+            savestring = string.Join(saveseparator, contents);
+            alltiles.Add(savestring);
+        }
         savestring = string.Join(tileseparator, alltiles);
+
         File.WriteAllText(Application.dataPath + "/SaveFiles" + "/" + savename + ".map", savestring);
     }
 
@@ -111,6 +143,28 @@ public class saveManager : MonoBehaviour
                     Debug.Log(controllable);
                     controllable.GetComponent<controllable_script>().ownerchange(int.Parse(contents[6]), int.Parse(contents[7]));
                 }
+            }
+            else
+            {
+                int x = int.Parse(contents[1]);
+                int y = int.Parse(contents[2]);
+                Vector3Int where = new Vector3Int(x, y, z);
+                GameObject unitprefab = GameObject.Instantiate(unitDictionary[contents[10]], map.GetCellCenterWorld(where), Quaternion.identity);
+                unitprefab.SetActive(true);
+                unitScript unit = unitprefab.GetComponent<unitScript>();
+                unit.owner = int.Parse(contents[3]);
+                unit.maxHP = int.Parse(contents[4]);
+                unit.HP = int.Parse(contents[5]);
+                unit.level = int.Parse(contents[6]);
+                unit.levelcounter = int.Parse(contents[7]);
+                unit.previousStatus = contents[8];
+                unit.status = contents[9];
+                unit.barracksname = contents[11];
+                unit.attackdamage = int.Parse(contents[12]);
+                unit.MP = int.Parse(contents[13]);
+                unit.ownerChange(unit.owner);
+                unit.statusChange(unit.status);
+                unit.healthChanged();
             }
         }
     }

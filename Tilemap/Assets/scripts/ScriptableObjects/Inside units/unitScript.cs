@@ -68,7 +68,7 @@ public class unitScript : MonoBehaviour
     private MapManager manager;
 
     private unitScript enemy;
-    private string previousStatus = "clear";
+    public string previousStatus = "clear";
     private int previousOwner;
     private AudioSource[] audios;
     public void Awake()
@@ -174,6 +174,7 @@ public class unitScript : MonoBehaviour
     /// ///////////////////////////////////////////
     /// </summary>
     //animations
+    //gainXP is calles whenever the unit gains XP, and it also controls the level up
     public void gainXP()
     {
         if (status != "downed")

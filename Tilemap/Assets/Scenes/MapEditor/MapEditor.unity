@@ -485,6 +485,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputField: {fileID: 1380158522}
   savemanager: {fileID: 1311524508}
+  scenename: 
 --- !u!1 &188387812
 GameObject:
   m_ObjectHideFlags: 0
@@ -3958,6 +3959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputField: {fileID: 1736517032}
   savemanager: {fileID: 1311524508}
+  scenename: 
 --- !u!114 &1051377833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4875,6 +4877,20 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1f9135f0f7302c84a85d0cee87f17469, type: 2}
   - {fileID: 11400000, guid: dc8d0756d367bc840b90afe4f6a50580, type: 2}
   - {fileID: 11400000, guid: 40d41f8a5486b3645a7b2f2b6bd4c32c, type: 2}
+  Buildables:
+  - {fileID: 461899769785655077, guid: de9fac749165d3945a91a3556a865a79, type: 3}
+  - {fileID: 4685858972544547839, guid: 18c32c4f48694b341b36828c866e9704, type: 3}
+  - {fileID: 7081024329539089893, guid: 5c2cf64a8966a32419f01340bef2488c, type: 3}
+  - {fileID: 8338487157324269347, guid: ddf0381046aae0a4582b7a88fe058abf, type: 3}
+  - {fileID: 9143493095769555728, guid: 8ed969794c520fd4b84128c5dc71de1e, type: 3}
+  - {fileID: 551501707901117065, guid: a06dbeea75c222d48bac3c13e445fa62, type: 3}
+  - {fileID: 7844332408058830645, guid: 6a1f9465deccac945893ffa056f6b9ad, type: 3}
+  - {fileID: 8833440146295634473, guid: 3dcfb13a7a068284da13a7605b808ca5, type: 3}
+  - {fileID: 7178172221925210446, guid: a52b152467d8926459ff9d47402ada5b, type: 3}
+  - {fileID: 810569579211895846, guid: 9a57f93afc6826a418aa288dd896f8e1, type: 3}
+  - {fileID: 1600005564373905490, guid: 69f01806d95539748a740f9a6e444af9, type: 3}
+  - {fileID: 1818295641376110886, guid: 6f206c0fd8f19704f84b3698ffb6ecc0, type: 3}
+  - {fileID: 6836927200792510265, guid: 7ddc0c6aba762aa4ea03b4ac37ff42cf, type: 3}
   map: {fileID: 216623308}
   conditions: {fileID: 195826303}
 --- !u!4 &1311524510
