@@ -30,8 +30,11 @@ public class CameraMovement : MonoBehaviour
     }
     void LateUpdate()
     {
-        PanCamera();
-        Zoom();
+        if(Input.anyKey)
+        {
+            PanCamera();
+            Zoom();
+        }
 
     }
 
@@ -92,6 +95,7 @@ public class CameraMovement : MonoBehaviour
                 lastStep = Time.time;
                 float newSize = cam.orthographicSize - zoomStep;
                 cam.orthographicSize = Mathf.Clamp(newSize, minCamSize, maxCamSize);
+                cam.transform.position = ClampCamera(cam.transform.position);
             }
         }
         if (Input.GetKey(KeyCode.X))
@@ -101,9 +105,9 @@ public class CameraMovement : MonoBehaviour
                 lastStep = Time.time;
                 float newSize = cam.orthographicSize + zoomStep;
                 cam.orthographicSize = Mathf.Clamp(newSize, minCamSize, maxCamSize);
+                cam.transform.position = ClampCamera(cam.transform.position);
             }
         }
-        cam.transform.position = ClampCamera(cam.transform.position);
     }
 
     private Vector3 ClampCamera(Vector3 targetPosition)

@@ -8,6 +8,10 @@ public class saveManager : MonoBehaviour
 {
     string saveseparator = "#SAVE-VALUE#";
     string tileseparator = "#NEW-TILE#";
+    private UIInputWindowForSaveMap inputwindow;
+    private UIInputWindowForSaveMap inputwindowforLoad;
+    public GameObject savewindow;
+    public GameObject loadwindow;
     /*forest: 0
     mountain: 1
     planes: 2
@@ -20,15 +24,29 @@ public class saveManager : MonoBehaviour
     private Dictionary<string, levelTile> tileDictionary = new Dictionary<string, levelTile>();
     [SerializeField]
     public Tilemap map, conditions;
+    private int z;
     private void Start()
     {
-        foreach(levelTile tile in tileBases)
+        inputwindow = savewindow.GetComponent<UIInputWindowForSaveMap>();
+        inputwindowforLoad = loadwindow.GetComponent<UIInputWindowForSaveMap>();
+        foreach (levelTile tile in tileBases)
         {
             tileDictionary[tile.type.ToString()] = tile;
         }
+        z = gridPosition(new Vector3(0, 0, 0)).z;
     }
-    public void Save()
+    //this is called by the Save button
+    public void SaveMap()
     {
+        inputwindow.Show("IwIllFoRGeT");
+    }
+    public void LoadMap()
+    {
+        inputwindowforLoad.Show("lol nice try");
+    }
+    public void QuickSaveMap(string savename = "save")
+    {
+
         string savestring = "";
         List<string> alltiles = new List<string>();
         string[] contents;
@@ -44,23 +62,25 @@ public class saveManager : MonoBehaviour
                     int owner = controllable.owner;
                     int HP = controllable.HP;
                     contents = new string[] {
-                    "" + localPlace.x,
-                    "" + localPlace.y,
-                    "" + localPlace.z,
-                    "" + Tile.type,
-                    "" + Tile.controllable,
-                    "" + owner,
-                    "" + HP
+                        "tile",
+                        "" + localPlace.x,
+                        "" + localPlace.y,
+                        "" + localPlace.z,
+                        "" + Tile.type,
+                        "" + Tile.controllable,
+                        "" + owner,
+                        "" + HP
                     };
                 }
                 else
                 {
                     contents = new string[] {
-                    "" + localPlace.x,
-                    "" + localPlace.y,
-                    "" + localPlace.z,
-                    "" + Tile.type,
-                    "" + Tile.controllable
+                        "tile",
+                        "" + localPlace.x,
+                        "" + localPlace.y,
+                        "" + localPlace.z,
+                        "" + Tile.type,
+                        "" + Tile.controllable
                     };
                 }
                 savestring = string.Join(saveseparator, contents);
@@ -68,28 +88,41 @@ public class saveManager : MonoBehaviour
             }
         }
         savestring = string.Join(tileseparator, alltiles);
-        File.WriteAllText(Application.dataPath + "/SaveFiles" + "/save.txt", savestring);
+        File.WriteAllText(Application.dataPath + "/SaveFiles" + "/" + savename + ".map", savestring);
     }
 
-    public void Load()
+    public void QuickLoadMap(string savename = "save")
     {
-        string saveString = File.ReadAllText(Application.dataPath + "/SaveFiles" + "/save.txt");
+        string saveString = File.ReadAllText(Application.dataPath + "/SaveFiles" + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
         foreach(string currentTile in alltiles)
         {
             string[] contents = currentTile.Split(new[] { saveseparator }, System.StringSplitOptions.None);
-            int x = int.Parse(contents[0]);
-            int y = int.Parse(contents[1]);
-            int z = int.Parse(contents[2]);
-            Vector3Int where = new Vector3Int(x, y, z);
-            string tile = contents[3];
-            map.SetTile(where, tileDictionary[tile]);
-            if(bool.Parse(contents[4]))
+            if (contents[0] == "tile")
             {
-                GameObject controllable = map.GetInstantiatedObject(where);
-                controllable.GetComponent<controllable_script>().ownerchange(int.Parse(contents[5]), int.Parse(contents[6]));
+                int x = int.Parse(contents[1]);
+                int y = int.Parse(contents[2]);
+                Vector3Int where = new Vector3Int(x, y, z);
+                string tile = contents[4];
+                map.SetTile(where, tileDictionary[tile]);
+                if (bool.Parse(contents[5]))
+                {
+                    GameObject controllable = map.GetInstantiatedObject(where);
+                    Debug.Log(controllable);
+                    controllable.GetComponent<controllable_script>().ownerchange(int.Parse(contents[6]), int.Parse(contents[7]));
+                }
             }
-            Debug.Log(where + " " + tileDictionary[tile]);
         }
+    }
+
+    public Vector3Int gridPosition(Vector3 position, bool screen = false)
+    {
+        if (screen)
+        {
+            position = Camera.main.ScreenToWorldPoint(position);
+        }
+
+        Vector3Int gridposition = map.WorldToCell(position);
+        return gridposition;
     }
 }

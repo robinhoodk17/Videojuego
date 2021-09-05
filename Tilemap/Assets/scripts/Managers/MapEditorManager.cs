@@ -17,6 +17,9 @@ public class MapEditorManager : MonoBehaviour
     bonfire: 6
      */
     public List<levelTile> tileBases;
+    public List<GameObject> Buildables;
+    //we use a dictionary to access each unit by name instead of by number
+    public Dictionary<string, GameObject> selectedbuildables = new Dictionary<string, GameObject>();
 
     //this is the current tilemap we are using (the same as in MapManager)
     [SerializeField]
@@ -26,18 +29,33 @@ public class MapEditorManager : MonoBehaviour
     public int CurrentButtonPressed;
 
     public GameObject[] ItemImage;
-    public List<GameObject> Prefabs;
-    public int numberofunitsingame;
-    public int activeplayer = 0;
+    public GameObject unitpanel;
+    public GameObject unitpanelcontent;
+    public int activeplayer = 1;
+    public string unitpressed;
+    private int numberoftiles;
+    private Camera _mainCamera;
+    private float timeBetweenSteps = 0.05f;
+    float lastStep;
+    private void Start()
+    {
+        _mainCamera = Camera.main;
+        foreach (GameObject card in Buildables)
+        {
+            GameObject unitprefab = card.GetComponent<UnitCards>().unitprefab;
+            selectedbuildables[unitprefab.GetComponent<unitScript>().unitname] = unitprefab;
+            GameObject instantiatedCard = Instantiate(card, new Vector3(0, 0, 0), Quaternion.identity);
+            instantiatedCard.transform.SetParent(unitpanelcontent.transform, false);
+            numberoftiles = tileBases.Count;
+        }
+    }
     private void Update()
     {
         //each time the frame is updated, we check the position of the mouse in the gridmap 
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int gridPosition = map.WorldToCell(mousePosition);
+        Vector3Int gridPosition = gridposition(Input.mousePosition, true);
 
-
-        //when the button gets pressed, we insert the appropriate tile in the tilemap.
-        int numberoftiles = tileBases.Count;
+        //when we select a unit, we make currentbuttonpressed = numberoftiles + 1, so that it enters this if.
         if (Input.GetMouseButtonUp(0) && CurrentButtonPressed >= numberoftiles)
         {
             if (EventSystem.current.IsPointerOverGameObject())
@@ -47,33 +65,45 @@ public class MapEditorManager : MonoBehaviour
             if (map.HasTile(gridPosition))
             {
                 Vector3 where = getWorldPosition((Vector3)gridPosition);
-                GameObject.Instantiate(Prefabs[CurrentButtonPressed - numberoftiles], where, Quaternion.identity);
+                //the unit is built from our unit dictionary, then selected and it gets its respective owner
+                GameObject.Instantiate(selectedbuildables[unitpressed], map.GetCellCenterWorld(gridPosition), Quaternion.identity).SetActive(true);
                 unitScript spawnedUnit = getunit(gridPosition);
+                if(activeplayer < 1)
+                {
+                    activeplayer = 1;
+                }
+                Debug.Log("you can't have neutral units");
                 spawnedUnit.ownerChange(activeplayer);
-                //units.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
             }
         }
-        if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && CurrentButtonPressed < numberoftiles)
+
+        //when the button gets pressed, we insert the appropriate tile in the tilemap.
+        if(CurrentButtonPressed < numberoftiles)
         {
-            if (EventSystem.current.IsPointerOverGameObject())
+            if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && Time.time - lastStep > timeBetweenSteps)
             {
-                return;
-            }
-            levelTile selectedtile = tileBases[CurrentButtonPressed];
-            int typenumber = (int)selectedtile.type;
-            if (typenumber<1000)
-            {
-                map.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
-                if(tileBases[CurrentButtonPressed].controllable)
+                if (EventSystem.current.IsPointerOverGameObject())
                 {
-                    map.GetInstantiatedObject(gridPosition).GetComponent<controllable_script>().ownerchange(activeplayer, 1);
+                    return;
                 }
+                levelTile selectedtile = tileBases[CurrentButtonPressed];
+                int typenumber = (int)selectedtile.type;
+                if (typenumber < 1000)
+                {
+                    map.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
+                    lastStep = Time.time;
+                    if (tileBases[CurrentButtonPressed].controllable)
+                    {
+                        map.GetInstantiatedObject(gridPosition).GetComponent<controllable_script>().ownerchange(activeplayer, 1);
+                    }
+                }
+                if (typenumber >= 2000)
+                {
+                    lastStep = Time.time;
+                    conditions.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
+                }
+                //Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
             }
-            if (typenumber >= 2000)
-            {
-                conditions.SetTile(gridPosition, tileBases[CurrentButtonPressed]);
-            }
-            //Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
         }
         if (Input.GetMouseButton(1))
         {
@@ -88,6 +118,31 @@ public class MapEditorManager : MonoBehaviour
 
     }
 
+    public void onClick(unitScript unit)
+    {
+        unitpanel.SetActive(false);
+        CurrentButtonPressed = numberoftiles + 1;
+        unitpressed = unit.unitname;
+        Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
+    }
+    public void TurnPanelOn()
+    {
+        unitpanel.SetActive(true);
+    }
+    public void setActivePlayer(int player)
+    {
+        activeplayer = player;
+    }
+    public Vector3Int gridposition(Vector3 position, bool screen = false)
+    {
+        if (screen)
+        {
+            position = _mainCamera.ScreenToWorldPoint(position);
+        }
+
+        Vector3Int gridposition = map.WorldToCell(position);
+        return gridposition;
+    }
     private Vector3 getWorldPosition(Vector3 gridposition)
     {
         Vector3 worldPosition = new Vector3();

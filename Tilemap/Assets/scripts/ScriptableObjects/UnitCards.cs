@@ -18,8 +18,20 @@ public class UnitCards : MonoBehaviour
     public GameObject unitprefab;
     public TextMeshProUGUI text;
     private CardPoolManager manager;
+    public MapEditorManager mapeditormanager;
+    public bool cardpool = true;
     void Awake()
     {
+        cardpool = true;
+        if(GameObject.FindGameObjectWithTag("CardPoolManager") != null)
+        {
+            manager = GameObject.FindGameObjectWithTag("CardPoolManager").GetComponent<CardPoolManager>();
+        }
+        else
+        {
+            cardpool = false;
+            mapeditormanager = GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>();
+        }
         unit = unitprefab.GetComponent<unitScript>();
         text.text = gameObject.transform.GetChild(8).gameObject.transform.GetChild(4).gameObject.transform.GetChild(0).gameObject.transform.GetChild(10).GetComponent<TextMeshProUGUI>().text;
 
@@ -62,20 +74,27 @@ public class UnitCards : MonoBehaviour
 
         }
 
-        manager = GameObject.FindGameObjectWithTag("CardPoolManager").GetComponent<CardPoolManager>();
+        
     }
 
 
     public void onClick()
     {
-        if(manager.selectedunits.Count < manager.decklimit)
+        if(cardpool)
         {
-            manager.onClick(unitName.text, this.gameObject);
-            this.gameObject.SetActive(false);
+            if (manager.selectedunits.Count < manager.decklimit)
+            {
+                manager.onClick(unitName.text, this.gameObject);
+                this.gameObject.SetActive(false);
+            }
+            else
+            {
+                Debug.Log("you reached the deck limit");
+            }
         }
         else
         {
-            Debug.Log("you reached the deck limit");
+            mapeditormanager.onClick(unit);
         }
     }
 }

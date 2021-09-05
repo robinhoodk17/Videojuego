@@ -45,25 +45,24 @@ public class MapManager : MonoBehaviour
     bool unitselected = false;
     private SelectionManager eventraiser;
     private Dictionary<int, unitScript> commanders = new Dictionary<int, unitScript>();
+    public GameObject savemanager;
     public string CurrentButtonPressed;
+    private saveManager save;
+    private string mapname;
     void Start()
     {
+        save = savemanager.GetComponent<saveManager>();
+        mapname = PlayerPrefs.GetString("mapname");
         food = new int[numberOfPlayers];
         SUP = new int[numberOfPlayers];
         state = BattleState.PLAYERTURN;
+        //Here we subscribe to the even onunitselected raised by the selectionmanager
         eventraiser = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
         eventraiser.OnUnitSelected += OnUnitSelected;
         eventraiser.OnUnitDeselected += OnUnitDeselected;
 
-        GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
-        foreach (var unit in allunits)
-        {
-            unitScript instanceofunit = unit.GetComponent<unitScript>();
-            if(instanceofunit.iscommander)
-            {
-                commanders[instanceofunit.owner] = instanceofunit;
-            }    
-        }
+
+        //here we build the selectedbuildables dictionary
         int decklimit = PlayerPrefs.GetInt("decklimit");
         for(int i = 0; i < decklimit; i++)
         {
@@ -81,6 +80,18 @@ public class MapManager : MonoBehaviour
     {
         if(turnnumber == 0)
         {
+            turnnumber = 1;
+            save.QuickLoadMap(mapname);
+            //Here we select the commanders for the game
+            GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
+            foreach (var unit in allunits)
+            {
+                unitScript instanceofunit = unit.GetComponent<unitScript>();
+                if (instanceofunit.iscommander)
+                {
+                    commanders[instanceofunit.owner] = instanceofunit;
+                }
+            }
             GameObject[] owners = GameObject.FindGameObjectsWithTag("Player");
             foreach(GameObject assign in owners)
             {
@@ -91,7 +102,6 @@ public class MapManager : MonoBehaviour
             int[] foodSUP = CalculateIncome();
             food[activeplayer - 1] = foodSUP[0];
             SUP[activeplayer - 1] = foodSUP[1];
-            turnnumber = 1;
             resourceshow(foodSUP);
         }
 

@@ -91,7 +91,8 @@ public class unitScript : MonoBehaviour
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
         healthChanged();
         map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
-        manager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        if (GameObject.FindGameObjectWithTag("MapManager") != null)
+            manager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         audios = GetComponentsInChildren<AudioSource>();
     }
     public void statusChange(string newstatus)

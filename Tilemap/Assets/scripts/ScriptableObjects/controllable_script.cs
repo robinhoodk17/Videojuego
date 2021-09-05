@@ -13,7 +13,7 @@ public class controllable_script : MonoBehaviour
         flagCanvas.transform.GetChild(owner).gameObject.SetActive(false);
         owner = newowner;
         flagCanvas.transform.GetChild(newowner).gameObject.SetActive(true);
-        HP = (int)(capturedHP * maxHP);
+        HP = maxHP;
         healthbar.SetActive(true);
         healthChanged();
     }
