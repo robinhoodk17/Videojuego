@@ -37,7 +37,6 @@ public class saveManager : MonoBehaviour
         }
         foreach (GameObject unitprefab in Buildables)
         {
-            Debug.Log(unitprefab);
             unitDictionary[unitprefab.GetComponent<unitScript>().unitname] = unitprefab;
         }
         z = gridPosition(new Vector3(0, 0, 0)).z;
@@ -120,12 +119,12 @@ public class saveManager : MonoBehaviour
         }
         savestring = string.Join(tileseparator, alltiles);
 
-        File.WriteAllText(Application.dataPath + "/SaveFiles" + "/" + savename + ".map", savestring);
+        File.WriteAllText(Application.persistentDataPath + "/" + savename + ".map", savestring);
     }
 
     public void QuickLoadMap(string savename = "save")
     {
-        string saveString = File.ReadAllText(Application.dataPath + "/SaveFiles" + "/" + savename + ".map");
+        string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
         foreach(string currentTile in alltiles)
         {
@@ -140,7 +139,6 @@ public class saveManager : MonoBehaviour
                 if (bool.Parse(contents[5]))
                 {
                     GameObject controllable = map.GetInstantiatedObject(where);
-                    Debug.Log(controllable);
                     controllable.GetComponent<controllable_script>().ownerchange(int.Parse(contents[6]), int.Parse(contents[7]));
                 }
             }

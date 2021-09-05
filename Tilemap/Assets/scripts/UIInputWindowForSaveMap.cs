@@ -33,14 +33,14 @@ public class UIInputWindowForSaveMap : MonoBehaviour
     //we call this method when we click accept on the save manager. The button calls it
     public void SaveEnterPressed()
     {
-        Debug.Log("hello, there");
         saveManager.QuickSaveMap(inputField.text);
+        Hide();
     }
     //we call this method when we click accept on the load manager. The button calls it
     public void LoadEnterPressed()
     {
-        Debug.Log("General Kenobi");
         saveManager.QuickLoadMap(inputField.text);
+        Hide();
     }
     public void changetoplayscene()
     {

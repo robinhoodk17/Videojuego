@@ -11,7 +11,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     float minCamSize = 1;
     [SerializeField]
-    float maxCamSize = 10;
+    float maxCamSize = 20;
     [SerializeField]
     Tilemap map;
 
