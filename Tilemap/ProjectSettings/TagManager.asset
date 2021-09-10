@@ -12,6 +12,7 @@ TagManager:
   - Controllable
   - SelectionManager
   - CardPoolManager
+  - damagePreview
   layers:
   - Default
   - TransparentFX

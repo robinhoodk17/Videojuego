@@ -14,6 +14,9 @@ public class SelectionManager : MonoBehaviour
 
     public float timeBetweenClicks = 0.5f;
     float lastClick;
+    public float HoverTime = .5f;
+    private float startHover;
+    private bool startedHovering = false;
 
     int activeplayer = 1;
     public int playernumber = 2;
@@ -24,12 +27,14 @@ public class SelectionManager : MonoBehaviour
     attackandmove: 2
     */
     public List<levelTile> movementUI;
-
-    bool unitselected = false;
-    unitScript unit;
-    GameObject unitprefab;
-    Vector3Int currentposition = new Vector3Int();
-    Vector3Int newposition = new Vector3Int();
+    public GameObject damagePreview;
+    private bool unitselected = false;
+    private unitScript unit;
+    private GameObject unitprefab;
+    private Vector3Int currentposition = new Vector3Int();
+    private Vector3Int newposition = new Vector3Int();
+    private Vector3Int hoveringTile = new Vector3Int();
+    private bool areWeHovering = false;
     //The unit panel to turn off after moving it
     int turnoff = 0;
 
@@ -45,12 +50,12 @@ public class SelectionManager : MonoBehaviour
     private bool usingability = false;
     List<Vector3Int> selectableTiles = new List<Vector3Int>();
     Stack<Vector3Int> path = new Stack<Vector3Int>();
-
+    
 
     public event Action<Vector3Int, Vector3Int> Oncombatstart;
     public event Action<GameObject> OnUnitSelected;
     public event Action OnUnitDeselected;
-    public event Action<Vector3Int, Vector3Int> Oncombathover;
+    public event Action<Vector3Int, Vector3Int, GameObject> Oncombathover;
     private Camera _mainCamera;
     //for the animations
     string unitstate ="idle";
@@ -162,12 +167,41 @@ public class SelectionManager : MonoBehaviour
             //Here we check if there is an attackable unit,and if it is clicked,
             // we initiate combat (the selected unit is on "newposition" and the attacked unit is on "clickedtile")
             //We also check for abilities, such as heals
-            if (Input.GetMouseButtonUp(0) && unitstate == "thinking" && Time.time - lastClick > timeBetweenClicks)
+            if (unitstate == "thinking" && Time.time - lastClick > timeBetweenClicks)
             {
                 Vector2 mousePos = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
                 Vector3Int clickedtile = gridPosition(Input.mousePosition, true);
+                if(!startedHovering)
+                {
+                    startedHovering = true;
+                    hoveringTile = clickedtile;
+                    startHover = Time.time;
+                }
+                if(startedHovering && hoveringTile == clickedtile)
+                {
+                    if (units.HasTile(clickedtile) && getunit(clickedtile) != null && !usingability)
+                    {
+                        if (getunit(clickedtile).owner != activeplayer && Time.time - startHover >= HoverTime && !areWeHovering)
+                        {
+                            GameObject damagePreviewInstance = Instantiate(damagePreview, worldPosition(clickedtile), Quaternion.identity);
+                            Oncombathover?.Invoke(newposition, clickedtile, damagePreviewInstance);
+                            areWeHovering = true;
+                        }
+
+                    }
+                }
+                if (areWeHovering && hoveringTile != clickedtile)
+                {
+                    Destroy(GameObject.FindGameObjectWithTag("damagePreview"));
+                    areWeHovering = false;
+                    startedHovering = false;
+                }
+                if (startedHovering && hoveringTile != clickedtile)
+                {
+                    startedHovering = false;
+                }
                 //this if invokes combat against another unit
-                if (units.HasTile(clickedtile) && getunit(clickedtile) != null && !usingability)
+                if (Input.GetMouseButtonUp(0) && units.HasTile(clickedtile) && getunit(clickedtile) != null && !usingability)
                 {
                     if (getunit(clickedtile).owner != activeplayer)
                     {
@@ -267,6 +301,12 @@ public class SelectionManager : MonoBehaviour
             units.ClearAllTiles();
             //there was a weird bug happening. I hope this fixes it.
             unit.healthChanged();
+        }
+        startedHovering = false;
+        if(areWeHovering)
+        {
+            Destroy(GameObject.FindGameObjectWithTag("damagePreview"));
+            areWeHovering = false;
         }
         unitselected = false;
         usingability = false;

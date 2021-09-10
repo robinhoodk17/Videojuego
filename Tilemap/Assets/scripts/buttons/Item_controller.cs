@@ -12,13 +12,24 @@ public class Item_controller : MonoBehaviour
     public TextMeshProUGUI quantityText;
     public bool Clicked = false;
     private MapEditorManager editor;
+    private SelectionManager selectionmanager;
+    //this is true when it finds the mapeditor, and false when it finds the selectionmanager
+    private bool editorOrSelectionManager = false;
 
     // This script controls the buttons in the map editor
     void Start()
     {
         Clicked = false;
         quantityText.text = quantity.ToString();
-        editor = GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>();
+        if(GameObject.FindGameObjectWithTag("MapEditorManager"))
+        {
+            editor = GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>();
+            editorOrSelectionManager = true;
+        }
+        else
+        {
+            selectionmanager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
+        }
     }
 
     public void ButtonClicked()
@@ -30,8 +41,10 @@ public class Item_controller : MonoBehaviour
         Clicked = true;
         Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-        Instantiate(editor.ItemImage[ID], new Vector3(worldPosition.x, worldPosition.y, 0), Quaternion.identity);
-        editor.CurrentButtonPressed = ID;
-        //print(ID);
+        if(editorOrSelectionManager)
+        {
+            Instantiate(editor.ItemImage[ID], new Vector3(worldPosition.x, worldPosition.y, 0), Quaternion.identity);
+            editor.CurrentButtonPressed = ID;
+        }
     }
 }

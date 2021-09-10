@@ -6700,11 +6700,13 @@ MonoBehaviour:
   conditions: {fileID: 589999151}
   units: {fileID: 1585076782}
   timeBetweenClicks: 0.5
+  HoverTime: 0.5
   playernumber: 2
   movementUI:
   - {fileID: 11400000, guid: 466805f28d1f8f342932a5643aed1232, type: 2}
   - {fileID: 11400000, guid: 1f1353ab8db1f7543990820c50e123a4, type: 2}
   - {fileID: 11400000, guid: 59f458820fe511848ae19eac482c0b38, type: 2}
+  damagePreview: {fileID: 4868246463739579359, guid: e4d0a636d2c32094983e4bef9d5f984d, type: 3}
   mask:
     serializedVersion: 2
     m_Bits: 0

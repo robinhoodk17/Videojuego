@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TMPro;
 
 public class gridCombat : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class gridCombat : MonoBehaviour
     {
         //here we register this object as a listener to the combat initiation in the selection manager
         GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>().Oncombatstart += OncombatHappening;
+        GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>().Oncombathover += OnCombatHover;
     }
     public void OncombatHappening(Vector3Int attackposition, Vector3Int defendposition)
     {
@@ -66,14 +68,15 @@ public class gridCombat : MonoBehaviour
 
             //the attacker deals damage to the defender (status changes also happen here)
             defenderScript.HP -= calculateDamage(attackerScript, defenderScript, defendposition);
-
+            defenderScript.status = changeStatus(attackerScript, defenderScript);
 
 
             //if the defender survives, and can counterattack, here we add a counterattack on the combat
             if (defenderScript.HP > 0 && canCounterAttack && defenderScript.status != "stunned")
             {
                 attackerScript.HP -= calculateDamage(defenderScript, attackerScript, defendposition);
-                //Here we add the animation of the shooting from the attacker, who then calls the counterattack on its enemy.
+                defenderScript.status = changeStatus(defenderScript, attackerScript);
+                //The rest of the function adds the animation of the shooting from the attacker, who then calls the counterattack on its enemy.
                 //The counterattack plays and then calls the damage animation on the attackerscript
                 attackerScript.onCombat(defenderScript);
 
@@ -93,7 +96,20 @@ public class gridCombat : MonoBehaviour
             }
         }
     }
-
+    public void OnCombatHover(Vector3Int attackposition, Vector3Int defendposition, GameObject preview)
+    {
+        attackerScript = getunit(attackposition);
+        defenderScript = getunit(defendposition);
+        string temporalstatus = defenderScript.status;
+        preview = preview.transform.GetChild(0).gameObject;
+        int defenderhealthchange = calculateDamage(attackerScript, defenderScript, defendposition);
+        defenderScript.status = changeStatus(attackerScript, defenderScript);
+        preview.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = defenderhealthchange.ToString();
+        defenderScript.HP -= defenderhealthchange;
+        preview.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = calculateDamage(defenderScript, attackerScript, attackposition).ToString();
+        defenderScript.HP += defenderhealthchange;
+        defenderScript.status = temporalstatus;
+    }
     public unitScript getunit(Vector3 position, bool screen = true)
     {
 
@@ -200,20 +216,21 @@ public class gridCombat : MonoBehaviour
         int tiledefense = Tile.defense;
         damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + attackingunit.level/10) * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
         damage -= tiledefense;
-
-        changeStatus(attackingunit, defendingunit);
+        
         return damage;
     }
 
-    public void changeStatus(unitScript attackingunit, unitScript defendingunit)
+    public string changeStatus(unitScript attackingunit, unitScript defendingunit)
     {
+        string newStatus = null;
         foreach(string stun in attackingunit.stuns)
         {
             if (stun == defendingunit.typeOfUnit || stun == defendingunit.movementtype || stun == defendingunit._attacktype)
             {
-                defendingunit.statusChange("stunned");
+                newStatus = "stunned";
             }
         }
+        return newStatus;
     }
 
     //on [0] returns global damage (bonfires, etc), and on [1] returns defense. For now, only bonfires are implemented.
