@@ -13,6 +13,7 @@ TagManager:
   - SelectionManager
   - CardPoolManager
   - damagePreview
+  - UnitNaming
   layers:
   - Default
   - TransparentFX

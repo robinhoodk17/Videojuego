@@ -37,6 +37,7 @@ public class MapManager : MonoBehaviour
     public GameObject playerstartpanel;
     public TextMeshProUGUI activeplayertext;
     public GameObject[] resourcePanels;
+    public UIInputWindowForBarracksName unitNameInputField;
     int[] food;
     int[] SUP;
     int turnnumber = 0;
@@ -57,6 +58,8 @@ public class MapManager : MonoBehaviour
         SUP = new int[numberOfPlayers];
         state = BattleState.PLAYERTURN;
         //Here we subscribe to the even onunitselected raised by the selectionmanager
+        unitNameInputField = GameObject.FindGameObjectWithTag("UnitNaming").GetComponent<UIInputWindowForBarracksName>();
+        unitNameInputField.Hide();
         eventraiser = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
         eventraiser.OnUnitSelected += OnUnitSelected;
         eventraiser.OnUnitDeselected += OnUnitDeselected;
@@ -104,7 +107,7 @@ public class MapManager : MonoBehaviour
             SUP[activeplayer - 1] = foodSUP[1];
             resourceshow(foodSUP);
         }
-
+        // to deselect the barracks once it was selected
         if ((Input.GetMouseButtonDown(0) && barracksSelected && !EventSystem.current.IsPointerOverGameObject()) || Input.GetMouseButtonDown(1))
         {
             if(barracksSelected)
@@ -113,6 +116,7 @@ public class MapManager : MonoBehaviour
             }
             barracksSelected = false;
         }
+        // to select the barracks
         if (Input.GetMouseButtonDown(0) && !barracksSelected && !unitselected)
         {
             currentposition = gridPosition(Input.mousePosition, true);
@@ -135,12 +139,14 @@ public class MapManager : MonoBehaviour
 
             }
         }
+        //to build a unit
         if(clicked)
         {
             int[] costs = new int[2];
             unitScript spawnedUnit = selectedbuildables[CurrentButtonPressed].GetComponent<unitScript>();
             costs[0] = spawnedUnit.foodCost;
             costs[1] = spawnedUnit.SUPCost;
+            //we build the unit directly on top of the barracks and update the player's resources
             if (costs[0] <= food[activeplayer-1] && costs[1] <= SUP[activeplayer - 1])
             {
                 GameObject.Instantiate(selectedbuildables[CurrentButtonPressed], map.GetCellCenterWorld(currentposition), Quaternion.identity);
@@ -157,6 +163,7 @@ public class MapManager : MonoBehaviour
                 resourceshow(foodSUP);
                 map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
                 clicked = false;
+                unitNameInputField.Show(spawnedUnit);
             }
             else
             {

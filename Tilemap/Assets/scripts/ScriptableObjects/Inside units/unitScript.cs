@@ -54,7 +54,7 @@ public class unitScript : MonoBehaviour
 
     [SerializeField]
     public GameObject attack;
-
+    public TextMeshProUGUI BarracksNameText;
     public GameObject statusSprite;
 
     public SpriteRenderer sprite;
@@ -71,7 +71,7 @@ public class unitScript : MonoBehaviour
     public string previousStatus = "clear";
     private int previousOwner;
     private AudioSource[] audios;
-    public void Awake()
+    public void customAwake()
     {
         healthbar.GetComponent<healthBar>().SetMaxHealth();
         healthbar.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = HP.ToString();
@@ -94,6 +94,7 @@ public class unitScript : MonoBehaviour
         if (GameObject.FindGameObjectWithTag("MapManager") != null)
             manager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         audios = GetComponentsInChildren<AudioSource>();
+        BarracksNameText.text = barracksname;
     }
     public void statusChange(string newstatus)
     {
