@@ -90,6 +90,7 @@ public class MapManager : MonoBehaviour
             foreach (var unit in allunits)
             {
                 unitScript instanceofunit = unit.GetComponent<unitScript>();
+                instanceofunit.customAwake();
                 if (instanceofunit.iscommander)
                 {
                     commanders[instanceofunit.owner] = instanceofunit;
