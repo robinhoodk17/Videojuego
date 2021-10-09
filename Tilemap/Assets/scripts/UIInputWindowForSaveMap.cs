@@ -11,11 +11,11 @@ public class UIInputWindowForSaveMap : MonoBehaviour
     private TMP_InputField inputField;
     public GameObject savemanager;
     private saveManager saveManager;
-    private LoadLevel levelLoader;
+    private NetworkManager levelLoader;
     public string scenename;
     private void Awake()
     {
-        levelLoader = GameObject.FindGameObjectWithTag("GameController").GetComponent<LoadLevel>();
+        levelLoader = GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkManager>();
         saveManager = savemanager.GetComponent<saveManager>();
         Hide();
     }
@@ -45,7 +45,7 @@ public class UIInputWindowForSaveMap : MonoBehaviour
     public void changetoplayscene()
     {
         PlayerPrefs.SetString("mapname", inputField.text);
-        levelLoader.LoadScene(scenename);
+        levelLoader.ChangeScene(scenename);
     }
 
 }

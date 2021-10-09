@@ -1,0 +1,95 @@
+{
+  "version": "3.0.0",
+  "aspectRatio": "1.7777777777777777",
+  "fps": 12,
+  "defaultBoardTiming": 2000,
+  "boards": [
+    {
+      "uid": "8LGOB",
+      "url": "board-1-8LGOB.png",
+      "newShot": false,
+      "lastEdited": 1633191995256,
+      "layers": {
+        "reference": {
+          "url": "board-1-8LGOB-reference.png",
+          "opacity": 1
+        }
+      },
+      "number": 1,
+      "shot": "1A",
+      "time": 0,
+      "lineMileage": 11701.024537289471,
+      "duration": "1000",
+      "notes": "La piramide puede tener los mismos colores que Quetzalcoatl (verde y rojo)",
+      "link": "board-1-8LGOB.psd"
+    },
+    {
+      "uid": "X1SJM",
+      "url": "board-2-X1SJM.png",
+      "newShot": false,
+      "lastEdited": 1633270038098,
+      "layers": {
+        "reference": {
+          "url": "board-2-X1SJM-reference.png",
+          "opacity": 1
+        }
+      },
+      "number": 2,
+      "shot": "2A",
+      "time": 1000,
+      "link": "board-2-X1SJM.psd",
+      "duration": "1000"
+    },
+    {
+      "uid": "ZXGIK",
+      "url": "board-3-ZXGIK.png",
+      "newShot": false,
+      "lastEdited": 1633270424815,
+      "layers": {
+        "reference": {
+          "url": "board-3-ZXGIK-reference.png",
+          "opacity": 1
+        }
+      },
+      "number": 3,
+      "shot": "3A",
+      "time": 2000,
+      "link": "board-3-ZXGIK.psd",
+      "duration": "1000"
+    },
+    {
+      "uid": "6TGNX",
+      "url": "board-4-6TGNX.png",
+      "newShot": false,
+      "lastEdited": 1633270487041,
+      "layers": {
+        "reference": {
+          "url": "board-4-6TGNX-reference.png",
+          "opacity": 1
+        }
+      },
+      "number": 4,
+      "shot": "4A",
+      "time": 3000,
+      "link": "board-4-6TGNX.psd",
+      "duration": "1000"
+    },
+    {
+      "uid": "5URYV",
+      "url": "board-5-5URYV.png",
+      "newShot": false,
+      "lastEdited": 1633270662416,
+      "layers": {
+        "reference": {
+          "url": "board-5-5URYV-reference.png",
+          "opacity": 1
+        }
+      },
+      "number": 5,
+      "shot": "5A",
+      "time": 4000,
+      "link": "board-5-5URYV.psd",
+      "duration": "1000"
+    }
+  ]
+}

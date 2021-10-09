@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/testMap/testMap.unity
     guid: f8bc20856029d9f49a0caa0a35b60040
+  - enabled: 1
+    path: Assets/Scenes/ProfileSetup/ProfileSetup.unity
+    guid: 61c668d3e8587fd42910b2fac0d8e173
+  - enabled: 1
+    path: Assets/Scenes/DeckSelector/DeckSelector.unity
+    guid: 40011d83aeb71a343ba72662668c5426
   m_configObjects: {}

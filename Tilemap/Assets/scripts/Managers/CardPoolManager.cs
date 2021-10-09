@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.IO;
 
 public class CardPoolManager : MonoBehaviour
 {
+    public GameObject SaveDeckDialogue;
     public GameObject[] humans;
     public GameObject humanarea;
     public GameObject[] avatars;
@@ -14,13 +16,26 @@ public class CardPoolManager : MonoBehaviour
     public List<string> selectedunits;
     public string deckname = "deck";
     public int decklimit = 10;
+    private string cardseparator = "#CARD-NAME#";
     // Start is called before the first frame update
     void Start()
     {
+        deckname = PlayerPrefs.GetString("CurrentDeck");
+        string saveString = File.ReadAllText(Application.persistentDataPath + "/" + deckname + ".deck");
+        string[] cardsindeck = saveString.Split(new[] { cardseparator }, System.StringSplitOptions.None);
+        //Here we check if the instantiated card is part of the deck we loaded
         foreach (GameObject i in humans)
         {
             GameObject card = Instantiate(i, new Vector3(0, 0, 0), Quaternion.identity);
             card.transform.SetParent(humanarea.transform, false);
+            foreach(string cardname in cardsindeck)
+            {
+                if (card.GetComponent<UnitCards>().unitName.text == cardname)
+                {
+                    card.GetComponent<UnitCards>().onClick();
+                }
+
+            }
         }
 
 
@@ -28,13 +43,18 @@ public class CardPoolManager : MonoBehaviour
         {
             GameObject card = Instantiate(i, new Vector3(0, 0, 0), Quaternion.identity);
             card.transform.SetParent(avatararea.transform, false);
+            //Here we check if the instantiated card is part of the deck we loaded
+            foreach (string cardname in cardsindeck)
+            {
+                if (card.GetComponent<UnitCards>().unitName.text == cardname)
+                {
+                    card.GetComponent<UnitCards>().onClick();
+                }
+
+            }
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
     //we call this method when we select a unitcard
     public void onClick(string buttonname, GameObject card)
     {
@@ -51,6 +71,7 @@ public class CardPoolManager : MonoBehaviour
             selectedunits.Add(cardname);
         }
     }
+    //this method is called when we change scenes (or whenever else the manager is destroyed)
     private void OnDestroy()
     {
         PlayerPrefs.SetInt("decklimit", decklimit);
@@ -61,5 +82,19 @@ public class CardPoolManager : MonoBehaviour
             PlayerPrefs.SetString(unitSaveString, cardname);
             i++;
         }
+    }
+
+    //Here we actually save the deck
+    public void SaveDeck(string savename)
+    {
+        string savestring = "";
+        List<string> cardnames = new List<string>();
+        foreach (string cardname in selectedunits)
+        {
+            cardnames.Add(cardname);
+        }
+        savestring = string.Join(cardseparator, cardnames);
+        File.WriteAllText(Application.persistentDataPath + "/" + savename + ".deck", savestring);
+
     }
 }

@@ -13,11 +13,6 @@ public class deckCards : MonoBehaviour
         manager = GameObject.FindGameObjectWithTag("CardPoolManager").GetComponent<CardPoolManager>();
         sprite.sprite = card.GetComponent<UnitCards>().sprite.sprite;
     }
-
-    void Update()
-    {
-        
-    }
     public void onClick()
     {
         manager.selectedunits.Remove(card.GetComponent<UnitCards>().unitName.text);

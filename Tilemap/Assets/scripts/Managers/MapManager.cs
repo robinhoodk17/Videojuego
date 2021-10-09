@@ -57,7 +57,7 @@ public class MapManager : MonoBehaviour
         food = new int[numberOfPlayers];
         SUP = new int[numberOfPlayers];
         state = BattleState.PLAYERTURN;
-        //Here we subscribe to the even onunitselected raised by the selectionmanager
+        //Here we subscribe to the event onunitselected raised by the selectionmanager
         unitNameInputField = GameObject.FindGameObjectWithTag("UnitNaming").GetComponent<UIInputWindowForBarracksName>();
         unitNameInputField.Hide();
         eventraiser = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();

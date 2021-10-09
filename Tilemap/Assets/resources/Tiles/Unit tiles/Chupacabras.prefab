@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5580728888313514753
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: maxHP
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: SUPCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: ability
+      value: drain
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: foodCost
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: movement
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: unitname
+      value: Chubacabras
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: typeOfUnit
+      value: infantry
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: attackdamage
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: movementtype
+      value: treads
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: resistances.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.data[0]
+      value: infantry
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.data[1]
+      value: warrior
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.data[2]
+      value: warrior
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: resistances.Array.data[0]
+      value: wheels
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: resistances.Array.data[1]
+      value: knight
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: vulnerabilities.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: vulnerabilities.Array.data[0]
+      value: vehicle
+      objectReference: {fileID: 0}
+    - target: {fileID: 2206158221000434103, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2206158221000434103, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713998934071829946, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611542902272961919, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_text
+      value: When this downs a unit, heal back to maxHP.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411712942504186916, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_Name
+      value: Chupacabras
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 12.741712
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.7722864
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_Size.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1b3f7ede64cfb184e90dda066f0bea58, type: 3}
+    - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
