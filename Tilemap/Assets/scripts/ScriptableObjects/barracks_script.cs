@@ -24,9 +24,4 @@ public class barracks_script : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

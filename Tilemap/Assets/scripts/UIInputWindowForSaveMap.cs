@@ -42,9 +42,11 @@ public class UIInputWindowForSaveMap : MonoBehaviour
         saveManager.QuickLoadMap(inputField.text);
         Hide();
     }
+    //Here we set the playerprefs to which map we are going to play. The deck used is saved in player prefs by the CardPoolManager on Destroy.
     public void changetoplayscene()
     {
         PlayerPrefs.SetString("mapname", inputField.text);
+        levelLoader.Connect();
         levelLoader.ChangeScene(scenename);
     }
 

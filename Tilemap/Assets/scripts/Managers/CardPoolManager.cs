@@ -20,6 +20,7 @@ public class CardPoolManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //we knoe the CurrentDeck name because it was set in PlayerPrefs in the DeckSelector scene by the deckButton prefab's deckChooser script
         deckname = PlayerPrefs.GetString("CurrentDeck");
         string saveString = File.ReadAllText(Application.persistentDataPath + "/" + deckname + ".deck");
         string[] cardsindeck = saveString.Split(new[] { cardseparator }, System.StringSplitOptions.None);
