@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.IO;
+using Photon.Pun;
 
-public class saveManager : MonoBehaviour
+public class saveManager : MonoBehaviourPun
 {
     string saveseparator = "#SAVE-VALUE#";
     string tileseparator = "#NEW-TILE#";
+    public int thisistheplayer;
     private UIInputWindowForSaveMap inputwindow;
     private UIInputWindowForSaveMap inputwindowforLoad;
     public GameObject savewindow;
@@ -144,25 +146,20 @@ public class saveManager : MonoBehaviour
             }
             else
             {
-                int x = int.Parse(contents[1]);
-                int y = int.Parse(contents[2]);
-                Vector3Int where = new Vector3Int(x, y, z);
-                GameObject unitprefab = GameObject.Instantiate(unitDictionary[contents[10]], map.GetCellCenterWorld(where), Quaternion.identity);
-                unitprefab.SetActive(true);
-                unitScript unit = unitprefab.GetComponent<unitScript>();
-                unit.owner = int.Parse(contents[3]);
-                unit.maxHP = int.Parse(contents[4]);
-                unit.HP = int.Parse(contents[5]);
-                unit.level = int.Parse(contents[6]);
-                unit.levelcounter = int.Parse(contents[7]);
-                unit.previousStatus = contents[8];
-                unit.status = contents[9];
-                unit.barracksname = contents[11];
-                unit.attackdamage = int.Parse(contents[12]);
-                unit.MP = int.Parse(contents[13]);
-                unit.ownerChange(unit.owner);
-                unit.statusChange(unit.status);
-                unit.healthChanged();
+                if(thisistheplayer == 1)
+                {
+                    int x = int.Parse(contents[1]);
+                    int y = int.Parse(contents[2]);
+                    Vector3Int where = new Vector3Int(x, y, z);
+                    GameObject unitprefab = PhotonNetwork.Instantiate(unitDictionary[contents[10]].name, map.GetCellCenterWorld(where), Quaternion.identity);
+                    unitprefab.SetActive(true);
+                    unitScript unit = unitprefab.GetComponent<unitScript>();
+                    unit.Load(int.Parse(contents[3]), int.Parse(contents[4]), int.Parse(contents[5]), int.Parse(contents[6]), int.Parse(contents[7]), contents[8], contents[9], contents[11], int.Parse(contents[12]), int.Parse(contents[13]));
+                    unit.ownerChange(unit.owner);
+                    unit.statusChange(unit.status);
+                    unit.healthChanged();
+
+                }
             }
         }
     }

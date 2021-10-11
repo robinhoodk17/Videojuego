@@ -14,6 +14,8 @@ TagManager:
   - CardPoolManager
   - damagePreview
   - UnitNaming
+  - endTurnButton
+  - Grid
   layers:
   - Default
   - TransparentFX

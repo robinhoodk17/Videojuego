@@ -3483,7 +3483,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &844835499
 GameObject:
@@ -4120,7 +4120,7 @@ RectTransform:
   - {fileID: 270244880}
   - {fileID: 1574115035}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4428,10 +4428,9 @@ GameObject:
   - component: {fileID: 1109851705}
   - component: {fileID: 1109851704}
   - component: {fileID: 1109851703}
-  - component: {fileID: 1109851702}
   m_Layer: 5
-  m_Name: endTurn
-  m_TagString: Untagged
+  m_Name: endTurnButton
+  m_TagString: endTurnButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4456,19 +4455,6 @@ RectTransform:
   m_AnchoredPosition: {x: -74, y: 70}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1109851702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1109851700}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc099ba081d31d94299c796566102bd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnTurnEnd: {fileID: 11400000, guid: 4c3bf28c710659648a267f9da3da338f, type: 2}
 --- !u!114 &1109851703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4513,9 +4499,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1109851702}
-        m_TargetAssemblyTypeName: endTurn, Assembly-CSharp
-        m_MethodName: Buttonclicked
+      - m_Target: {fileID: 1760734695}
+        m_TargetAssemblyTypeName: MapManager, Assembly-CSharp
+        m_MethodName: OnTurnEnd
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4688,7 +4674,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1160036065
 GameObject:
@@ -5106,7 +5092,7 @@ GameObject:
   - component: {fileID: 1226015547}
   m_Layer: 0
   m_Name: Grid
-  m_TagString: Untagged
+  m_TagString: Grid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6176,7 +6162,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1574115034
 GameObject:
@@ -6590,51 +6576,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!1 &1594232353
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1594232355}
-  - component: {fileID: 1594232354}
-  m_Layer: 0
-  m_Name: GridCombat
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1594232354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1594232353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8c5dac2eaf39a1498b5487a7b8568ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  map: {fileID: 216623308}
-  conditions: {fileID: 589999151}
---- !u!4 &1594232355
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1594232353}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.866138, y: 7.9408784, z: -19731.012}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1626489160
 GameObject:
   m_ObjectHideFlags: 0
@@ -7092,8 +7033,10 @@ MonoBehaviour:
   - {fileID: 157119475}
   - {fileID: 1626489160}
   unitNameInputField: {fileID: 0}
+  OnTurnEndEvent: {fileID: 11400000, guid: 4c3bf28c710659648a267f9da3da338f, type: 2}
   savemanager: {fileID: 1466828368}
   CurrentButtonPressed: 0
+  thisistheplayer: 0
 --- !u!4 &1760734696
 Transform:
   m_ObjectHideFlags: 0
@@ -7117,25 +7060,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1760734694}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28eb834bcfcf1a84792b0faf85fe66c5, type: 3}
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: 4c3bf28c710659648a267f9da3da338f, type: 2}
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1760734695}
-        m_TargetAssemblyTypeName: MapManager, Assembly-CSharp
-        m_MethodName: OnTurnEnd
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1827919367
 GameObject:
   m_ObjectHideFlags: 0
@@ -7713,6 +7650,7 @@ MonoBehaviour:
   units: {fileID: 1585076782}
   timeBetweenClicks: 0.5
   HoverTime: 0.5
+  thisistheplayer: 0
   playernumber: 2
   movementUI:
   - {fileID: 11400000, guid: 466805f28d1f8f342932a5643aed1232, type: 2}

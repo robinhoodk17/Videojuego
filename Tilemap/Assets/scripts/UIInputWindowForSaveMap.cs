@@ -47,7 +47,6 @@ public class UIInputWindowForSaveMap : MonoBehaviour
     {
         PlayerPrefs.SetString("mapname", inputField.text);
         levelLoader.Connect();
-        levelLoader.ChangeScene(scenename);
     }
 
 }

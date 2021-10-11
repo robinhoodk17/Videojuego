@@ -1,7 +1,8 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
-public class unitScript : MonoBehaviour
+using Photon.Pun;
+public class unitScript : MonoBehaviourPun
 {
     //To access this unit position, you have to do it from the Mapmanager
     public string barracksname;
@@ -71,6 +72,8 @@ public class unitScript : MonoBehaviour
     public string previousStatus = "clear";
     private int previousOwner;
     private AudioSource[] audios;
+
+    [PunRPC]
     public void customAwake()
     {
         healthbar.GetComponent<healthBar>().SetMaxHealth();
@@ -96,7 +99,32 @@ public class unitScript : MonoBehaviour
         audios = GetComponentsInChildren<AudioSource>();
         BarracksNameText.text = barracksname;
     }
+
+    //we call this method only when we are loading the unit from a saved game
+    public void Load(int o, int m, int h, int l, int lc, string ps, string s, string bs, int ad, int mp)
+    {
+        photonView.RPC("load", RpcTarget.All, o, m, h, l, lc, ps, s, bs, ad, mp);
+    }
+    [PunRPC]
+    public void load(int o, int m, int h, int l, int lc, string ps, string s, string bs, int ad, int mp)
+    {
+        owner = o;
+        maxHP = m;
+        HP = h;
+        level = l;
+        levelcounter = lc;
+        previousStatus = ps;
+        status = s;
+        barracksname = bs;
+        attackdamage = ad;
+        MP = mp;
+    }
     public void statusChange(string newstatus)
+    {
+        photonView.RPC("statusChangeNetwork", RpcTarget.All, newstatus);
+    }
+    [PunRPC]
+    public void statusChangeNetwork(string newstatus)
     {
         if (previousStatus == "stunned" || previousStatus == "recovered")
         {
@@ -109,6 +137,7 @@ public class unitScript : MonoBehaviour
         }
         previousStatus = status;
         status = newstatus;
+
     }
     public void trackactiveplayer(int player)
     {
@@ -155,6 +184,12 @@ public class unitScript : MonoBehaviour
 
     public void healthChanged()
     {
+        photonView.RPC("healthChangedNetwork", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void healthChangedNetwork()
+    {
         healthbar.SetActive(true);
         if (HP <= 0)
         {
@@ -165,12 +200,19 @@ public class unitScript : MonoBehaviour
         attack.GetComponent<TextMeshProUGUI>().text = ((int)(attackdamage * HP / maxHP)).ToString();
         healthbar.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = HP.ToString();
     }
-    public void ownerChange(int newowner)
+    public void ownerChange(int newOwner)
+    {
+        photonView.RPC("ownerChangeNetwork", RpcTarget.All, newOwner);
+    }
+    [PunRPC]
+    public void ownerChangeNetwork(int newOwner)
     {
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(false);
-        owner = newowner;
+        owner = newOwner;
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
+
     }
+
     /// <summary>
     /// ///////////////////////////////////////////
     /// </summary>
