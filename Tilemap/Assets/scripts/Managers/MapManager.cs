@@ -59,7 +59,7 @@ public class MapManager : MonoBehaviourPun
     }
     void Update()
     {
-        if(turnnumber == 0)
+        if (turnnumber == 0)
         {
             turnnumber = 1;
             InitializeGame(mapname);
@@ -67,7 +67,7 @@ public class MapManager : MonoBehaviourPun
         // to deselect the barracks once it was selected
         if (((Input.GetMouseButtonDown(0) && barracksSelected && !EventSystem.current.IsPointerOverGameObject()) || Input.GetMouseButtonDown(1)) && thisistheplayer == activeplayer)
         {
-            if(barracksSelected)
+            if (barracksSelected)
             {
                 map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
             }
@@ -77,7 +77,7 @@ public class MapManager : MonoBehaviourPun
         if (Input.GetMouseButtonDown(0) && !barracksSelected && !unitselected && thisistheplayer == activeplayer)
         {
             currentposition = gridPosition(Input.mousePosition, true);
-            if(getunit(currentposition) ==null)
+            if (getunit(currentposition) == null)
             {
                 if (map.HasTile(currentposition))
                 {
@@ -97,14 +97,14 @@ public class MapManager : MonoBehaviourPun
             }
         }
         //to build a unit
-        if(clicked)
+        if (clicked)
         {
             int[] costs = new int[2];
             unitScript spawnedUnit = selectedbuildables[CurrentButtonPressed].GetComponent<unitScript>();
             costs[0] = spawnedUnit.foodCost;
             costs[1] = spawnedUnit.SUPCost;
             //we build the unit directly on top of the barracks and update the player's resources
-            if (costs[0] <= food[activeplayer-1] && costs[1] <= SUP[activeplayer - 1])
+            if (costs[0] <= food[activeplayer - 1] && costs[1] <= SUP[activeplayer - 1])
             {
                 PhotonNetwork.Instantiate(selectedbuildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
                 spawnedUnit = getunit(currentposition);
@@ -129,7 +129,7 @@ public class MapManager : MonoBehaviourPun
         }
     }
 
-    public Vector3Int gridPosition (Vector2 mouseposition)
+    public Vector3Int gridPosition(Vector2 mouseposition)
     {
         Vector3Int gridposition = map.WorldToCell(mouseposition);
         return gridposition;
@@ -140,47 +140,57 @@ public class MapManager : MonoBehaviourPun
         yield return new WaitForSeconds(waitingtime);
         playerstartpanel.SetActive(false);
     }
+
     public void OnTurnEnd()
     {
         if(activeplayer == thisistheplayer)
         {
-            OnTurnEndEvent.Raise();
-            state = BattleState.ENDTURN;
-            GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
+            photonView.RPC("OnTurnEndNetwork", RpcTarget.All);
+        }
 
-            foreach (GameObject unit in allunits)
+    }
+
+    [PunRPC]
+    public void OnTurnEndNetwork()
+    {
+        OnTurnEndEvent.Raise();
+        state = BattleState.ENDTURN;
+        GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
+
+        foreach (GameObject unit in allunits)
+        {
+            unitScript instanceofunit = unit.GetComponent<unitScript>();
+            if (instanceofunit.owner == activeplayer)
             {
-                unitScript instanceofunit = unit.GetComponent<unitScript>();
-                if (instanceofunit.owner == activeplayer)
-                {
-                    instanceofunit.turnEnd();
-                }
+                instanceofunit.turnEnd();
             }
-            resourcePanels[activeplayer - 1].SetActive(false);
-            if (activeplayer < numberOfPlayers)
-            { activeplayer++; }
-            else
-            { activeplayer = 1; turnnumber++; }
-            state = BattleState.START;
+        }
+        if (activeplayer < numberOfPlayers)
+        { activeplayer++; }
+        else
+        { activeplayer = 1; turnnumber++; }
+        state = BattleState.START;
             //making the turn start message pop up
             //panel turns off the panel after f seconds
-            activeplayertext.text = "Player " + activeplayer.ToString();
-            StartCoroutine(panel(.7f));
+        activeplayertext.text = "Player " + activeplayer.ToString();
+        StartCoroutine(panel(.7f));
 
-            int[] foodSUP = CalculateIncome();
-            food[activeplayer - 1] += foodSUP[0];
-            SUP[activeplayer - 1] += foodSUP[1];
-            foodSUP[0] = food[activeplayer - 1];
-            foodSUP[1] = SUP[activeplayer - 1];
+        int[] foodSUP = CalculateIncome();
+        food[activeplayer - 1] += foodSUP[0];
+        SUP[activeplayer - 1] += foodSUP[1];
+        foodSUP[0] = food[activeplayer - 1];
+        foodSUP[1] = SUP[activeplayer - 1];
+        if(activeplayer == thisistheplayer)
+        {
             resourceshow(foodSUP);
-            foreach (GameObject unit in allunits)
+        }
+        foreach (GameObject unit in allunits)
+        {
+            unitScript instanceofunit = unit.GetComponent<unitScript>();
+            if (instanceofunit.owner == activeplayer)
             {
-                unitScript instanceofunit = unit.GetComponent<unitScript>();
-                if (instanceofunit.owner == activeplayer)
-                {
-                    instanceofunit.trackactiveplayer(activeplayer);
-                    instanceofunit.turnStart();
-                }
+                instanceofunit.trackactiveplayer(activeplayer);
+                instanceofunit.turnStart();
             }
         }
     }
@@ -217,9 +227,8 @@ public class MapManager : MonoBehaviourPun
     }
     public void resourceshow(int[] resources)
     {
-        resourcePanels[activeplayer - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = resources[0].ToString();
-        resourcePanels[activeplayer - 1].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = resources[1].ToString();
-        resourcePanels[activeplayer - 1].SetActive(true);
+        resourcePanels[thisistheplayer - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = resources[0].ToString();
+        resourcePanels[thisistheplayer - 1].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = resources[1].ToString();
     }
     //get the gridposition given a world position (if screen = true, it calculates given a screen position instead)
     public Vector3Int gridPosition(Vector3 position, bool screen = false)
@@ -351,17 +360,23 @@ public class MapManager : MonoBehaviourPun
             }
         }
         GameObject[] owners = GameObject.FindGameObjectsWithTag("Player");
+        /* This part of code is obsolete, we no longer use assigns for tiles.
         foreach (GameObject assign in owners)
         {
             GameObject controllable = map.GetInstantiatedObject(gridPosition(assign.transform.position));
             controllable.GetComponent<controllable_script>().ownerchange(assign.GetComponent<ownerAssginScript>().owner, 1);
             Destroy(assign);
-        }
+        }*/
         int[] foodSUP = CalculateIncome();
         food[activeplayer - 1] = foodSUP[0];
         SUP[activeplayer - 1] = foodSUP[1];
+        if(thisistheplayer > 1)
+        {
+            foodSUP[0] = 0;
+            foodSUP[0] = 1;
+        }
+        resourcePanels[thisistheplayer - 1].SetActive(true);
         resourceshow(foodSUP);
-
     }
     [PunRPC]
     public void Waiting(Vector3 originalposition, Vector3 gridposition)

@@ -49,6 +49,8 @@ MonoBehaviour:
   - load
   - ownerChangeNetwork
   - statusChangeNetwork
+  - OnTurnEndNetwork
+  - ownerlossNetwork
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

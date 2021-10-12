@@ -757,6 +757,8 @@ GameObject:
   - component: {fileID: 7753008453306579222}
   - component: {fileID: 3806969026275796685}
   - component: {fileID: 7964105350546730978}
+  - component: {fileID: 2360175405340257457}
+  - component: {fileID: 6291051986196608065}
   m_Layer: 5
   m_Name: controllables
   m_TagString: Controllable
@@ -811,6 +813,45 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonsprefab: {fileID: 5015736593967587628, guid: b7758708cdb466b4190645a9fbfd3ee0, type: 3}
   Content: {fileID: 7241709395807345976}
+--- !u!114 &2360175405340257457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4879992593563287845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 0
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 0
+  ObservedComponents:
+  - {fileID: 6291051986196608065}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &6291051986196608065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4879992593563287845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &4921144567520602433
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ public class saveManager : MonoBehaviourPun
     private UIInputWindowForSaveMap inputwindowforLoad;
     public GameObject savewindow;
     public GameObject loadwindow;
+    public GameObject controllableprefab;
     /*forest: 0
     mountain: 1
     planes: 2
@@ -128,6 +129,7 @@ public class saveManager : MonoBehaviourPun
     {
         string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
+        int numberofcontrollables = 0;
         foreach(string currentTile in alltiles)
         {
             string[] contents = currentTile.Split(new[] { saveseparator }, System.StringSplitOptions.None);
@@ -141,6 +143,9 @@ public class saveManager : MonoBehaviourPun
                 if (bool.Parse(contents[5]))
                 {
                     GameObject controllable = map.GetInstantiatedObject(where);
+                    PhotonView tileID = controllable.GetComponent<PhotonView>();
+                    tileID.ViewID = 999 - numberofcontrollables;
+                    numberofcontrollables++;
                     controllable.GetComponent<controllable_script>().ownerchange(int.Parse(contents[6]), int.Parse(contents[7]));
                 }
             }
@@ -173,5 +178,31 @@ public class saveManager : MonoBehaviourPun
 
         Vector3Int gridposition = map.WorldToCell(position);
         return gridposition;
+    }
+
+    public unitScript getunit(Vector3 position, bool screen = true)
+    {
+
+        if (!screen)
+        {
+            position = Camera.main.WorldToScreenPoint(position);
+        }
+        var ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            unitScript unit = selection.GetComponent<unitScript>();
+            return unit;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
+    }
+    public unitScript getunit(Vector3Int position)
+    {
+        return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
     }
 }

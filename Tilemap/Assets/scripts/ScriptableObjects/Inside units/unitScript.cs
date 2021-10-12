@@ -184,12 +184,13 @@ public class unitScript : MonoBehaviourPun
 
     public void healthChanged()
     {
-        photonView.RPC("healthChangedNetwork", RpcTarget.All);
+        photonView.RPC("healthChangedNetwork", RpcTarget.All, HP);
     }
 
     [PunRPC]
-    public void healthChangedNetwork()
+    public void healthChangedNetwork(int hp)
     {
+        HP = hp;
         healthbar.SetActive(true);
         if (HP <= 0)
         {
@@ -202,7 +203,14 @@ public class unitScript : MonoBehaviourPun
     }
     public void ownerChange(int newOwner)
     {
-        photonView.RPC("ownerChangeNetwork", RpcTarget.All, newOwner);
+        if(PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("ownerChangeNetwork", RpcTarget.All, newOwner);
+        }
+        else
+        {
+            ownerChangeNetwork(newOwner);
+        }
     }
     [PunRPC]
     public void ownerChangeNetwork(int newOwner)
