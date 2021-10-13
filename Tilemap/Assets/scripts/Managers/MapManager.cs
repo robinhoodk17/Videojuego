@@ -145,6 +145,11 @@ public class MapManager : MonoBehaviourPun
     {
         if(activeplayer == thisistheplayer)
         {
+            if(barracksSelected)
+            {
+                map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
+                barracksSelected = false;
+            }
             photonView.RPC("OnTurnEndNetwork", RpcTarget.All);
         }
 

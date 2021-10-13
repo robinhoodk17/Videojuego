@@ -6,6 +6,9 @@ public class unitProduction : MonoBehaviour
 {
     public string ID;
     public bool Clicked = false;
+    public TextMeshProUGUI name;
+    public TextMeshProUGUI foodCost;
+    public TextMeshProUGUI SUPCost;
     private MapManager manager;
     public Image sprite;
     // This script controls the buttons in the mapmanager
