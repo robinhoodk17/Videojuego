@@ -99,6 +99,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             LoadScene();
         }
+        if(currentScene.name == "mapEditor")
+        {
+            PhotonNetwork.Disconnect();
+            PhotonNetwork.OfflineMode = true;
+        }
     }
     [PunRPC]
     public void ChangeScene(string sceneName)

@@ -91,6 +91,7 @@ public class unitScript : MonoBehaviourPun
         }
         else
             attack.transform.GetChild(1).gameObject.SetActive(true);
+            attack.transform.GetChild(1).gameObject.SetActive(true);
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
         healthChanged();
         map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
@@ -153,7 +154,7 @@ public class unitScript : MonoBehaviourPun
         {
             Destroyed();
         }
-        if(status == "captured")
+        if (status == "captured")
         {
             statusChange("downed");
             ownerChange(previousOwner);
@@ -178,8 +179,17 @@ public class unitScript : MonoBehaviourPun
 
     public void Destroyed()
     {
-        manager.destroyedunit(this);
-        Destroy(gameObject);
+        photonView.RPC("DestroyedNetwork", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void DestroyedNetwork()
+    {
+        if (photonView.IsMine)
+        {
+            manager.destroyedunit(owner);
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 
     public void healthChanged()
@@ -203,7 +213,7 @@ public class unitScript : MonoBehaviourPun
     }
     public void ownerChange(int newOwner)
     {
-        if(PhotonNetwork.IsConnected)
+        if (PhotonNetwork.IsConnected)
         {
             photonView.RPC("ownerChangeNetwork", RpcTarget.All, newOwner);
         }
@@ -287,18 +297,33 @@ public class unitScript : MonoBehaviourPun
         enemy.healthChanged();
     }
 
-    public void Downed(unitScript attacker)
+
+    public void Downed()
+    {
+        photonView.RPC("DownedNetwork", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void DownedNetwork()
     {
         status = "downed";
         sprite.color = new Color(.5f, .5f, .5f);
         animator.SetTrigger("downed");
-
-        if(attacker.ability == "drain")
-        {
-            attacker.HP = attacker.maxHP;
-        }
     }
 
+    public void downedanotherUnit()
+    {
+        photonView.RPC("DownedanotherUnitNetwork", RpcTarget.All);
+    }
+    [PunRPC]
+    public void DownedanotherUnitNetwork()
+    {
+        if(ability == "drain")
+        {
+            HP = maxHP;
+            healthChanged();
+        }
+    }
     public void recoverFromDowned()
     {
         status = "clear";
@@ -313,6 +338,7 @@ public class unitScript : MonoBehaviourPun
     public void onMove()
     {
         animator.SetTrigger("move");
+        audios = GetComponentsInChildren<AudioSource>();
         audios[0].Play();
     }
 

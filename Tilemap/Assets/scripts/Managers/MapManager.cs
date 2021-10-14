@@ -304,12 +304,20 @@ public class MapManager : MonoBehaviourPun
         }
     }
 
-    public void destroyedunit(unitScript destroyedunit)
+    public void destroyedunit(int owner)
     {
-        commanders[destroyedunit.owner].HP -= commanders[destroyedunit.owner].maxHP / 10;
-        commanders[destroyedunit.owner].healthChanged();
+        photonView.RPC("destroyedunitNetwork", RpcTarget.All, owner);
     }
 
+    [PunRPC]
+    public void destroyedunitNetwork(int owner)
+    {
+        if(photonView.IsMine)
+        {
+            commanders[owner].HP -= commanders[owner].maxHP / 10;
+            commanders[owner].healthChanged();
+        }
+    }
 
     public void selectedUnitWaits(Vector3 originalposition, Vector3 gridposition)
     {

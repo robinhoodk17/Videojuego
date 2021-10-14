@@ -1089,7 +1089,8 @@ public class SelectionManager : MonoBehaviour
 
                     if (attackerScript.HP <= 0)
                     {
-                        attackerScript.Downed(defenderScript);
+                        attackerScript.Downed();
+                        defenderScript.downedanotherUnit();
                     }
                 }
                 //no counterattack
@@ -1099,7 +1100,8 @@ public class SelectionManager : MonoBehaviour
                 }
                 if (defenderScript.HP <= 0)
                 {
-                    defenderScript.Downed(attackerScript);
+                    defenderScript.Downed();
+                    attackerScript.downedanotherUnit();
                 }
             }
         }
