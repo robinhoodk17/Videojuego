@@ -7,9 +7,9 @@ using System.IO;
 public class CardPoolManager : MonoBehaviour
 {
     public GameObject SaveDeckDialogue;
-    public GameObject[] humans;
+    private List<GameObject> humans = new List<GameObject>();
     public GameObject humanarea;
-    public GameObject[] avatars;
+    private List<GameObject> avatars = new List<GameObject>();
     public GameObject avatararea;
     public GameObject deck;
     public GameObject buttons;
@@ -20,6 +20,20 @@ public class CardPoolManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        List<GameObject> temporal = GameObject.FindGameObjectWithTag("BuildableUnits").GetComponent<BuildableUnits>().Buildables;
+        foreach(GameObject card in temporal)
+        {
+            Debug.Log(card.name);
+            unitScript unit = card.GetComponent<UnitCards>().unitprefab.GetComponent<unitScript>();
+            if(unit.typeOfUnit == "avatar")
+            {
+                avatars.Add(card);
+            }
+            else
+            {
+                humans.Add(card);
+            }
+        }
         //we knoe the CurrentDeck name because it was set in PlayerPrefs in the DeckSelector scene by the deckButton prefab's deckChooser script
         deckname = PlayerPrefs.GetString("CurrentDeck");
         string saveString = File.ReadAllText(Application.persistentDataPath + "/" + deckname + ".deck");

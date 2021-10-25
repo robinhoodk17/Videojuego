@@ -8155,7 +8155,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0.8
   m_PhysicalUnit: 3
@@ -9819,8 +9819,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d93131f3dd6d7440a0a1676b10887cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisistheplayer: 0
   savewindow: {fileID: 164034214}
   loadwindow: {fileID: 1051377830}
+  controllableprefab: {fileID: 0}
   tileBases:
   - {fileID: 11400000, guid: 1e2aecd8f6da05f4490ab1603a04446b, type: 2}
   - {fileID: 11400000, guid: 4b46c688dd407114c914e8968d3857c2, type: 2}
@@ -14034,5 +14036,13 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 7100610029538184283, guid: 3a68366a5eb7a4e4ca350f138601b7ba, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 7100610029538184283, guid: 3a68366a5eb7a4e4ca350f138601b7ba, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a68366a5eb7a4e4ca350f138601b7ba, type: 3}

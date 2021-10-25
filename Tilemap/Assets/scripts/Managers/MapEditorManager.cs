@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
+using Photon.Pun;
 
 public class MapEditorManager : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class MapEditorManager : MonoBehaviour
     bonfire: 6
      */
     public List<levelTile> tileBases;
-    public List<GameObject> Buildables;
+    private List<GameObject> Buildables = new List<GameObject>();
     //we use a dictionary to access each unit by name instead of by number
     public Dictionary<string, GameObject> selectedbuildables = new Dictionary<string, GameObject>();
 
@@ -37,8 +38,12 @@ public class MapEditorManager : MonoBehaviour
     private Camera _mainCamera;
     private float timeBetweenSteps = 0.05f;
     float lastStep;
+    private int numberofcontrollables = 0;
     private void Start()
     {
+        PhotonNetwork.OfflineMode = true;
+        Buildables.Clear();
+        Buildables = GameObject.FindGameObjectWithTag("BuildableUnits").GetComponent<BuildableUnits>().Buildables;
         _mainCamera = Camera.main;
         foreach (GameObject card in Buildables)
         {
@@ -64,9 +69,8 @@ public class MapEditorManager : MonoBehaviour
             }
             if (map.HasTile(gridPosition))
             {
-                Vector3 where = getWorldPosition((Vector3)gridPosition);
                 //the unit is built from our unit dictionary, then selected and it gets its respective owner
-                GameObject.Instantiate(selectedbuildables[unitpressed], map.GetCellCenterWorld(gridPosition), Quaternion.identity).SetActive(true);
+                PhotonNetwork.Instantiate("Units/" + selectedbuildables[unitpressed].name, map.GetCellCenterWorld(gridPosition), Quaternion.identity);
                 unitScript spawnedUnit = getunit(gridPosition);
                 if(activeplayer < 1)
                 {
@@ -94,6 +98,10 @@ public class MapEditorManager : MonoBehaviour
                     lastStep = Time.time;
                     if (tileBases[CurrentButtonPressed].controllable)
                     {
+                        GameObject controllable = map.GetInstantiatedObject(gridPosition);
+                        PhotonView tileID = controllable.GetComponent<PhotonView>();
+                        tileID.ViewID = 999 - numberofcontrollables;
+                        numberofcontrollables++;
                         map.GetInstantiatedObject(gridPosition).GetComponent<controllable_script>().ownerchange(activeplayer, 1);
                     }
                 }

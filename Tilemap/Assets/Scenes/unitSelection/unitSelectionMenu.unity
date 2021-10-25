@@ -812,7 +812,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0.8
   m_PhysicalUnit: 3
@@ -4969,8 +4969,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d93131f3dd6d7440a0a1676b10887cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisistheplayer: 0
   savewindow: {fileID: 410547754}
   loadwindow: {fileID: 410547754}
+  controllableprefab: {fileID: 0}
   tileBases:
   - {fileID: 11400000, guid: 1e2aecd8f6da05f4490ab1603a04446b, type: 2}
   - {fileID: 11400000, guid: 4b46c688dd407114c914e8968d3857c2, type: 2}
@@ -5663,7 +5665,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1607184416}
   m_HandleRect: {fileID: 1607184415}
   m_Direction: 0
-  m_Value: 0.0000000477126
+  m_Value: 0
   m_Size: 0.28304765
   m_NumberOfSteps: 0
   m_OnValueChanged:

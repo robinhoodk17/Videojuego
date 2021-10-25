@@ -1089,8 +1089,16 @@ public class SelectionManager : MonoBehaviour
 
                     if (attackerScript.HP <= 0)
                     {
-                        attackerScript.Downed();
-                        defenderScript.downedanotherUnit();
+                        if (defenderScript.cankill)
+                        {
+                            attackerScript.Destroyed();
+                            defenderScript.downedanotherUnit();
+                        }
+                        else
+                        {
+                            attackerScript.Downed();
+                            defenderScript.downedanotherUnit();
+                        }
                     }
                 }
                 //no counterattack
@@ -1100,8 +1108,16 @@ public class SelectionManager : MonoBehaviour
                 }
                 if (defenderScript.HP <= 0)
                 {
-                    defenderScript.Downed();
-                    attackerScript.downedanotherUnit();
+                    if (attackerScript.cankill)
+                    {
+                        defenderScript.Destroyed();
+                        attackerScript.downedanotherUnit();
+                    }
+                    else
+                    {
+                        defenderScript.Downed();
+                        attackerScript.downedanotherUnit();
+                    }
                 }
             }
         }
@@ -1226,6 +1242,8 @@ public class SelectionManager : MonoBehaviour
             damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + attackingunit.level / 10) * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
             damage -= tiledefense;
 
+            if (damage < 0)
+                damage = 0;
             return damage;
         }
 

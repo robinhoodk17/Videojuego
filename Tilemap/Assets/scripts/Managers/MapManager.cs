@@ -28,8 +28,7 @@ public class MapManager : MonoBehaviourPun
     public string deckname = "deck";
     [SerializeField]
     public Tilemap map, conditions, units;
-    [SerializeField]
-    public List<GameObject> Buildables;
+    private List<GameObject> Buildables = new List<GameObject>();
     public Dictionary<string, GameObject> selectedbuildables = new Dictionary<string, GameObject>();
     public bool clicked;
     public int numberOfPlayers;
@@ -55,6 +54,13 @@ public class MapManager : MonoBehaviourPun
     public int thisistheplayer = 1;
     void Start()
     {
+        List<GameObject> temporal = GameObject.FindGameObjectWithTag("BuildableUnits").GetComponent<BuildableUnits>().Buildables;
+        Buildables.Clear();
+        foreach(GameObject card in temporal)
+        {
+            GameObject unitprefab = card.GetComponent<UnitCards>().unitprefab;
+            Buildables.Add(unitprefab);
+        }
         customStart();
     }
     void Update()
@@ -106,7 +112,7 @@ public class MapManager : MonoBehaviourPun
             //we build the unit directly on top of the barracks and update the player's resources
             if (costs[0] <= food[activeplayer - 1] && costs[1] <= SUP[activeplayer - 1])
             {
-                PhotonNetwork.Instantiate(selectedbuildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
+                PhotonNetwork.Instantiate("Units/" + selectedbuildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
                 spawnedUnit = getunit(currentposition);
                 spawnedUnit.exhausted = true;
                 spawnedUnit.ownerChange(activeplayer);
@@ -360,7 +366,10 @@ public class MapManager : MonoBehaviourPun
     {
 
         save.thisistheplayer = thisistheplayer;
-        save.QuickLoadMap(mapname);
+        if(thisistheplayer == 1)
+        {
+            save.LoadNetworkCaller(mapname);
+        }
         //Here we select the commanders for the game
         GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
         foreach (var unit in allunits)
@@ -372,8 +381,8 @@ public class MapManager : MonoBehaviourPun
                 commanders[instanceofunit.owner] = instanceofunit;
             }
         }
-        GameObject[] owners = GameObject.FindGameObjectsWithTag("Player");
         /* This part of code is obsolete, we no longer use assigns for tiles.
+        GameObject[] owners = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject assign in owners)
         {
             GameObject controllable = map.GetInstantiatedObject(gridPosition(assign.transform.position));

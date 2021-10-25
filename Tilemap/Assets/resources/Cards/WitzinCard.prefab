@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 5156773953087146874, guid: 290ca78a7cd50154a9b59015341b6057, type: 3}
       propertyPath: unitprefab
       value: 
-      objectReference: {fileID: 2847393696090974129}
+      objectReference: {fileID: 4685858972544547839, guid: 18c32c4f48694b341b36828c866e9704, type: 3}
     - target: {fileID: 8372893320230190142, guid: 290ca78a7cd50154a9b59015341b6057, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -97,7 +97,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8372893320230190143, guid: 290ca78a7cd50154a9b59015341b6057, type: 3}
       propertyPath: m_Name
-      value: Witzin
+      value: WitzinCard
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 290ca78a7cd50154a9b59015341b6057, type: 3}
@@ -175,8 +175,3 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18c32c4f48694b341b36828c866e9704, type: 3}
---- !u!1 &2847393696090974129 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4685858972544547839, guid: 18c32c4f48694b341b36828c866e9704, type: 3}
-  m_PrefabInstance: {fileID: 7387164057774087246}
-  m_PrefabAsset: {fileID: 0}

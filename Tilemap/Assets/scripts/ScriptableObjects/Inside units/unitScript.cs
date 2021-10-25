@@ -21,6 +21,7 @@ public class unitScript : MonoBehaviourPun
     public int attackrange = 1;
     public int attackdamage = 100;
     private string attacktype = "melee";
+    public bool cankill = true;
     public string _attacktype
     {
         get

@@ -55,6 +55,7 @@ MonoBehaviour:
   - DownedNetwork
   - destroyedunitNetwork
   - DestroyedNetwork
+  - LoadNetwork
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

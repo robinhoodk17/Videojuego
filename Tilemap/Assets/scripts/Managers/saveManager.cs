@@ -25,13 +25,23 @@ public class saveManager : MonoBehaviourPun
      */
     public List<levelTile> tileBases;
     private Dictionary<string, levelTile> tileDictionary = new Dictionary<string, levelTile>();
-    public List<GameObject> Buildables;
+    private List<GameObject> Buildables = new List<GameObject>();
     private Dictionary<string, GameObject> unitDictionary = new Dictionary<string, GameObject>();
     [SerializeField]
     public Tilemap map, conditions;
     private int z;
     private void Start()
     {
+        List<GameObject> temporal = GameObject.FindGameObjectWithTag("BuildableUnits").GetComponent<BuildableUnits>().Buildables;
+        Buildables.Clear();
+        foreach (GameObject card in temporal)
+        {
+            GameObject unitprefab = card.GetComponent<UnitCards>().unitprefab;
+            Buildables.Add(unitprefab);
+            Debug.Log(unitprefab.name);
+        }
+
+
         inputwindow = savewindow.GetComponent<UIInputWindowForSaveMap>();
         inputwindowforLoad = loadwindow.GetComponent<UIInputWindowForSaveMap>();
         foreach (levelTile tile in tileBases)
@@ -127,10 +137,12 @@ public class saveManager : MonoBehaviourPun
 
     public void QuickLoadMap(string savename = "save")
     {
+        PhotonNetwork.OfflineMode = true;
+        thisistheplayer = 1;
         string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
         int numberofcontrollables = 0;
-        foreach(string currentTile in alltiles)
+        foreach (string currentTile in alltiles)
         {
             string[] contents = currentTile.Split(new[] { saveseparator }, System.StringSplitOptions.None);
             if (contents[0] == "tile")
@@ -151,12 +163,63 @@ public class saveManager : MonoBehaviourPun
             }
             else
             {
-                if(thisistheplayer == 1)
+                if (thisistheplayer == 1)
                 {
                     int x = int.Parse(contents[1]);
                     int y = int.Parse(contents[2]);
                     Vector3Int where = new Vector3Int(x, y, z);
-                    GameObject unitprefab = PhotonNetwork.Instantiate(unitDictionary[contents[10]].name, map.GetCellCenterWorld(where), Quaternion.identity);
+                    GameObject unitprefab = PhotonNetwork.Instantiate("Units/" + unitDictionary[contents[10]].name, map.GetCellCenterWorld(where), Quaternion.identity);
+                    unitprefab.SetActive(true);
+                    unitScript unit = unitprefab.GetComponent<unitScript>();
+                    unit.Load(int.Parse(contents[3]), int.Parse(contents[4]), int.Parse(contents[5]), int.Parse(contents[6]), int.Parse(contents[7]), contents[8], contents[9], contents[11], int.Parse(contents[12]), int.Parse(contents[13]));
+                    unit.ownerChange(unit.owner);
+                    unit.statusChange(unit.status);
+                    unit.healthChanged();
+
+                }
+            }
+        }
+
+    }
+
+    public void LoadNetworkCaller(string savename = "save")
+    {
+        string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
+        string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
+        photonView.RPC("LoadNetwork", RpcTarget.All, alltiles);
+    }
+
+    [PunRPC]
+    public void LoadNetwork(string[] alltiles)
+    {
+        int numberofcontrollables = 0;
+        foreach (string currentTile in alltiles)
+        {
+            string[] contents = currentTile.Split(new[] { saveseparator }, System.StringSplitOptions.None);
+            if (contents[0] == "tile")
+            {
+                int x = int.Parse(contents[1]);
+                int y = int.Parse(contents[2]);
+                Vector3Int where = new Vector3Int(x, y, z);
+                string tile = contents[4];
+                map.SetTile(where, tileDictionary[tile]);
+                if (bool.Parse(contents[5]))
+                {
+                    GameObject controllable = map.GetInstantiatedObject(where);
+                    PhotonView tileID = controllable.GetComponent<PhotonView>();
+                    tileID.ViewID = 999 - numberofcontrollables;
+                    numberofcontrollables++;
+                    controllable.GetComponent<controllable_script>().ownerchange(int.Parse(contents[6]), int.Parse(contents[7]));
+                }
+            }
+            else
+            {
+                if (thisistheplayer == 1)
+                {
+                    int x = int.Parse(contents[1]);
+                    int y = int.Parse(contents[2]);
+                    Vector3Int where = new Vector3Int(x, y, z);
+                    GameObject unitprefab = PhotonNetwork.Instantiate("Units/" + unitDictionary[contents[10]].name, map.GetCellCenterWorld(where), Quaternion.identity);
                     unitprefab.SetActive(true);
                     unitScript unit = unitprefab.GetComponent<unitScript>();
                     unit.Load(int.Parse(contents[3]), int.Parse(contents[4]), int.Parse(contents[5]), int.Parse(contents[6]), int.Parse(contents[7]), contents[8], contents[9], contents[11], int.Parse(contents[12]), int.Parse(contents[13]));
