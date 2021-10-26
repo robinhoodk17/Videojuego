@@ -377,14 +377,16 @@ public class unitScript : MonoBehaviourPun
             case "none":
                 return false;
             case "heal":
-                if ((getunit(position + Vector3Int.left)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.left)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.left)?.owner == owner)
+                if ((getunit(position + Vector3Int.left)?.foodCost <= manager.food[owner - 1]) && getunit(position + Vector3Int.left)?.owner == owner)
                     return true;
-                if ((getunit(position + Vector3Int.right)?.status == "downed" || getunit(position + Vector3Int.right)?.status == "captured") && getunit(position + Vector3Int.right)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.right)?.owner == owner)
+                if ((getunit(position + Vector3Int.right)?.foodCost <= manager.food[owner - 1]) && getunit(position + Vector3Int.right)?.owner == owner)
                     return true;
-                if ((getunit(position + Vector3Int.up)?.status == "downed" || getunit(position + Vector3Int.up)?.status == "captured") && getunit(position + Vector3Int.up)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.up)?.owner == owner)
+                if ((getunit(position + Vector3Int.up)?.foodCost <= manager.food[owner - 1]) && getunit(position + Vector3Int.up)?.owner == owner)
                     return true;
-                if ((getunit(position + Vector3Int.down)?.status == "downed" || getunit(position + Vector3Int.left)?.status == "captured") && getunit(position + Vector3Int.down)?.typeOfUnit == "infantry" && getunit(position + Vector3Int.down)?.owner == owner)
+                if ((getunit(position + Vector3Int.down)?.foodCost <= manager.food[owner - 1]) && getunit(position + Vector3Int.down)?.owner == owner)
+                {
                     return true;
+                }
                 return false;
         }
         return false;

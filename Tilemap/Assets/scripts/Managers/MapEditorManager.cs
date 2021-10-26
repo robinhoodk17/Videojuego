@@ -70,6 +70,12 @@ public class MapEditorManager : MonoBehaviour
             if (map.HasTile(gridPosition))
             {
                 //the unit is built from our unit dictionary, then selected and it gets its respective owner
+
+                if (getunitprefab(gridPosition) != null)
+                {
+                    Destroy(getunitprefab(gridPosition));
+                }
+
                 PhotonNetwork.Instantiate("Units/" + selectedbuildables[unitpressed].name, map.GetCellCenterWorld(gridPosition), Quaternion.identity);
                 unitScript spawnedUnit = getunit(gridPosition);
                 if(activeplayer < 1)

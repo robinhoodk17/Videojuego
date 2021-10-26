@@ -218,17 +218,24 @@ public class SelectionManager : MonoBehaviour
                     }
                 }
                 //this if uses the ability of the unit
-                if(units.HasTile(clickedtile) && getunit(clickedtile) != null && usingability)
+                if(Input.GetMouseButtonUp(0) && units.HasTile(clickedtile) && getunit(clickedtile) != null && usingability)
                 {
                     if(unit.ability == "heal")
                     {
+
                         unitScript resUnit = getunit(clickedtile);
-                        resUnit.HP = 10;
+                        mapmanager.food[resUnit.owner - 1] -= resUnit.foodCost;
+                        int food = mapmanager.food[resUnit.owner -1];
+                        int SUP = mapmanager.SUP[resUnit.owner - 1];
+                        int[] temp = new int[2];
+                        temp[0] = food;
+                        temp[1] = SUP;
+                        mapmanager.resourceshow(temp);
+                        resUnit.HP = resUnit.maxHP;
                         resUnit.exhausted = false;
                         resUnit.status = "clear";
                         resUnit.healthChanged();
                         resUnit.sprite.color = new Color(1, 1, 1);
-                        resUnit.recoverFromDowned();
                         onWait();
                     }
                 }
@@ -274,7 +281,6 @@ public class SelectionManager : MonoBehaviour
     {
         turnpanel(unitprefab, false, turnoff);
         usingability = true;
-
         lastClick = Time.time;
     }
     public void OnTurnEnd()

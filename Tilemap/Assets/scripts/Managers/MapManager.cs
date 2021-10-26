@@ -38,8 +38,9 @@ public class MapManager : MonoBehaviourPun
     public TextMeshProUGUI activeplayertext;
     public GameObject[] resourcePanels;
     public UIInputWindowForBarracksName unitNameInputField;
-    int[] food;
-    int[] SUP;
+    public int[] food;
+    public int[] SUP;
+    public int[] foodSUP = new int[2];
     int turnnumber = 0;
     bool barracksSelected = false;
     Vector3Int currentposition;
@@ -120,7 +121,6 @@ public class MapManager : MonoBehaviourPun
                 food[activeplayer - 1] -= costs[0];
                 SUP[activeplayer - 1] -= costs[1];
                 clicked = false;
-                int[] foodSUP = new int[2];
                 foodSUP[0] = food[activeplayer - 1];
                 foodSUP[1] = SUP[activeplayer - 1];
                 resourceshow(foodSUP);
