@@ -23,9 +23,8 @@ public class CardPoolManager : MonoBehaviour
         List<GameObject> temporal = GameObject.FindGameObjectWithTag("BuildableUnits").GetComponent<BuildableUnits>().Buildables;
         foreach(GameObject card in temporal)
         {
-            Debug.Log(card.name);
             unitScript unit = card.GetComponent<UnitCards>().unitprefab.GetComponent<unitScript>();
-            if(unit.typeOfUnit == "avatar")
+            if(unit.typeOfUnit == TypeOfUnit.avatar)
             {
                 avatars.Add(card);
             }
@@ -41,6 +40,7 @@ public class CardPoolManager : MonoBehaviour
         //Here we check if the instantiated card is part of the deck we loaded
         foreach (GameObject i in humans)
         {
+
             GameObject card = Instantiate(i, new Vector3(0, 0, 0), Quaternion.identity);
             card.transform.SetParent(humanarea.transform, false);
             foreach(string cardname in cardsindeck)

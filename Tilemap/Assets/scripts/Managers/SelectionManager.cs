@@ -213,17 +213,22 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (getunit(clickedtile).owner != activeplayer)
                     {
-                        onWait();
-                        Oncombatstart?.Invoke(newposition, clickedtile);
+                        if(getunit(clickedtile).HP > 0 || unit.ability == "capture")
+                        {
+                            onWait();
+                            Oncombatstart?.Invoke(newposition, clickedtile);
+                        }
                     }
                 }
                 //this if uses the ability of the unit
                 if(Input.GetMouseButtonUp(0) && units.HasTile(clickedtile) && getunit(clickedtile) != null && usingability)
                 {
-                    if(unit.ability == "heal")
+                    #region heal
+                    if (unit.ability == "heal")
                     {
-
+                        //the healed unit
                         unitScript resUnit = getunit(clickedtile);
+                        //this next region manages the cost for healing the unit
                         mapmanager.food[resUnit.owner - 1] -= resUnit.foodCost;
                         int food = mapmanager.food[resUnit.owner -1];
                         int SUP = mapmanager.SUP[resUnit.owner - 1];
@@ -231,16 +236,40 @@ public class SelectionManager : MonoBehaviour
                         temp[0] = food;
                         temp[1] = SUP;
                         mapmanager.resourceshow(temp);
+                        //here we heal the unit and un-exhaust it
                         resUnit.HP = resUnit.maxHP;
                         resUnit.exhausted = false;
                         resUnit.status = "clear";
                         resUnit.healthChanged();
                         resUnit.sprite.color = new Color(1, 1, 1);
+                        //the unit that healed the other unit waits
                         onWait();
                     }
+                    #endregion
+                    #region teach
+                    if (unit.ability == "teach")
+                    {
+                        //the unit that gains a level
+                        unitScript resUnit = getunit(clickedtile);
+                        //this next region manages the cost for healing the unit
+                        mapmanager.food[resUnit.owner - 1] -= resUnit.foodCost/10;
+                        int food = mapmanager.food[resUnit.owner - 1];
+                        int SUP = mapmanager.SUP[resUnit.owner - 1];
+                        int[] temp = new int[2];
+                        temp[0] = food;
+                        temp[1] = SUP;
+                        mapmanager.resourceshow(temp);
+                        //here we the unit gains a level
+                        resUnit.xp+= (resUnit.xptoincreaselv-1);
+                        resUnit.gainXP();
+                        //the unit that taught the other unit waits
+                        onWait();
+
+                    }
+                    #endregion teach
                 }
                 //this if attacks a controllable tile
-                if(units.HasTile(clickedtile) && getunit(clickedtile) == null && !usingability)
+                if (units.HasTile(clickedtile) && getunit(clickedtile) == null && !usingability)
                 {
                     if(map.GetTile<levelTile>(clickedtile).controllable)
                     {
@@ -338,7 +367,7 @@ public class SelectionManager : MonoBehaviour
     void findneighbors(unitScript unit, Vector3Int position)
     {
         List<Vector3Int> adjacencyList = new List<Vector3Int>();
-        string movementType = unit.movementtype;
+        string movementType = unit.movementtype.ToString();
         Vector3Int left = new Vector3Int(-1, 0, 0);
         Vector3Int right = new Vector3Int(1, 0, 0);
         Vector3Int up = new Vector3Int(0, 1, 0);
@@ -668,7 +697,7 @@ public class SelectionManager : MonoBehaviour
                 findneighbors(unit, localPlace);
                 visitlist[localPlace] = false;
                 parentlist[localPlace] = Vector3Int.zero;
-                distancelist[localPlace] = Tile.movecost(unit.movementtype);
+                distancelist[localPlace] = Tile.movecost(unit.movementtype.ToString());
             }
         }
 
@@ -696,7 +725,7 @@ public class SelectionManager : MonoBehaviour
                     }
                     if (visitlist[vector])
                     {
-                        int tempdistance = map.GetTile<levelTile>(vector).movecost(unit.movementtype);
+                        int tempdistance = map.GetTile<levelTile>(vector).movecost(unit.movementtype.ToString());
                         if (tempdistance + distancelist[pos] < distancelist[vector])
                         {
                             parentlist[vector] = pos;
@@ -737,7 +766,7 @@ public class SelectionManager : MonoBehaviour
                     }
                     if (visitlist[vector])
                     {
-                        int tempdistance = map.GetTile<levelTile>(vector).movecost(unit.movementtype);
+                        int tempdistance = map.GetTile<levelTile>(vector).movecost(unit.movementtype.ToString());
                         if (tempdistance + distancelist[pos] < distancelist[vector])
                         {
                             parentlist[vector] = pos;
@@ -946,7 +975,7 @@ public class SelectionManager : MonoBehaviour
         //to select if the unit is on top of a neutral property and can capture it
         if(map.GetTile<levelTile>(gridposition).controllable)
         {
-            if (unitscript.typeOfUnit == "infantry" && map.GetInstantiatedObject(gridposition).GetComponent<controllable_script>().owner == 0)
+            if (unitscript.typeOfUnit == TypeOfUnit.infantry && map.GetInstantiatedObject(gridposition).GetComponent<controllable_script>().owner == 0)
             {
                 unitcancapture = true;
             }
@@ -1039,6 +1068,10 @@ public class SelectionManager : MonoBehaviour
                 int damage = attackerScript.attackdamage;
                 damage = (int)(damage * attackerScript.HP / attackerScript.maxHP * (1 + attackerScript.level / 10) * (1 + GlobalModifiers(attackerScript.owner)[0]));
                 controllable_script attackedTile = map.GetInstantiatedObject(defendposition).GetComponent<controllable_script>();
+                if(attackerScript.ability == "siege")
+                {
+                    damage = 500;
+                }
                 attackedTile.HP -= damage;
                 if (attackedTile.HP <= 0)
                 {
@@ -1095,15 +1128,26 @@ public class SelectionManager : MonoBehaviour
 
                     if (attackerScript.HP <= 0)
                     {
-                        if (defenderScript.cankill)
+                        if (defenderScript.cankill && defenderScript.ability != "capture")
                         {
                             attackerScript.Destroyed();
                             defenderScript.downedanotherUnit();
                         }
                         else
                         {
-                            attackerScript.Downed();
-                            defenderScript.downedanotherUnit();
+                            if (!defenderScript.cankill)
+                            {
+                                attackerScript.Downed();
+                                defenderScript.downedanotherUnit();
+                            }
+                            if(defenderScript.ability == "capture")
+                            {
+                                attackerScript.HP = 10;
+                                attackerScript.ownerChange(defenderScript.owner);
+                                attackerScript.healthChanged();
+                                attackerScript.exhausted = true;
+                                attackerScript.sprite.color = new Color(.6f, .6f, .6f);
+                            }
                         }
                     }
                 }
@@ -1114,15 +1158,26 @@ public class SelectionManager : MonoBehaviour
                 }
                 if (defenderScript.HP <= 0)
                 {
-                    if (attackerScript.cankill)
+                    if (attackerScript.cankill && attackerScript.ability != "capture")
                     {
                         defenderScript.Destroyed();
                         attackerScript.downedanotherUnit();
                     }
                     else
                     {
-                        defenderScript.Downed();
-                        attackerScript.downedanotherUnit();
+                        if (!attackerScript.cankill)
+                        {
+                            defenderScript.Downed();
+                            attackerScript.downedanotherUnit();
+                        }
+                        if (attackerScript.ability == "capture")
+                        {
+                            defenderScript.HP = 10;
+                            defenderScript.ownerChange(attackerScript.owner);
+                            defenderScript.healthChanged();
+                            defenderScript.exhausted = true;
+                            defenderScript.sprite.color = new Color(.6f, .6f, .6f);
+                        }
                     }
                 }
             }
@@ -1208,9 +1263,9 @@ public class SelectionManager : MonoBehaviour
             if (attackingunit.status == "stunned" || attackingunit.status == "recovered")
                 return 0;
 
-            string[] attackingadv = null;
-            string[] defendingresist = null;
-            string[] defendingvul = null;
+            List<string> attackingadv = new List<string>();
+            List<string> defendingresist = new List<string>();
+            List<string> defendingvul = new List<string>();
             int damage = attackingunit.attackdamage;
             if (attackingunit.advantages != null)
             {
@@ -1226,21 +1281,21 @@ public class SelectionManager : MonoBehaviour
             }
             foreach (string adv in attackingadv)
             {
-                if (adv == defendingunit.typeOfUnit || adv == defendingunit.movementtype || adv == defendingunit._attacktype || adv == (defendingunit._attacktype + defendingunit.movementtype) || adv == (defendingunit._attacktype + defendingunit.typeOfUnit) || adv == (defendingunit.movementtype + defendingunit.typeOfUnit))
+                if (adv == defendingunit.typeOfUnit.ToString()|| adv == defendingunit.movementtype.ToString() || adv == defendingunit._attacktype || adv == (defendingunit._attacktype + defendingunit.movementtype) || adv == (defendingunit._attacktype + defendingunit.typeOfUnit.ToString()) || adv == (defendingunit.movementtype.ToString() + defendingunit.typeOfUnit.ToString()))
                 {
                     damage *= 2;
                 }
             }
             foreach (string vul in defendingvul)
             {
-                if (vul == attackingunit.typeOfUnit || vul == attackingunit.movementtype || vul == attackingunit._attacktype || vul == (attackingunit._attacktype + attackingunit.movementtype) || vul == (attackingunit._attacktype + attackingunit.typeOfUnit) || vul == (attackingunit.movementtype + attackingunit.typeOfUnit))
+                if (vul == attackingunit.typeOfUnit.ToString() || vul == attackingunit.movementtype.ToString() || vul == attackingunit._attacktype || vul == (attackingunit._attacktype + attackingunit.movementtype) || vul == (attackingunit._attacktype + attackingunit.typeOfUnit.ToString()) || vul == (attackingunit.movementtype.ToString() + attackingunit.typeOfUnit.ToString()))
                 {
                     damage *= 2;
                 }
             }
             foreach (string res in defendingresist)
             {
-                if (attackingunit.typeOfUnit == res || attackingunit.movementtype == res || attackingunit._attacktype == res || res == (attackingunit._attacktype + attackingunit.movementtype) || res == (attackingunit._attacktype + attackingunit.typeOfUnit) || res == (attackingunit.movementtype + attackingunit.typeOfUnit))
+                if (attackingunit.typeOfUnit.ToString() == res || attackingunit.movementtype.ToString() == res || attackingunit._attacktype == res || res == (attackingunit._attacktype + attackingunit.movementtype) || res == (attackingunit._attacktype + attackingunit.typeOfUnit.ToString()) || res == (attackingunit.movementtype.ToString() + attackingunit.typeOfUnit.ToString()))
                     damage /= 2;
             }
             levelTile Tile = map.GetTile<levelTile>(defendposition);
@@ -1258,7 +1313,7 @@ public class SelectionManager : MonoBehaviour
             string newStatus = null;
             foreach (string stun in attackingunit.stuns)
             {
-                if (stun == defendingunit.typeOfUnit || stun == defendingunit.movementtype || stun == defendingunit._attacktype)
+                if (stun == defendingunit.typeOfUnit.ToString() || stun == defendingunit.movementtype.ToString() || stun == defendingunit._attacktype)
                 {
                     newStatus = "stunned";
                 }

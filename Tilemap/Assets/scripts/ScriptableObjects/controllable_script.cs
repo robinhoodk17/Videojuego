@@ -34,6 +34,7 @@ public class controllable_script : MonoBehaviourPun
 
     public void ownerlossNetwork()
     {
+        HP = 0;
         flagCanvas.transform.GetChild(owner).gameObject.SetActive(false);
         owner = 0;
         healthbar.SetActive(false);

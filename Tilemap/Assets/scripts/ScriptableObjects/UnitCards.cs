@@ -33,13 +33,14 @@ public class UnitCards : MonoBehaviour
             mapeditormanager = GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>();
         }
         unit = unitprefab.GetComponent<unitScript>();
+        Debug.Log("unit name: " + unit + " and text: " + text.text);
         text.text = gameObject.transform.GetChild(8).gameObject.transform.GetChild(4).gameObject.transform.GetChild(0).gameObject.transform.GetChild(10).GetComponent<TextMeshProUGUI>().text;
 
         sprite.sprite = gameObject.transform.GetChild(8).gameObject.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite;
         Cost.text = unit.foodCost.ToString();
         SUPCost.text = unit.SUPCost.ToString();
         unitName.text = unit.unitname;
-        type.text = unit.typeOfUnit;
+        type.text = unit.typeOfUnit.ToString();
 
         //attack range and damage
         if (unit.attackrange == 1)
@@ -56,7 +57,7 @@ public class UnitCards : MonoBehaviour
 
         //movement type and distance
         movement.GetComponentInChildren<TextMeshProUGUI>().text = unit.movement.ToString();
-        switch (unit.movementtype)
+        switch (unit.movementtype.ToString())
         {
             case ("foot"):
                 movement.transform.GetChild(0).gameObject.SetActive(true);

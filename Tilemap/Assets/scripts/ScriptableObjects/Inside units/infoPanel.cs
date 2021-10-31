@@ -32,8 +32,8 @@ public class infoPanel : MonoBehaviour
         SUPCost.text = unit.SUPCost.ToString();
         BarracksName.text = unit.barracksname;
         Level.text = "LV" + unit.level.ToString();
-        XP.text = "XP" + unit.levelcounter.ToString() + "/5";
-        type.text = unit.typeOfUnit;
+        XP.text = "XP" + unit.xp.ToString() + "/5";
+        type.text = unit.typeOfUnit.ToString();
 
         #region advantages etc
         string temporal = "";
@@ -89,7 +89,7 @@ public class infoPanel : MonoBehaviour
 
         //movement type and distance
         movement.GetComponentInChildren<TextMeshProUGUI>().text = unit.movement.ToString();
-        switch (unit.movementtype)
+        switch (unit.movementtype.ToString())
         {
             case ("foot"):
                 movement.transform.GetChild(0).gameObject.SetActive(true);

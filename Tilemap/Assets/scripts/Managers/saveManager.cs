@@ -38,7 +38,6 @@ public class saveManager : MonoBehaviourPun
         {
             GameObject unitprefab = card.GetComponent<UnitCards>().unitprefab;
             Buildables.Add(unitprefab);
-            Debug.Log(unitprefab.name);
         }
 
 
@@ -119,7 +118,7 @@ public class saveManager : MonoBehaviourPun
                         "" + instanceofunit.maxHP,
                         "" + instanceofunit.HP,
                         "" + instanceofunit.level,
-                        "" + instanceofunit.levelcounter,
+                        "" + instanceofunit.xp,
                         "" + instanceofunit.previousStatus,
                         "" + instanceofunit.status,
                         "" + instanceofunit.unitname,

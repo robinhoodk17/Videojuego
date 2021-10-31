@@ -2,8 +2,27 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
 using Photon.Pun;
+using System.Collections.Generic;
+public enum TypeOfUnit
+{
+    infantry,
+    vehicle,
+    avatar
+
+}
+
+public enum Movement
+{
+    wheels,
+    foot,
+    treads,
+    flying
+
+}
 public class unitScript : MonoBehaviourPun
 {
+    public TypeOfUnit typeOfUnit;
+    public Movement movementtype;
     //To access this unit position, you have to do it from the Mapmanager
     public string barracksname;
     public string unitname;
@@ -16,8 +35,6 @@ public class unitScript : MonoBehaviourPun
     public int MP;
     public int maxHP;
     public int movement;
-    public string typeOfUnit;
-    public string movementtype;
     public int attackrange = 1;
     public int attackdamage = 100;
     private string attacktype = "melee";
@@ -32,15 +49,15 @@ public class unitScript : MonoBehaviourPun
     public bool attackandmove = true;
     public bool firstStrike = false;
     public string ability = "none";
-    public string[] advantages = null;
-    public string[] resistances = null;
-    public string[] vulnerabilities = null;
-    public string[] stuns = null;
+    public List<string> advantages;
+    public List<string> resistances;
+    public List<string> vulnerabilities;
+    public List<string> stuns;
 
     //do not touch
     public bool exhausted = false;
     public int level = 0;
-    public int levelcounter = 0;
+    public int xp = 0;
     public int maxlevel = 10;
     public float movespeedanimation = 25;
 
@@ -73,7 +90,7 @@ public class unitScript : MonoBehaviourPun
     public string previousStatus = "clear";
     private int previousOwner;
     private AudioSource[] audios;
-
+    public int xptoincreaselv = 5;
     [PunRPC]
     public void customAwake()
     {
@@ -85,14 +102,11 @@ public class unitScript : MonoBehaviourPun
         if (attackrange > 1)
         {
             attacktype = "ranged";
-        }
-        if (attacktype == "melee")
-        {
-            attack.transform.GetChild(0).gameObject.SetActive(true);
+            attack.transform.GetChild(1).gameObject.SetActive(true);
         }
         else
-            attack.transform.GetChild(1).gameObject.SetActive(true);
-            attack.transform.GetChild(1).gameObject.SetActive(true);
+            attack.transform.GetChild(0).gameObject.SetActive(true);
+
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
         healthChanged();
         map = GameObject.FindGameObjectWithTag("builtMap").GetComponent<Tilemap>();
@@ -114,7 +128,7 @@ public class unitScript : MonoBehaviourPun
         maxHP = m;
         HP = h;
         level = l;
-        levelcounter = lc;
+        xp = lc;
         previousStatus = ps;
         status = s;
         barracksname = bs;
@@ -153,7 +167,12 @@ public class unitScript : MonoBehaviourPun
         }
         if (status == "downed" && activeplayer == owner)
         {
-            Destroyed();
+            HP = 10;
+            recoverFromDowned();
+            exhausted = true;
+            sprite.color = new Color(.6f, .6f, .6f);
+            healthChanged();
+
         }
         if (status == "captured")
         {
@@ -241,18 +260,44 @@ public class unitScript : MonoBehaviourPun
     {
         if (status != "downed")
         {
-            levelcounter++;
+            xp++;
         }
 
-        if (levelcounter >= 5)
+        if (xp >= xptoincreaselv)
             if (level < maxlevel)
             {
                 level++;
-                levelcounter = 0;
-                attackdamage += (initialattack / 10);
-                maxHP += (initialmaxHP / 10);
-                HP += (initialmaxHP / 10);
-                healthChanged();
+                xp -= xptoincreaselv;
+                switch(name)
+                {
+                    case "warrior":
+                        attackdamage += (initialattack / 5);
+                        maxHP += (initialmaxHP / 5);
+                        HP += (initialmaxHP / 5);
+                        healthChanged();
+                        break;
+                    default:
+                        attackdamage += (initialattack / 10);
+                        maxHP += (initialmaxHP / 10);
+                        HP += (initialmaxHP / 10);
+                        healthChanged();
+                        break;
+                }
+            }
+        //this else is reached when they get to max level
+            else
+            {
+                switch (name)
+                {
+                    case "warrior":
+                        resistances.Add("melee");
+                        break;
+                    case "sniper":
+                        attackrange = 4;
+                        break;
+                    default:
+                        break;
+                }
             }
     }
 
@@ -266,6 +311,7 @@ public class unitScript : MonoBehaviourPun
         }
     }
 
+    // this is called only for the attacker
     public void onCombat(unitScript defender)
     {
         animator.SetTrigger("shoot");
@@ -376,6 +422,7 @@ public class unitScript : MonoBehaviourPun
         {
             case "none":
                 return false;
+            #region heal
             case "heal":
                 if ((getunit(position + Vector3Int.left)?.foodCost <= manager.food[owner - 1]) && getunit(position + Vector3Int.left)?.owner == owner)
                     return true;
@@ -384,10 +431,21 @@ public class unitScript : MonoBehaviourPun
                 if ((getunit(position + Vector3Int.up)?.foodCost <= manager.food[owner - 1]) && getunit(position + Vector3Int.up)?.owner == owner)
                     return true;
                 if ((getunit(position + Vector3Int.down)?.foodCost <= manager.food[owner - 1]) && getunit(position + Vector3Int.down)?.owner == owner)
-                {
                     return true;
-                }
                 return false;
+            #endregion
+            #region teach
+            case "teach":
+                if ((getunit(position + Vector3Int.left)?.foodCost <= manager.food[owner - 1]/10) && getunit(position + Vector3Int.left)?.owner == owner && getunit(position + Vector3Int.left)?.level < maxlevel)
+                    return true;
+                if ((getunit(position + Vector3Int.right)?.foodCost <= manager.food[owner - 1]/10) && getunit(position + Vector3Int.right)?.owner == owner && getunit(position + Vector3Int.right)?.level < maxlevel)
+                    return true;
+                if ((getunit(position + Vector3Int.up)?.foodCost <= manager.food[owner - 1]/10) && getunit(position + Vector3Int.up)?.owner == owner && getunit(position + Vector3Int.up)?.level < maxlevel)
+                    return true;
+                if ((getunit(position + Vector3Int.down)?.foodCost <= manager.food[owner - 1]/10) && getunit(position + Vector3Int.down)?.owner == owner && getunit(position + Vector3Int.down)?.level < maxlevel)
+                    return true;
+                return false;
+                #endregion
         }
         return false;
     }
