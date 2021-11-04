@@ -49,6 +49,11 @@ public class unitScript : MonoBehaviourPun
     public bool attackandmove = true;
     public bool firstStrike = false;
     public string ability = "none";
+    public bool hasaura = false;
+    public bool haswaitingaura = false;
+    public int aurarange = 1;
+    public bool istransport = false;
+    public int unitCarryingCapacity = 1;
     public List<string> advantages;
     public List<string> resistances;
     public List<string> vulnerabilities;
@@ -87,13 +92,20 @@ public class unitScript : MonoBehaviourPun
     private MapManager manager;
 
     private unitScript enemy;
+    public List<unitScript> transportedUnits { get; private set; }
     public string previousStatus = "clear";
     private int previousOwner;
     private AudioSource[] audios;
     public int xptoincreaselv = 5;
-    [PunRPC]
     public void customAwake()
     {
+        photonView.RPC("customAwakeNewtork", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void customAwakeNewtork()
+    {
+        transportedUnits = new List<unitScript>();
         healthbar.GetComponent<healthBar>().SetMaxHealth();
         healthbar.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = HP.ToString();
         initialattack = attackdamage;
@@ -114,8 +126,8 @@ public class unitScript : MonoBehaviourPun
             manager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         audios = GetComponentsInChildren<AudioSource>();
         BarracksNameText.text = barracksname;
-    }
 
+    }
     //we call this method only when we are loading the unit from a saved game
     public void Load(int o, int m, int h, int l, int lc, string ps, string s, string bs, int ad, int mp)
     {
@@ -445,11 +457,37 @@ public class unitScript : MonoBehaviourPun
                 if ((getunit(position + Vector3Int.down)?.foodCost <= manager.food[owner - 1]/10) && getunit(position + Vector3Int.down)?.owner == owner && getunit(position + Vector3Int.down)?.level < maxlevel)
                     return true;
                 return false;
-                #endregion
+            #endregion
+            #region unload
+            case "unload":
+                if (transportedUnits.Count > 0)
+                    return true;
+                else
+                    return false;
+            #endregion
         }
         return false;
     }
 
+    public bool auracheck(unitScript unit)
+    {
+        switch(ability)
+        {
+            case "pistolero":
+                if (unit.owner != owner)
+                    return true;
+                else
+                    return false;
+            case "deathdealer":
+                if (unit.owner != owner && unit.status == "downed")
+                    return true;
+                else
+                    return
+                        false;
+            default:
+                return false;
+        }
+    }
     public void unitCaptured(int newowner)
     {
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(false);

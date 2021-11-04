@@ -330,6 +330,18 @@ public class MapManager : MonoBehaviourPun
         photonView.RPC("Waiting", RpcTarget.Others, originalposition, gridposition);
     }
 
+
+    [PunRPC]
+    public void Waiting(Vector3 originalposition, Vector3 gridposition)
+    {
+        Vector3Int original = new Vector3Int((int)originalposition.x, (int)originalposition.y, (int)originalposition.z);
+        unitScript selectedunit = getunit(original);
+        selectedunit.gameObject.transform.position = map.GetCellCenterWorld(Vector3Int.FloorToInt(gridposition));
+        selectedunit.exhausted = true;
+        selectedunit.sprite.color = new Color(.6f, .6f, .6f);
+    }
+
+
     [PunRPC]
     private void customStart()
     {
@@ -399,14 +411,5 @@ public class MapManager : MonoBehaviourPun
         }
         resourcePanels[thisistheplayer - 1].SetActive(true);
         resourceshow(foodSUP);
-    }
-    [PunRPC]
-    public void Waiting(Vector3 originalposition, Vector3 gridposition)
-    {
-        Vector3Int original = new Vector3Int((int)originalposition.x, (int)originalposition.y, (int)originalposition.z);
-        unitScript selectedunit = getunit(original);
-        selectedunit.gameObject.transform.position = map.GetCellCenterWorld(Vector3Int.FloorToInt(gridposition));
-        selectedunit.exhausted = true;
-        selectedunit.sprite.color = new Color(.6f, .6f, .6f);
     }
 }

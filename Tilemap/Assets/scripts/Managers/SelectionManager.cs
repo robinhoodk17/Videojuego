@@ -21,6 +21,7 @@ public class SelectionManager : MonoBehaviour
     public int thisistheplayer;
     int activeplayer = 1;
     public int playernumber = 2;
+    private bool load = false;
     //this list holds the tile types with the UI elements of the units for easy accesibility
     /*
     movement: 0
@@ -68,7 +69,7 @@ public class SelectionManager : MonoBehaviour
 
     private void Start()
     {
-        Oncombatstart += Oncombat;
+        //Oncombatstart += Oncombat;
         _mainCamera = Camera.main;
         combatManager = new gridCombat();
         combatManager.Start();
@@ -108,15 +109,23 @@ public class SelectionManager : MonoBehaviour
         //this is the click to move the unit
         if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject() && unitstate != "moving" && thisistheplayer == activeplayer)
         {
-            if (unit.owner != activeplayer ) { Reset(); }
+            if (unit.owner != activeplayer) { Reset(); }
             else
             {
-                if(unitstate == "idle")
+                if (unitstate == "idle")
                 {
                     //these ifs set the unit in motion (works even if you press its own position) only if you are clicking on a movement UI tile while the
                     //unit is not exhausted an while the target position has no units.
                     newposition = gridPosition(Input.mousePosition, true);
-                    if (((getunit(newposition) != null && newposition != currentposition) && unitstate != "thinking") || (unit.exhausted || !units.HasTile(newposition) || unit.status == "stunned" || unit.status == "recovered"))
+                    if(getunit(newposition) != null)
+                    {
+                        if(getunit(newposition).istransport && getunit(newposition).transportedUnits.Count < getunit(newposition).unitCarryingCapacity && unit.typeOfUnit == TypeOfUnit.infantry)
+                        {
+                            load = true;
+                            Debug.Log("we loaded");
+                        }
+                    }
+                    if ((getunit(newposition) != null && newposition != currentposition && unitstate != "thinking" && !load) || (unit.exhausted || !units.HasTile(newposition) || unit.status == "stunned" || unit.status == "recovered"))
                     {
                         Reset();
                     }
@@ -124,7 +133,7 @@ public class SelectionManager : MonoBehaviour
                     {
                         if (!unit.exhausted && units.HasTile(newposition))
                         {
-                            if(units.GetTile<levelTile>(newposition) == movementUI[0] || units.GetTile<levelTile>(newposition) == movementUI[2])
+                            if (units.GetTile<levelTile>(newposition) == movementUI[0] || units.GetTile<levelTile>(newposition) == movementUI[2])
                             {
                                 getPath(currentposition, newposition, unit);
                                 unitstate = "moving";
@@ -277,6 +286,7 @@ public class SelectionManager : MonoBehaviour
                         if(attackedproperty.GetComponent<controllable_script>().owner != activeplayer)
                         {
                             Oncombatstart?.Invoke(newposition, clickedtile);
+                            onWait();
                         }
                     }
                 }
@@ -289,9 +299,46 @@ public class SelectionManager : MonoBehaviour
     {
         mapmanager.selectedUnitWaits(currentposition, newposition);
         currentposition = newposition;
+        List<unitScript> auras = new List<unitScript>();
+        if(unit.hasaura)
+        {
+            List<Vector3Int> affectedUnits = findifwithinrange(unit, newposition);
+            foreach(Vector3Int affectedUnit in affectedUnits)
+            {
+                switch(unit.ability)
+                {
+                    case "deathdealer":
+                        getunit(affectedUnit).Destroyed();
+                        break;
+                }
+            }
+        }
+        foreach(GameObject unitloop in GameObject.FindGameObjectsWithTag("Unit"))
+        {
+            if(unitloop.GetComponent<unitScript>().haswaitingaura)
+            {
+                auras.Add(unitloop.GetComponent<unitScript>());
+            }
+        }
+        foreach(unitScript unitwithaura in auras)
+        {
+            if (findifwithinrange(newposition, unitwithaura, gridPosition(unitwithaura)))
+            {
+                switch(unitwithaura.ability)
+                {
+                    case "pistolero":
+                        Oncombatstart?.Invoke(gridPosition(unitwithaura), newposition);
+                        break;
+                }
+            }
+        }
         unit.exhausted = true;
         unit.sprite.color = new Color(.6f, .6f, .6f);
         Reset();
+    }
+    public void onLoad()
+    {
+
     }
     public void onCap()
     {
@@ -326,6 +373,7 @@ public class SelectionManager : MonoBehaviour
     }
     private void Reset()
     {
+        load = false;
         neighborlist.Clear();
         selectableTiles.Clear();
         path.Clear();
@@ -680,6 +728,11 @@ public class SelectionManager : MonoBehaviour
         Vector3Int gridposition = map.WorldToCell(position);
         return gridposition;
     }
+
+    public Vector3Int gridPosition(unitScript unit)
+    {
+        return map.WorldToCell(unit.gameObject.transform.position);
+    }
     public Vector3 worldPosition(Vector3Int gridposition)
     {
         return map.CellToWorld(gridposition);
@@ -714,6 +767,11 @@ public class SelectionManager : MonoBehaviour
                 Vector3Int pos = process.Dequeue();
                 if (getunit(pos) == null)
                 { selectableTiles.Add(pos); }
+                else
+                {
+                    if((getunit(pos).istransport || (unit.ability == "attach" && getunit(pos).typeOfUnit == TypeOfUnit.vehicle)) && getunit(pos).transportedUnits.Count < getunit(pos).unitCarryingCapacity && unit.typeOfUnit == TypeOfUnit.infantry)
+                    { selectableTiles.Add(pos); }
+                }
                 foreach (Vector3Int vector in neighborlist[pos])
                 {
                     if (!visitlist[vector] && (distancelist[pos] + distancelist[vector]) <= unit.movement)
@@ -956,6 +1014,162 @@ public class SelectionManager : MonoBehaviour
         }
     }
 
+    //this method returns true if the targetposition is within the unit's aura range (position is the unit with aura's position)
+    public bool findifwithinrange(Vector3Int targetposition, unitScript unit, Vector3Int position)
+    {
+
+        //creating the neighborlist for attackable tiles
+        neighborlist.Clear();
+        selectableTiles.Clear();
+        path.Clear();
+        distancelist.Clear();
+        units.ClearAllTiles();
+
+
+        //getting the attackable tiles
+        foreach (var posi in map.cellBounds.allPositionsWithin)
+        {
+            Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
+            if (map.HasTile(localPlace))
+            {
+                List<Vector3Int> adjacencyList = new List<Vector3Int>();
+                Vector3Int left = new Vector3Int(-1, 0, 0);
+                Vector3Int right = new Vector3Int(1, 0, 0);
+                Vector3Int up = new Vector3Int(0, 1, 0);
+                Vector3Int down = new Vector3Int(0, -1, 0);
+                if (map.HasTile(localPlace + left))
+                {
+                    adjacencyList.Add(localPlace + left);
+                }
+                if (map.HasTile(localPlace + up))
+                {
+                    adjacencyList.Add(localPlace + up);
+                }
+                if (map.HasTile(localPlace + down))
+                {
+                    adjacencyList.Add(localPlace + down);
+                }
+                if (map.HasTile(localPlace + right))
+                {
+                    adjacencyList.Add(localPlace + right);
+                }
+                neighborlist[localPlace] = adjacencyList;
+                visitlist[localPlace] = false;
+                parentlist[localPlace] = Vector3Int.zero;
+                distancelist[localPlace] = 1;
+            }
+        }
+
+        //here we initialize the queue where we will get all the selectable tiles
+        Queue<Vector3Int> process = new Queue<Vector3Int>();
+        visitlist[position] = true;
+        distancelist[position] = 0;
+        process.Enqueue(position);
+        while (process.Count > 0)
+        {
+            Vector3Int pos = process.Dequeue();
+            selectableTiles.Add(pos);
+            foreach (Vector3Int vector in neighborlist[pos])
+            {
+                if (!visitlist[vector] && (distancelist[pos] + distancelist[vector]) <= unit.aurarange)
+                {
+                    parentlist[vector] = pos;
+                    visitlist[vector] = true;
+                    distancelist[vector] = distancelist[pos] + distancelist[vector];
+                    process.Enqueue(vector);
+                }
+            }
+        }
+
+        foreach (Vector3Int selectable in selectableTiles)
+        {
+            if(selectable == targetposition)
+            {
+                if (unit.auracheck(getunit(targetposition)))
+                    return true;
+            }
+        }
+        return false;
+    }
+    public List<Vector3Int> findifwithinrange(unitScript unit, Vector3Int position)
+    {
+        List<Vector3Int> affectedUnits = new List<Vector3Int> ();
+        //creating the neighborlist for attackable tiles
+        neighborlist.Clear();
+        selectableTiles.Clear();
+        path.Clear();
+        distancelist.Clear();
+        units.ClearAllTiles();
+
+
+        //getting the attackable tiles
+        foreach (var posi in map.cellBounds.allPositionsWithin)
+        {
+            Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
+            if (map.HasTile(localPlace))
+            {
+                List<Vector3Int> adjacencyList = new List<Vector3Int>();
+                Vector3Int left = new Vector3Int(-1, 0, 0);
+                Vector3Int right = new Vector3Int(1, 0, 0);
+                Vector3Int up = new Vector3Int(0, 1, 0);
+                Vector3Int down = new Vector3Int(0, -1, 0);
+                if (map.HasTile(localPlace + left))
+                {
+                    adjacencyList.Add(localPlace + left);
+                }
+                if (map.HasTile(localPlace + up))
+                {
+                    adjacencyList.Add(localPlace + up);
+                }
+                if (map.HasTile(localPlace + down))
+                {
+                    adjacencyList.Add(localPlace + down);
+                }
+                if (map.HasTile(localPlace + right))
+                {
+                    adjacencyList.Add(localPlace + right);
+                }
+                neighborlist[localPlace] = adjacencyList;
+                visitlist[localPlace] = false;
+                parentlist[localPlace] = Vector3Int.zero;
+                distancelist[localPlace] = 1;
+            }
+        }
+
+        //here we initialize the queue where we will get all the selectable tiles
+        Queue<Vector3Int> process = new Queue<Vector3Int>();
+        visitlist[position] = true;
+        distancelist[position] = 0;
+        process.Enqueue(position);
+        while (process.Count > 0)
+        {
+            Vector3Int pos = process.Dequeue();
+            selectableTiles.Add(pos);
+            foreach (Vector3Int vector in neighborlist[pos])
+            {
+                if (!visitlist[vector] && (distancelist[pos] + distancelist[vector]) <= unit.aurarange)
+                {
+                    parentlist[vector] = pos;
+                    visitlist[vector] = true;
+                    distancelist[vector] = distancelist[pos] + distancelist[vector];
+                    process.Enqueue(vector);
+                }
+            }
+        }
+
+        foreach (Vector3Int selectable in selectableTiles)
+        {
+            if(getunit(selectable) != null)
+            {
+                if (unit.auracheck(getunit(selectable)))
+                {
+                    affectedUnits.Add(selectable);
+                }
+            }
+        }
+        return affectedUnits;
+    }
+
     public int showUnitPanel(GameObject unitobject, unitScript unitscript, Vector3Int gridposition)
     {
         /*
@@ -967,6 +1181,7 @@ public class SelectionManager : MonoBehaviour
        * 5: wao
        * 6: wco
        * 7: waco
+       * 8: load
        */
         bool attackablewithinrange = false;
         bool unithasability = false;
@@ -1011,7 +1226,7 @@ public class SelectionManager : MonoBehaviour
         }
 
         //here we select which panel we want to show
-        if(unitcancapture || unithasability || attackablewithinrange)
+        if(unitcancapture || unithasability || attackablewithinrange || load)
         {
             if(!unithasability && !unitcancapture) { childtoactivate = 3; }
             if(!unithasability && !attackablewithinrange) { childtoactivate = 4; }
@@ -1020,6 +1235,7 @@ public class SelectionManager : MonoBehaviour
             if (unithasability && attackablewithinrange && !unitcancapture) { childtoactivate = 7; }
             if (unithasability && !attackablewithinrange && unitcancapture) { childtoactivate = 8; }
             if (unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 9; }
+            if (load) { childtoactivate = 11; }
         }
 
         else
@@ -1036,13 +1252,13 @@ public class SelectionManager : MonoBehaviour
         unitobject.transform.GetChild(0).transform.GetChild(child).gameObject.SetActive(onoroff);
     }
 
-    public void Oncombat(Vector3Int attacker, Vector3Int defender)
+    /*public void Oncombat(Vector3Int attacker, Vector3Int defender)
     {
         currentposition = attacker; 
         unit.exhausted = true;
         unit.sprite.color = new Color(.6f, .6f, .6f);
         Reset();
-    }
+    }*/
 
     public class gridCombat : MonoBehaviour
     {

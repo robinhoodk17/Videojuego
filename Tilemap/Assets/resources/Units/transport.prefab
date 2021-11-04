@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &2980993879954416065
+--- !u!1001 &5470595602988298944
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,52 +8,60 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: HP
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: maxHP
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: SUPCost
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: cankill
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: foodCost
-      value: 400
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: movement
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: unitname
-      value: knight
+      value: transport
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: typeOfUnit
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: barracksname
-      value: Joseph Bologne
-      objectReference: {fileID: 0}
-    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: movementtype
+      propertyPath: attackrange
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: advantages.Array.size
+      propertyPath: istransport
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: resistances.Array.size
-      value: 1
+      propertyPath: attackdamage
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: advantages.Array.data[0]
-      value: infantry
+      propertyPath: barracksname
+      value: Wheely
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: resistances.Array.data[0]
-      value: infantry
+      propertyPath: movementtype
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: unitCarryingCapacity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1268036689833161598, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: sceneViewId
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2206158221000434103, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_AnchorMax.x
@@ -63,17 +71,13 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2713998934071829946, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4611542902272961919, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_text
-      value: Advantage and resist against infantry
+      value: Can transport 2 units but cannot attack.
       objectReference: {fileID: 0}
     - target: {fileID: 5411712942504186916, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Name
-      value: knight
+      value: transport
       objectReference: {fileID: 0}
     - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_RootOrder
@@ -81,11 +85,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16.267744
+      value: -118.63919
       objectReference: {fileID: 0}
     - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.7147307
+      value: 17.262543
       objectReference: {fileID: 0}
     - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -126,7 +130,7 @@ PrefabInstance:
     - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: bb1b823b7115e854e8bbc66d4ce41751, type: 3}
+      objectReference: {fileID: 21300000, guid: 6885914bc8e597440815a5cff88bbccb, type: 3}
     - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
