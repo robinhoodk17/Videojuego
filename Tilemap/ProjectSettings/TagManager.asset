@@ -17,6 +17,7 @@ TagManager:
   - endTurnButton
   - Grid
   - BuildableUnits
+  - unitTilemap
   layers:
   - Default
   - TransparentFX

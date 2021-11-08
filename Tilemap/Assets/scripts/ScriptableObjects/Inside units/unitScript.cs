@@ -97,6 +97,7 @@ public class unitScript : MonoBehaviourPun
     private int previousOwner;
     private AudioSource[] audios;
     public int xptoincreaselv = 5;
+    public GameObject unLoadButtons;
     public void customAwake()
     {
         photonView.RPC("customAwakeNewtork", RpcTarget.All);
@@ -495,5 +496,16 @@ public class unitScript : MonoBehaviourPun
         owner = newowner;
         ownerUI.transform.GetChild(owner - 1).gameObject.SetActive(true);
         status = "captured";
+    }
+
+    public void deactivateObject(bool OnorOff)
+    {
+        photonView.RPC("deactivateObjectNetwork", RpcTarget.All, OnorOff);
+    }
+
+    [PunRPC]
+    public void deactivateObjectNetwork(bool OnorOff)
+    {
+        gameObject.SetActive(OnorOff);
     }
 }

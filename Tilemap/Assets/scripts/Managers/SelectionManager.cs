@@ -32,6 +32,7 @@ public class SelectionManager : MonoBehaviour
     public GameObject damagePreview;
     private bool unitselected = false;
     private unitScript unit;
+    private unitScript transport;
     private GameObject unitprefab;
     private Vector3Int currentposition = new Vector3Int();
     private Vector3Int newposition = new Vector3Int();
@@ -66,7 +67,8 @@ public class SelectionManager : MonoBehaviour
     infoPanel unitToolTip;
     bool showingtooltip = false;
     private MapManager mapmanager;
-
+    public GameObject buttonsprefab;
+    public unitScript unloadUnit= null;
     private void Start()
     {
         //Oncombatstart += Oncombat;
@@ -119,10 +121,10 @@ public class SelectionManager : MonoBehaviour
                     newposition = gridPosition(Input.mousePosition, true);
                     if(getunit(newposition) != null)
                     {
-                        if(getunit(newposition).istransport && getunit(newposition).transportedUnits.Count < getunit(newposition).unitCarryingCapacity && unit.typeOfUnit == TypeOfUnit.infantry)
+                        if(getunit(newposition).istransport && getunit(newposition).transportedUnits.Count < getunit(newposition).unitCarryingCapacity && unit.typeOfUnit == TypeOfUnit.infantry && getunit(newposition).owner == unit.owner)
                         {
                             load = true;
-                            Debug.Log("we loaded");
+                            transport = getunit(newposition);
                         }
                     }
                     if ((getunit(newposition) != null && newposition != currentposition && unitstate != "thinking" && !load) || (unit.exhausted || !units.HasTile(newposition) || unit.status == "stunned" || unit.status == "recovered"))
@@ -230,10 +232,10 @@ public class SelectionManager : MonoBehaviour
                     }
                 }
                 //this if uses the ability of the unit
-                if(Input.GetMouseButtonUp(0) && units.HasTile(clickedtile) && getunit(clickedtile) != null && usingability)
+                if(Input.GetMouseButtonUp(0) && units.HasTile(clickedtile)  && usingability && Time.time - lastClick > timeBetweenClicks)
                 {
                     #region heal
-                    if (unit.ability == "heal")
+                    if (unit.ability == "heal" && getunit(clickedtile) != null)
                     {
                         //the healed unit
                         unitScript resUnit = getunit(clickedtile);
@@ -256,7 +258,7 @@ public class SelectionManager : MonoBehaviour
                     }
                     #endregion
                     #region teach
-                    if (unit.ability == "teach")
+                    if (unit.ability == "teach" && getunit(clickedtile) != null)
                     {
                         //the unit that gains a level
                         unitScript resUnit = getunit(clickedtile);
@@ -276,6 +278,33 @@ public class SelectionManager : MonoBehaviour
 
                     }
                     #endregion teach
+                    #region unload
+                    if (unit.ability == "unload")
+                    {
+                        //we get the unloadUnit from the script unitUnloadTransport attached to the unitUnLoadbutton
+                        unloadUnit.deactivateObject(true);
+                        //this makes the guest accounts update the position for both the transport and the unloaded unit
+                        mapmanager.selectedUnitWaits(gridPosition(unloadUnit.transform.position), clickedtile);
+                        mapmanager.selectedUnitWaits(currentposition, newposition);
+
+                        //this does the same for the host
+                        unloadUnit.gameObject.transform.position = map.GetCellCenterWorld(clickedtile);
+                        unloadUnit.exhausted = true;
+                        unloadUnit.sprite.color = new Color(.6f, .6f, .6f);
+                        currentposition = newposition;
+                        unit.exhausted = true;
+                        unit.sprite.color = new Color(.6f, .6f, .6f);
+
+                        unit.transportedUnits.Remove(unloadUnit);
+                        Debug.Log(unit.transportedUnits.Count);
+                        units.ClearAllTiles();
+                        usingability = false;
+                        if(unit.transportedUnits.Count > 0)
+                        {
+                            turnpanel(unitprefab, true, turnoff);
+                        }
+                    }
+                    #endregion unload
                 }
                 //this if attacks a controllable tile
                 if (units.HasTile(clickedtile) && getunit(clickedtile) == null && !usingability)
@@ -292,6 +321,9 @@ public class SelectionManager : MonoBehaviour
                 }
             }
         }
+
+        //to unload  a unit from a transport
+        
     }
 
     
@@ -336,28 +368,93 @@ public class SelectionManager : MonoBehaviour
         unit.sprite.color = new Color(.6f, .6f, .6f);
         Reset();
     }
-    public void onLoad()
-    {
-
-    }
     public void onCap()
     {
         map.GetInstantiatedObject(newposition).GetComponent<controllable_script>().ownerchange(activeplayer, (double)((double) unit.HP/ (double)unit.maxHP));
         unit.onCap();
         onWait();
     }
-
     public void onAttackButtonClicked()
     {
         turnpanel(unitprefab, false, turnoff);
 
         lastClick = Time.time;
     }
+
+    //this is called when a unit gets loaded into a vehicle
+    public void onLoad()
+    {
+        transport.transportedUnits.Add(unit);
+        unit.deactivateObject(false);
+        Reset();
+    }
+    //this function is called after selecting which unit you want to unload from a vehicle
+    public void unLoadClicked(GameObject buttonToDestroy)
+    {
+        Vector3Int left = new Vector3Int(-1, 0, 0);
+        Vector3Int right = new Vector3Int(1, 0, 0);
+        Vector3Int up = new Vector3Int(0, 1, 0);
+        Vector3Int down = new Vector3Int(0, -1, 0);
+        units.ClearAllTiles();
+        if (map.HasTile(newposition + left) && getunit(newposition + left) == null)
+        {
+            units.SetTile(newposition + left, movementUI[0]);
+        }
+
+        if (map.HasTile(newposition + right) && getunit(newposition + right) == null)
+        {
+            units.SetTile(newposition + right, movementUI[0]);
+        }
+
+        if (map.HasTile(newposition + up) && getunit(newposition + up) == null)
+        {
+            units.SetTile(newposition + up, movementUI[0]);
+        }
+
+        if (map.HasTile(newposition + down) && getunit(newposition + down) == null)
+        {
+            units.SetTile(newposition + down, movementUI[0]);
+        }
+
+        //turns off the unit selection panel
+        for (int i = 0; i < unit.transportedUnits.Count; i++)
+        {
+            unit.transform.GetChild(5).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i).GetComponent<unitUnloadFromTransport>().destroyThis();
+        }
+        lastClick = Time.time;
+        unit.transform.GetChild(5).gameObject.SetActive(false);
+        usingability = true;
+    }
     public void onAbilityclicked()
     {
-        turnpanel(unitprefab, false, turnoff);
-        usingability = true;
-        lastClick = Time.time;
+
+        #region unload
+        if (unit.ability == "unload")
+        {
+            Debug.Log("we clicked the ability");
+            unit.transform.GetChild(5).gameObject.SetActive(true);
+            foreach (unitScript loadedunit in unit.transportedUnits)
+            {
+                Debug.Log("there are " + unit.transportedUnits.Count + " units");
+                GameObject button = Instantiate(buttonsprefab, new Vector3(0, 0, 0), Quaternion.identity);
+                unitUnloadFromTransport buttonscript = button.GetComponent<unitUnloadFromTransport>();
+                button.transform.SetParent(unit.unLoadButtons.transform, false);
+                button.GetComponent<unitUnloadFromTransport>().unitHeld = loadedunit;
+                button.SetActive(true);
+                buttonscript.name.text = loadedunit.barracksname;
+                buttonscript.foodCost.text = "";
+                buttonscript.SUPCost.text = "";
+                button.GetComponent<unitUnloadFromTransport>().customAwake(loadedunit.gameObject);
+            }
+            turnpanel(unitprefab, false, turnoff);
+        }
+        #endregion unload
+        else
+        {
+            turnpanel(unitprefab, false, turnoff);
+            usingability = true;
+            lastClick = Time.time;
+        }
     }
     public void OnTurnEnd()
     {
@@ -373,11 +470,13 @@ public class SelectionManager : MonoBehaviour
     }
     private void Reset()
     {
+        unloadUnit = null;
         load = false;
         neighborlist.Clear();
         selectableTiles.Clear();
         path.Clear();
         distancelist.Clear();
+        transport = null;
         if (unitselected)
         {
             unitstate = "idle";
@@ -394,6 +493,14 @@ public class SelectionManager : MonoBehaviour
             //there was a weird bug happening. I hope this fixes it.
             unit.healthChanged();
             currentposition = newposition;
+            if(unit.ability == "unload")
+            {
+                for (int i = 0; i < unit.transform.GetChild(5).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.childCount; i++)
+                {
+                    unit.transform.GetChild(5).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i).GetComponent<unitUnloadFromTransport>().destroyThis();
+                }
+                unit.transform.GetChild(5).gameObject.SetActive(false);
+            }    
         }
         startedHovering = false;
         if(areWeHovering)

@@ -6414,7 +6414,7 @@ GameObject:
   - component: {fileID: 1585076781}
   m_Layer: 0
   m_Name: units
-  m_TagString: Untagged
+  m_TagString: unitTilemap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7662,6 +7662,8 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 0
+  buttonsprefab: {fileID: 6730562490382954216, guid: f8d9d71f8eb390f419dd554e10b704f0, type: 3}
+  unloadClicked: {fileID: 0}
 --- !u!4 &2113467733
 Transform:
   m_ObjectHideFlags: 0

@@ -2,20 +2,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class unitProduction : MonoBehaviour
+public class unitUnloadFromTransport : MonoBehaviour
 {
     public string ID;
     public bool Clicked = false;
     public TextMeshProUGUI name;
     public TextMeshProUGUI foodCost;
     public TextMeshProUGUI SUPCost;
-    private MapManager manager;
+    private SelectionManager manager;
     public Image sprite;
+    public unitScript unitHeld;
     // This script controls the buttons in the mapmanager
     void Awake()
     {
         Clicked = false;
-        manager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        manager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
     }
 
     public void customAwake(GameObject unit)
@@ -24,9 +25,11 @@ public class unitProduction : MonoBehaviour
     }
     public void ButtonClicked()
     {
-        Clicked = true;
-        manager.CurrentButtonPressed = ID;
-        manager.clicked = true;
+        manager.unLoadClicked(this.gameObject);
+        manager.unloadUnit = unitHeld;
     }
-
+    public void destroyThis()
+    {
+        Destroy(this.gameObject);
+    }
 }

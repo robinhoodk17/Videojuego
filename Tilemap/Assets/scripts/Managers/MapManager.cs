@@ -412,4 +412,5 @@ public class MapManager : MonoBehaviourPun
         resourcePanels[thisistheplayer - 1].SetActive(true);
         resourceshow(foodSUP);
     }
+
 }

@@ -20,6 +20,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: ability
+      value: unload
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: foodCost
       value: 500
       objectReference: {fileID: 0}
@@ -71,6 +75,34 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2418250712425307771, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2418250712425307771, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2418250712425307771, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2792719683681463106, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2792719683681463106, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2792719683681463106, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3365371153437297434, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4611542902272961919, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_text
       value: Can transport 2 units but cannot attack.
@@ -78,6 +110,18 @@ PrefabInstance:
     - target: {fileID: 5411712942504186916, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Name
       value: transport
+      objectReference: {fileID: 0}
+    - target: {fileID: 5723359564894014705, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5723359564894014705, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6085842263144804868, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_OverridePixelPerfect
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_RootOrder
@@ -134,6 +178,10 @@ PrefabInstance:
     - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7615044236583975843, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
