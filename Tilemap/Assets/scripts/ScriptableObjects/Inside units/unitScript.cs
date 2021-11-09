@@ -469,7 +469,21 @@ public class unitScript : MonoBehaviourPun
         }
         return false;
     }
-
+    public bool buildCheck()
+    {
+        if(name == "gundam")
+        {
+            foreach(GameObject unitPrefab in GameObject.FindGameObjectsWithTag("Unit"))
+            {
+                if(unitPrefab.GetComponent<unitScript>().level >= 10)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
     public bool auracheck(unitScript unit)
     {
         switch(ability)

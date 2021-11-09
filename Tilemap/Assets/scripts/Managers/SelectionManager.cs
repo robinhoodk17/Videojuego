@@ -271,7 +271,7 @@ public class SelectionManager : MonoBehaviour
                         temp[1] = SUP;
                         mapmanager.resourceshow(temp);
                         //here we the unit gains a level
-                        resUnit.xp+= (resUnit.xptoincreaselv-1);
+                        resUnit.xp += (resUnit.xptoincreaselv-1);
                         resUnit.gainXP();
                         //the unit that taught the other unit waits
                         onWait();
@@ -1384,10 +1384,26 @@ public class SelectionManager : MonoBehaviour
         }
         public void OncombatHappening(Vector3Int attackposition, Vector3Int defendposition)
         {
+            attackerScript = getunit(attackposition);
+            switch(attackerScript.ability)
+            {
+                //this is the god of small thing's ability, where all units gain 2 levels
+                case "demonstrate":
+                    foreach(GameObject unitObject in GameObject.FindGameObjectsWithTag("Unit"))
+                    {
+                        if(unitObject.GetComponent<unitScript>().owner == attackerScript.owner)
+                        {
+                            unitObject.GetComponent<unitScript>().gainXP();
+                            unitObject.GetComponent<unitScript>().gainXP();
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
             //This if happens if the unit is attacking a tile
             if (getunit(defendposition) == null)
             {
-                attackerScript = getunit(attackposition);
                 int damage = attackerScript.attackdamage;
                 damage = (int)(damage * attackerScript.HP / attackerScript.maxHP * (1 + attackerScript.level / 10) * (1 + GlobalModifiers(attackerScript.owner)[0]));
                 controllable_script attackedTile = map.GetInstantiatedObject(defendposition).GetComponent<controllable_script>();
@@ -1415,7 +1431,6 @@ public class SelectionManager : MonoBehaviour
             //This if happens if the unit is attacking another unit
             else
             {
-                attackerScript = getunit(attackposition);
                 defenderScript = getunit(defendposition);
                 bool canCounterAttack = false;
 

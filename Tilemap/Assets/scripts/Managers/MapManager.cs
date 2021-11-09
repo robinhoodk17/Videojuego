@@ -111,7 +111,7 @@ public class MapManager : MonoBehaviourPun
             costs[0] = spawnedUnit.foodCost;
             costs[1] = spawnedUnit.SUPCost;
             //we build the unit directly on top of the barracks and update the player's resources
-            if (costs[0] <= food[activeplayer - 1] && costs[1] <= SUP[activeplayer - 1])
+            if (costs[0] <= food[activeplayer - 1] && costs[1] <= SUP[activeplayer - 1] && spawnedUnit.buildCheck())
             {
                 PhotonNetwork.Instantiate("Units/" + selectedbuildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
                 spawnedUnit = getunit(currentposition);
