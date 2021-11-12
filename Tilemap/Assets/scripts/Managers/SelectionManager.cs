@@ -1335,19 +1335,19 @@ public class SelectionManager : MonoBehaviour
         //here we select which panel we want to show
         if(unitcancapture || unithasability || attackablewithinrange || load)
         {
-            if(!unithasability && !unitcancapture) { childtoactivate = 3; }
-            if(!unithasability && !attackablewithinrange) { childtoactivate = 4; }
-            if(!unitcancapture && !attackablewithinrange) { childtoactivate = 5; }
-            if (!unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 6; }
-            if (unithasability && attackablewithinrange && !unitcancapture) { childtoactivate = 7; }
-            if (unithasability && !attackablewithinrange && unitcancapture) { childtoactivate = 8; }
-            if (unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 9; }
-            if (load) { childtoactivate = 11; }
+            if(!unithasability && !unitcancapture) { childtoactivate = 1; }
+            if(!unithasability && !attackablewithinrange) { childtoactivate = 2; }
+            if(!unitcancapture && !attackablewithinrange) { childtoactivate = 3; }
+            if (!unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 4; }
+            if (unithasability && attackablewithinrange && !unitcancapture) { childtoactivate = 5; }
+            if (unithasability && !attackablewithinrange && unitcancapture) { childtoactivate = 6; }
+            if (unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 7; }
+            if (load) { childtoactivate = 8; }
         }
 
         else
         {
-            childtoactivate = 2;
+            childtoactivate = 0;
         }
 
         turnpanel(unitobject, true, childtoactivate);

@@ -161,6 +161,7 @@ public class MapManager : MonoBehaviourPun
 
     }
 
+
     [PunRPC]
     public void OnTurnEndNetwork()
     {
