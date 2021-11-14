@@ -17,11 +17,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: foodCost
-      value: 400
+      value: 450
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: movement
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: unitname
@@ -30,6 +30,10 @@ PrefabInstance:
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: typeOfUnit
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: attackdamage
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: barracksname
@@ -69,7 +73,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4611542902272961919, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_text
-      value: Advantage and resist against infantry
+      value: Advantage and resistance against infantry
       objectReference: {fileID: 0}
     - target: {fileID: 5411712942504186916, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
       propertyPath: m_Name

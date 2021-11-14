@@ -38,7 +38,12 @@ public class MapEditorManager : MonoBehaviour
     private Camera _mainCamera;
     private float timeBetweenSteps = 0.05f;
     float lastStep;
-    private int numberofcontrollables = 0;
+    public int numberofcontrollables = 0;
+
+    public bool dragging = false;
+    private Vector3Int topLeft;
+    private Vector3Int bottomRight;
+    private bool gotupperLeft = false;
     private void Start()
     {
         PhotonNetwork.OfflineMode = true;
@@ -57,11 +62,10 @@ public class MapEditorManager : MonoBehaviour
     private void Update()
     {
         //each time the frame is updated, we check the position of the mouse in the gridmap 
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int gridPosition = gridposition(Input.mousePosition, true);
 
         //when we select a unit, we make currentbuttonpressed = numberoftiles + 1, so that it enters this if.
-        if (Input.GetMouseButtonUp(0) && CurrentButtonPressed >= numberoftiles)
+        if (Input.GetMouseButtonUp(0) && CurrentButtonPressed >= numberoftiles && !dragging)
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {
@@ -82,7 +86,6 @@ public class MapEditorManager : MonoBehaviour
                 {
                     activeplayer = 1;
                 }
-                Debug.Log("you can't have neutral units");
                 spawnedUnit.ownerChange(activeplayer);
             }
         }
@@ -90,7 +93,7 @@ public class MapEditorManager : MonoBehaviour
         //when the button gets pressed, we insert the appropriate tile in the tilemap.
         if(CurrentButtonPressed < numberoftiles)
         {
-            if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && Time.time - lastStep > timeBetweenSteps)
+            if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && Time.time - lastStep > timeBetweenSteps && !dragging)
             {
                 if (EventSystem.current.IsPointerOverGameObject())
                 {
@@ -130,6 +133,20 @@ public class MapEditorManager : MonoBehaviour
             }
         }
 
+        if(Input.GetMouseButtonDown(0) && dragging)
+        {
+            topLeft = gridposition(Input.mousePosition, true);
+            gotupperLeft = true;
+        }
+        if (Input.GetMouseButtonUp(0) && dragging && gotupperLeft)
+        {
+            bottomRight = gridposition(Input.mousePosition, true);
+            Vector3Int realtopLeft = new Vector3Int(Mathf.Min(topLeft.x, bottomRight.x), Mathf.Max(topLeft.y, bottomRight.y), topLeft.z);
+            Vector3Int realbottomright = new Vector3Int(Mathf.Max(topLeft.x, bottomRight.x), Mathf.Min(topLeft.y, bottomRight.y), topLeft.z);
+            dragging = false;
+            gotupperLeft = false;
+            rotatedmirror(realtopLeft, realbottomright);
+        }
     }
 
     public void onClick(unitScript unit)
@@ -157,6 +174,7 @@ public class MapEditorManager : MonoBehaviour
         Vector3Int gridposition = map.WorldToCell(position);
         return gridposition;
     }
+
     private Vector3 getWorldPosition(Vector3 gridposition)
     {
         Vector3 worldPosition = new Vector3();
@@ -211,5 +229,45 @@ public class MapEditorManager : MonoBehaviour
     public unitScript getunit(Vector3Int position)
     {
         return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+    }
+
+    private void rotatedmirror(Vector3Int upperleft, Vector3Int bottomright)
+    {
+        Vector3Int upperright = new Vector3Int(bottomright.x, upperleft.y, upperleft.z);
+        Vector3Int bottomleft = new Vector3Int(upperleft.x, bottomright.y, upperleft.z);
+        int height = (upperleft.y - bottomleft.y);
+        int width = (upperright.x - upperleft.x);
+        Vector3Int newbottomright = new Vector3Int(upperright.x + width, bottomleft.y, upperleft.z);
+        for (int i = 0; i <= width; i++)
+        {
+            for (int j = 0; j <= height; j++)
+            {
+                if(map.HasTile(new Vector3Int(upperleft.x + i, upperleft.y - j, upperleft.z)))
+                {
+                    levelTile Tile = map.GetTile<levelTile>(new Vector3Int(upperleft.x + i, upperleft.y - j, upperleft.z));
+                    Vector3Int rotated = new Vector3Int(newbottomright.x - i +1, newbottomright.y + j, newbottomright.z);
+                    map.SetTile(rotated, Tile);
+                    if (Tile.controllable)
+                    {
+                        GameObject controllable = map.GetInstantiatedObject(rotated);
+                        PhotonView tileID = controllable.GetComponent<PhotonView>();
+                        tileID.ViewID = 999 - numberofcontrollables;
+                        numberofcontrollables++;
+                        map.GetInstantiatedObject(rotated).GetComponent<controllable_script>().ownerchange(activeplayer, 1);
+                    }
+                }
+                else
+                {
+                    Vector3Int rotated = new Vector3Int(newbottomright.x - i + 1, newbottomright.y + j, newbottomright.z);
+                    map.SetTile(rotated, null);
+                }
+            }
+        }
+        dragging = false;
+    }
+    public void startDrag()
+    {
+        dragging = true;
+        Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
     }
 }

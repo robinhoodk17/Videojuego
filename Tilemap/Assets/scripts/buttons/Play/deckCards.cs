@@ -15,7 +15,7 @@ public class deckCards : MonoBehaviour
     }
     public void onClick()
     {
-        manager.selectedunits.Remove(card.GetComponent<UnitCards>().unitName.text);
+        manager.removeCard(card.GetComponent<UnitCards>().unitName.text);
         card.SetActive(true);
         Destroy(this.gameObject);
     }

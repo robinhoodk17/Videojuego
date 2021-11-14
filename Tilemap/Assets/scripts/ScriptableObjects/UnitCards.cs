@@ -33,8 +33,8 @@ public class UnitCards : MonoBehaviour
             mapeditormanager = GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>();
         }
         unit = unitprefab.GetComponent<unitScript>();
-        Debug.Log("unit name: " + unit + " and text: " + text.text);
-        text.text = gameObject.transform.GetChild(8).gameObject.transform.GetChild(4).gameObject.transform.GetChild(0).gameObject.transform.GetChild(10).GetComponent<TextMeshProUGUI>().text;
+
+        text.text = gameObject.transform.GetChild(8).gameObject.transform.GetChild(4).gameObject.transform.GetChild(0).gameObject.transform.GetChild(9).GetComponent<TextMeshProUGUI>().text;
 
         sprite.sprite = gameObject.transform.GetChild(8).gameObject.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite;
         Cost.text = unit.foodCost.ToString();

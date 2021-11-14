@@ -137,10 +137,11 @@ public class saveManager : MonoBehaviourPun
     public void QuickLoadMap(string savename = "save")
     {
         PhotonNetwork.OfflineMode = true;
+        map.ClearAllTiles();
         thisistheplayer = 1;
         string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
-        int numberofcontrollables = 0;
+        int numberofcontrollables = GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>().numberofcontrollables;
         foreach (string currentTile in alltiles)
         {
             string[] contents = currentTile.Split(new[] { saveseparator }, System.StringSplitOptions.None);
@@ -178,7 +179,7 @@ public class saveManager : MonoBehaviourPun
                 }
             }
         }
-
+        GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>().numberofcontrollables = numberofcontrollables;
     }
 
     public void LoadNetworkCaller(string savename = "save")

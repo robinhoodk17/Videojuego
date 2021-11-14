@@ -205,6 +205,7 @@ public class SelectionManager : MonoBehaviour
                             GameObject damagePreviewInstance = Instantiate(damagePreview, worldPosition(clickedtile), Quaternion.identity);
                             Oncombathover?.Invoke(newposition, clickedtile, damagePreviewInstance);
                             areWeHovering = true;
+                            Debug.Log("this is what started the combat");
                         }
 
                     }
@@ -222,6 +223,7 @@ public class SelectionManager : MonoBehaviour
                 //this if invokes combat against another unit
                 if (Input.GetMouseButtonUp(0) && units.HasTile(clickedtile) && getunit(clickedtile) != null && !usingability)
                 {
+                    Debug.Log("we entered combat without click");
                     if (getunit(clickedtile).owner != activeplayer)
                     {
                         if(getunit(clickedtile).HP > 0 || unit.ability == "capture")
@@ -271,7 +273,7 @@ public class SelectionManager : MonoBehaviour
                         temp[1] = SUP;
                         mapmanager.resourceshow(temp);
                         //here we the unit gains a level
-                        resUnit.xp+= (resUnit.xptoincreaselv-1);
+                        resUnit.xp += (resUnit.xptoincreaselv-1);
                         resUnit.gainXP();
                         //the unit that taught the other unit waits
                         onWait();
@@ -329,6 +331,7 @@ public class SelectionManager : MonoBehaviour
     
     public void onWait()
     {
+        Debug.Log("we entered the button");
         mapmanager.selectedUnitWaits(currentposition, newposition);
         currentposition = newposition;
         List<unitScript> auras = new List<unitScript>();
@@ -1335,19 +1338,19 @@ public class SelectionManager : MonoBehaviour
         //here we select which panel we want to show
         if(unitcancapture || unithasability || attackablewithinrange || load)
         {
-            if(!unithasability && !unitcancapture) { childtoactivate = 3; }
-            if(!unithasability && !attackablewithinrange) { childtoactivate = 4; }
-            if(!unitcancapture && !attackablewithinrange) { childtoactivate = 5; }
-            if (!unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 6; }
-            if (unithasability && attackablewithinrange && !unitcancapture) { childtoactivate = 7; }
-            if (unithasability && !attackablewithinrange && unitcancapture) { childtoactivate = 8; }
-            if (unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 9; }
-            if (load) { childtoactivate = 11; }
+            if(!unithasability && !unitcancapture) { childtoactivate = 1; }
+            if(!unithasability && !attackablewithinrange) { childtoactivate = 2; }
+            if(!unitcancapture && !attackablewithinrange) { childtoactivate = 3; }
+            if (!unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 4; }
+            if (unithasability && attackablewithinrange && !unitcancapture) { childtoactivate = 5; }
+            if (unithasability && !attackablewithinrange && unitcancapture) { childtoactivate = 6; }
+            if (unithasability && attackablewithinrange && unitcancapture) { childtoactivate = 7; }
+            if (load) { childtoactivate = 8; }
         }
 
         else
         {
-            childtoactivate = 2;
+            childtoactivate = 0;
         }
 
         turnpanel(unitobject, true, childtoactivate);
@@ -1384,10 +1387,26 @@ public class SelectionManager : MonoBehaviour
         }
         public void OncombatHappening(Vector3Int attackposition, Vector3Int defendposition)
         {
+            attackerScript = getunit(attackposition);
+            switch(attackerScript.ability)
+            {
+                //this is the god of small thing's ability, where all units gain 2 levels
+                case "demonstrate":
+                    foreach(GameObject unitObject in GameObject.FindGameObjectsWithTag("Unit"))
+                    {
+                        if(unitObject.GetComponent<unitScript>().owner == attackerScript.owner)
+                        {
+                            unitObject.GetComponent<unitScript>().gainXP();
+                            unitObject.GetComponent<unitScript>().gainXP();
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
             //This if happens if the unit is attacking a tile
             if (getunit(defendposition) == null)
             {
-                attackerScript = getunit(attackposition);
                 int damage = attackerScript.attackdamage;
                 damage = (int)(damage * attackerScript.HP / attackerScript.maxHP * (1 + attackerScript.level / 10) * (1 + GlobalModifiers(attackerScript.owner)[0]));
                 controllable_script attackedTile = map.GetInstantiatedObject(defendposition).GetComponent<controllable_script>();
@@ -1415,7 +1434,6 @@ public class SelectionManager : MonoBehaviour
             //This if happens if the unit is attacking another unit
             else
             {
-                attackerScript = getunit(attackposition);
                 defenderScript = getunit(defendposition);
                 bool canCounterAttack = false;
 
