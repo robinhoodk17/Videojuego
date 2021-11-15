@@ -138,6 +138,7 @@ public class saveManager : MonoBehaviourPun
     {
         PhotonNetwork.OfflineMode = true;
         thisistheplayer = 1;
+        map.ClearAllTiles();
         string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
         int numberofcontrollables = GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>().numberofcontrollables;

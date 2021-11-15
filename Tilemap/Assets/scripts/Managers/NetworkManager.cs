@@ -12,8 +12,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private SelectionManager selectionManager;
     private MapManager mapManager;
     private bool joinedRoom = true;
-    private bool startedGame = false;
     private void Awake()
+
     {
         if(instance != null && instance != this)
         {
@@ -39,7 +39,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void Disconnect()
     {
         PhotonNetwork.Disconnect();
-        startedGame = false;
     }
     public override void OnConnectedToMaster()
     {
@@ -91,7 +90,32 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             photonView.RPC("ChangeScene", RpcTarget.Others, "testMap");
         }
     }
+    /*
+    void OnEnable()
+    {
+        //Tell our 'OnLevelFinishedLoading' function to start listening for a scene change as soon as this script is enabled.
+        SceneManager.sceneLoaded += OnLevelFinishedLoading;
+    }
 
+    void OnDisable()
+    {
+        //Tell our 'OnLevelFinishedLoading' function to stop listening for a scene change as soon as this script is disabled. Remember to always have an unsubscription for every delegate you subscribe to!
+        SceneManager.sceneLoaded -= OnLevelFinishedLoading;
+    }
+    void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        if (currentScene.name == "testMap")
+        {
+            LoadScene();
+        }
+        if (currentScene.name == "mapEditor")
+        {
+            PhotonNetwork.Disconnect();
+            PhotonNetwork.OfflineMode = true;
+        }
+    }
+    */
     private void OnLevelWasLoaded(int level)
     {
         Scene currentScene = SceneManager.GetActiveScene();

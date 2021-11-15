@@ -17,6 +17,7 @@ public class CardPoolManager : MonoBehaviour
     public string deckname = "deck";
     public int decklimit = 10;
     private string cardseparator = "#CARD-NAME#";
+    public TextMeshProUGUI cardcount;
     // Start is called before the first frame update
     void Start()
     {
@@ -68,6 +69,7 @@ public class CardPoolManager : MonoBehaviour
 
             }
         }
+        cardcount.text = selectedunits.Count.ToString() + "/" + decklimit.ToString();
     }
 
     //we call this method when we select a unitcard
@@ -84,6 +86,7 @@ public class CardPoolManager : MonoBehaviour
             button.GetComponent<deckCards>().customAwake();
             string cardname = card.GetComponent<UnitCards>().unitName.text;
             selectedunits.Add(cardname);
+            cardcount.text = selectedunits.Count.ToString() + "/" + decklimit.ToString();
         }
     }
     //this method is called when we change scenes (or whenever else the manager is destroyed)
@@ -111,5 +114,11 @@ public class CardPoolManager : MonoBehaviour
         savestring = string.Join(cardseparator, cardnames);
         File.WriteAllText(Application.persistentDataPath + "/" + savename + ".deck", savestring);
 
+    }
+
+    public void Remove(string cardName)
+    {
+        selectedunits.Remove(cardName);
+        cardcount.text = selectedunits.Count.ToString() + "/" + decklimit.ToString();
     }
 }

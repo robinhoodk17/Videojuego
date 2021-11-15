@@ -76,6 +76,11 @@ public class MapManager : MonoBehaviourPun
         {
             if (barracksSelected)
             {
+                for (int i = 0; i < map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.childCount; i++)
+                {
+                    Destroy(map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i));
+                }
+                
                 map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
             }
             barracksSelected = false;
@@ -125,6 +130,12 @@ public class MapManager : MonoBehaviourPun
                 foodSUP[1] = SUP[activeplayer - 1];
                 resourceshow(foodSUP);
                 map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
+
+                for (int i = 0; i < map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.childCount; i++)
+                {
+                    Destroy(map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i));
+                }
+
                 clicked = false;
                 unitNameInputField.Show(spawnedUnit);
             }
