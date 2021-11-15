@@ -82,7 +82,7 @@ public class MapEditorManager : MonoBehaviour
 
                 PhotonNetwork.Instantiate("Units/" + selectedbuildables[unitpressed].name, map.GetCellCenterWorld(gridPosition), Quaternion.identity);
                 unitScript spawnedUnit = getunit(gridPosition);
-                if(activeplayer < 1)
+                if (activeplayer < 1)
                 {
                     activeplayer = 1;
                 }
@@ -91,7 +91,7 @@ public class MapEditorManager : MonoBehaviour
         }
 
         //when the button gets pressed, we insert the appropriate tile in the tilemap.
-        if(CurrentButtonPressed < numberoftiles)
+        if (CurrentButtonPressed < numberoftiles)
         {
             if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && Time.time - lastStep > timeBetweenSteps && !dragging)
             {
@@ -127,22 +127,25 @@ public class MapEditorManager : MonoBehaviour
             map.SetTile(gridPosition, null);
             conditions.SetTile(gridPosition, null);
             units.SetTile(gridPosition, null);
-            if(getunitprefab(gridPosition) != null)
+            if (getunitprefab(gridPosition) != null)
             {
                 Destroy(getunitprefab(gridPosition));
             }
         }
 
-        if(Input.GetMouseButtonDown(0) && dragging)
+        if (Input.GetMouseButtonDown(0) && dragging)
         {
             topLeft = gridposition(Input.mousePosition, true);
             gotupperLeft = true;
         }
-        if(Input.GetMouseButtonUp(0) && dragging && gotupperLeft)
+        if (Input.GetMouseButtonUp(0) && dragging && gotupperLeft)
         {
             bottomRight = gridposition(Input.mousePosition, true);
-            rotatedmirror(topLeft, bottomRight);
+            Vector3Int realtopLeft = new Vector3Int(Mathf.Min(topLeft.x, bottomRight.x), Mathf.Max(topLeft.y, bottomRight.y), topLeft.z);
+            Vector3Int realbottomright = new Vector3Int(Mathf.Max(topLeft.x, bottomRight.x), Mathf.Min(topLeft.y, bottomRight.y), topLeft.z);
+            dragging = false;
             gotupperLeft = false;
+            rotatedmirror(realtopLeft, realbottomright);
         }
     }
 
@@ -175,7 +178,7 @@ public class MapEditorManager : MonoBehaviour
     private Vector3 getWorldPosition(Vector3 gridposition)
     {
         Vector3 worldPosition = new Vector3();
-        worldPosition = (gridposition*(map.cellGap.x+map.cellSize.x)) + new Vector3(map.cellSize.x / 2, map.cellSize.x / 2, 0);
+        worldPosition = (gridposition * (map.cellGap.x + map.cellSize.x)) + new Vector3(map.cellSize.x / 2, map.cellSize.x / 2, 0);
         return worldPosition;
     }
     public GameObject getunitprefab(Vector3 position, bool screen = true)
@@ -239,16 +242,24 @@ public class MapEditorManager : MonoBehaviour
         {
             for (int j = 0; j <= height; j++)
             {
-                levelTile Tile = map.GetTile<levelTile>(new Vector3Int(upperleft.x + i, upperleft.y - j, upperleft.z));
-                Vector3Int rotated = new Vector3Int(newbottomright.x - i, newbottomright.y + j, newbottomright.z);
-                map.SetTile(rotated, Tile);
-                if (Tile.controllable)
+                if (map.HasTile(new Vector3Int(upperleft.x + i, upperleft.y - j, upperleft.z)))
                 {
-                    GameObject controllable = map.GetInstantiatedObject(rotated);
-                    PhotonView tileID = controllable.GetComponent<PhotonView>();
-                    tileID.ViewID = 999 - numberofcontrollables;
-                    numberofcontrollables++;
-                    map.GetInstantiatedObject(rotated).GetComponent<controllable_script>().ownerchange(activeplayer, 1);
+                    levelTile Tile = map.GetTile<levelTile>(new Vector3Int(upperleft.x + i, upperleft.y - j, upperleft.z));
+                    Vector3Int rotated = new Vector3Int(newbottomright.x - i + 1, newbottomright.y + j, newbottomright.z);
+                    map.SetTile(rotated, Tile);
+                    if (Tile.controllable)
+                    {
+                        GameObject controllable = map.GetInstantiatedObject(rotated);
+                        PhotonView tileID = controllable.GetComponent<PhotonView>();
+                        tileID.ViewID = 999 - numberofcontrollables;
+                        numberofcontrollables++;
+                        map.GetInstantiatedObject(rotated).GetComponent<controllable_script>().ownerchange(activeplayer, 1);
+                    }
+                }
+                else
+                {
+                    Vector3Int rotated = new Vector3Int(newbottomright.x - i + 1, newbottomright.y + j, newbottomright.z);
+                    map.SetTile(rotated, null);
                 }
             }
         }
