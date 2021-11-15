@@ -1,0 +1,171 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2866240979876629265
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: HP
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: maxHP
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: SUPCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: ability
+      value: teach
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: foodCost
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: movement
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: unitname
+      value: Scholar
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: attackdamage
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: barracksname
+      value: Sor Juana
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: movementtype
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: resistances.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.data[0]
+      value: Shaman
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.data[1]
+      value: Tank
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: advantages.Array.data[2]
+      value: Tank
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: resistances.Array.data[0]
+      value: Shaman
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: resistances.Array.data[1]
+      value: Chupacabras
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: vulnerabilities.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: vulnerabilities.Array.data[0]
+      value: Knight
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: vulnerabilities.Array.data[1]
+      value: Warrior
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: vulnerabilities.Array.data[2]
+      value: Sniper
+      objectReference: {fileID: 0}
+    - target: {fileID: -431614627842067626, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: vulnerabilities.Array.data[3]
+      value: airship
+      objectReference: {fileID: 0}
+    - target: {fileID: 2206158221000434103, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2206158221000434103, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4611542902272961919, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_text
+      value: Pay 1/10 of an adjacent unit's cost to increase its level by 1.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411712942504186916, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_Name
+      value: Scholar
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 11.643831
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.5597935
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455456945513359815, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_Size.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5ebe8983bf36cac418ad1457497490c1, type: 3}
+    - target: {fileID: 6648368384991546076, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 54952799969a4e54698d74cd9c4cfa6b, type: 3}
