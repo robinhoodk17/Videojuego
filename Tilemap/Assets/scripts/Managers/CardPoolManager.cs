@@ -96,10 +96,11 @@ public class CardPoolManager : MonoBehaviour
         int i = 0;
         foreach(string cardname in selectedunits)
         {
-            string unitSaveString = deckname + i.ToString();
+            string unitSaveString = "selecteddeck" + i.ToString();
             PlayerPrefs.SetString(unitSaveString, cardname);
             i++;
         }
+        PlayerPrefs.SetInt("decksize", i);
     }
 
     //Here we actually save the deck

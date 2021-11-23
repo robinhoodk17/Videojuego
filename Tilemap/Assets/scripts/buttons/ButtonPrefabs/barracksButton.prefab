@@ -354,7 +354,6 @@ GameObject:
   - component: {fileID: 703131891767050129}
   - component: {fileID: 1352425422813462081}
   - component: {fileID: 4687650320888650876}
-  - component: {fileID: 4701260653594991443}
   m_Layer: 0
   m_Name: barracksButton
   m_TagString: Untagged
@@ -430,25 +429,6 @@ MonoBehaviour:
   foodCost: {fileID: 8777060118187839185}
   SUPCost: {fileID: 955861878502095140}
   sprite: {fileID: 7472047875865397402}
---- !u!114 &4701260653594991443
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5015736593967587628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec37fcf7f6746884fa95da0ae61e7327, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: 
-  Clicked: 0
-  name: {fileID: 6020696993897339155}
-  foodCost: {fileID: 8777060118187839185}
-  SUPCost: {fileID: 955861878502095140}
-  sprite: {fileID: 7472047875865397402}
-  unitHeld: {fileID: 0}
 --- !u!1 &5439894865319337372
 GameObject:
   m_ObjectHideFlags: 0

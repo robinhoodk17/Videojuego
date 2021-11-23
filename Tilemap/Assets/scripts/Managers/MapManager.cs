@@ -28,7 +28,7 @@ public class MapManager : MonoBehaviourPun
     public string deckname = "deck";
     [SerializeField]
     public Tilemap map, conditions, units;
-    private List<GameObject> Buildables = new List<GameObject>();
+    private Dictionary<string, GameObject> Buildables = new Dictionary<string, GameObject>();
     public Dictionary<string, GameObject> selectedbuildables = new Dictionary<string, GameObject>();
     public bool clicked;
     public int numberOfPlayers;
@@ -60,8 +60,24 @@ public class MapManager : MonoBehaviourPun
         foreach(GameObject card in temporal)
         {
             GameObject unitprefab = card.GetComponent<UnitCards>().unitprefab;
-            Buildables.Add(unitprefab);
+            Buildables[unitprefab.GetComponent<unitScript>().unitname] =  unitprefab;
         }
+
+        //here we build the selectedbuildables dictionary
+        int decklimit = PlayerPrefs.GetInt("decksize");
+        for (int i = 0; i < decklimit; i++)
+        {
+            string currentUnitName = PlayerPrefs.GetString("selecteddeck" + i.ToString());
+            foreach (var keyvaluepair in Buildables)
+            {
+                if (keyvaluepair.Key == currentUnitName)
+                {
+                    selectedbuildables[currentUnitName] = keyvaluepair.Value;
+                }
+            }
+        }
+
+
         customStart();
     }
     void Update()
@@ -78,7 +94,7 @@ public class MapManager : MonoBehaviourPun
             {
                 for (int i = 0; i < map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.childCount; i++)
                 {
-                    Destroy(map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i));
+                    map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i).GetComponent<unitProduction>().destroyThis();
                 }
                 
                 map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
@@ -98,9 +114,10 @@ public class MapManager : MonoBehaviourPun
                     {
                         if (Tile.type == tileType.barracks && map.GetInstantiatedObject(currentposition).GetComponent<controllable_script>().owner == activeplayer)
                         {
+
                             GameObject barracks = map.GetInstantiatedObject(currentposition);
                             barracks.transform.GetChild(0).gameObject.SetActive(true);
-                            barracks.GetComponent<barracks_script>().onActivation();
+                            barracks.GetComponent<barracks_script>().onActivation(selectedbuildables);
                             barracksSelected = true;
                         }
                     }
@@ -112,13 +129,13 @@ public class MapManager : MonoBehaviourPun
         if (clicked)
         {
             int[] costs = new int[2];
-            unitScript spawnedUnit = selectedbuildables[CurrentButtonPressed].GetComponent<unitScript>();
+            unitScript spawnedUnit = Buildables[CurrentButtonPressed].GetComponent<unitScript>();
             costs[0] = spawnedUnit.foodCost;
             costs[1] = spawnedUnit.SUPCost;
             //we build the unit directly on top of the barracks and update the player's resources
             if (costs[0] <= food[activeplayer - 1] && costs[1] <= SUP[activeplayer - 1] && spawnedUnit.buildCheck())
             {
-                PhotonNetwork.Instantiate("Units/" + selectedbuildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
+                PhotonNetwork.Instantiate("Units/" + Buildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
                 spawnedUnit = getunit(currentposition);
                 spawnedUnit.exhausted = true;
                 spawnedUnit.ownerChange(activeplayer);
@@ -133,7 +150,7 @@ public class MapManager : MonoBehaviourPun
 
                 for (int i = 0; i < map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.childCount; i++)
                 {
-                    Destroy(map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i));
+                    map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i).GetComponent<unitProduction>().destroyThis();
                 }
 
                 clicked = false;
@@ -369,21 +386,6 @@ public class MapManager : MonoBehaviourPun
         eventraiser.OnUnitSelected += OnUnitSelected;
         eventraiser.OnUnitDeselected += OnUnitDeselected;
 
-
-        //here we build the selectedbuildables dictionary
-        int decklimit = PlayerPrefs.GetInt("decklimit");
-        for (int i = 0; i < decklimit; i++)
-        {
-            string currentUnitName = PlayerPrefs.GetString(deckname + i.ToString());
-            foreach (GameObject unitprefab in Buildables)
-            {
-                if (unitprefab.GetComponent<unitScript>().unitname == currentUnitName)
-                {
-                    selectedbuildables[currentUnitName] = unitprefab;
-                }
-            }
-        }
-
     }
     [PunRPC]
     private void InitializeGame(string mapname)
@@ -405,14 +407,6 @@ public class MapManager : MonoBehaviourPun
                 commanders[instanceofunit.owner] = instanceofunit;
             }
         }
-        /* This part of code is obsolete, we no longer use assigns for tiles.
-        GameObject[] owners = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject assign in owners)
-        {
-            GameObject controllable = map.GetInstantiatedObject(gridPosition(assign.transform.position));
-            controllable.GetComponent<controllable_script>().ownerchange(assign.GetComponent<ownerAssginScript>().owner, 1);
-            Destroy(assign);
-        }*/
         int[] foodSUP = CalculateIncome();
         food[activeplayer - 1] = foodSUP[0];
         SUP[activeplayer - 1] = foodSUP[1];
@@ -423,6 +417,8 @@ public class MapManager : MonoBehaviourPun
         }
         resourcePanels[thisistheplayer - 1].SetActive(true);
         resourceshow(foodSUP);
+
+        
     }
 
 }

@@ -28,5 +28,8 @@ public class unitProduction : MonoBehaviour
         manager.CurrentButtonPressed = ID;
         manager.clicked = true;
     }
-
+    public void destroyThis()
+    {
+        Destroy(this.gameObject);
+    }
 }

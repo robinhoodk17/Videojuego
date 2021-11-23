@@ -1,18 +1,16 @@
-using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class barracks_script : MonoBehaviour
 {
     public GameObject buttonsprefab;
     public GameObject Content;
-    private MapManager manager;
 
     //we call onActivation when the player clicks on the barracks during playtime
-    public void onActivation()
+    public void onActivation(Dictionary<string, GameObject> selectedBuildables)
     {
-        manager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         //buttons is a prefab where we store the selected units (which we save in the pool of humans and avatars)
-        foreach (var entry in manager.selectedbuildables)
+        foreach (var entry in selectedBuildables)
         {
             GameObject button = Instantiate(buttonsprefab, new Vector3(0, 0, 0), Quaternion.identity);
             unitProduction buttonscript = button.GetComponent<unitProduction>();
