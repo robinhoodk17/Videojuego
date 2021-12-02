@@ -43,7 +43,7 @@ public class MapManager : MonoBehaviourPun
     public int[] foodSUP = new int[2];
     int turnnumber = 0;
     bool barracksSelected = false;
-    Vector3Int currentposition;
+    public Vector3Int currentposition;
     bool unitselected = false;
     private SelectionManager eventraiser;
     public eventsScript OnTurnEndEvent;
@@ -135,34 +135,44 @@ public class MapManager : MonoBehaviourPun
             //we build the unit directly on top of the barracks and update the player's resources
             if (costs[0] <= food[activeplayer - 1] && costs[1] <= SUP[activeplayer - 1] && spawnedUnit.buildCheck())
             {
-                PhotonNetwork.Instantiate("Units/" + Buildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
-                spawnedUnit = getunit(currentposition);
-                spawnedUnit.exhausted = true;
-                spawnedUnit.ownerChange(activeplayer);
-                spawnedUnit.sprite.color = new Color(.6f, .6f, .6f);
-                food[activeplayer - 1] -= costs[0];
-                SUP[activeplayer - 1] -= costs[1];
-                clicked = false;
-                foodSUP[0] = food[activeplayer - 1];
-                foodSUP[1] = SUP[activeplayer - 1];
-                resourceshow(foodSUP);
-                map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
-
+                buildUnit(spawnedUnit);
+            }
+            else
+            {
                 for (int i = 0; i < map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.childCount; i++)
                 {
                     map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i).GetComponent<unitProduction>().destroyThis();
                 }
-
-                clicked = false;
-                unitNameInputField.Show(spawnedUnit);
-            }
-            else
-            {
                 clicked = false;
             }
         }
     }
+    public void buildUnit(unitScript spawnedUnit)
+    {
+        int[] costs = new int[2];
+        costs[0] = spawnedUnit.foodCost;
+        costs[1] = spawnedUnit.SUPCost;
+        PhotonNetwork.Instantiate("Units/" + Buildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
+        spawnedUnit = getunit(currentposition);
+        spawnedUnit.exhausted = true;
+        spawnedUnit.ownerChange(activeplayer);
+        spawnedUnit.sprite.color = new Color(.6f, .6f, .6f);
+        food[activeplayer - 1] -= costs[0];
+        SUP[activeplayer - 1] -= costs[1];
+        clicked = false;
+        foodSUP[0] = food[activeplayer - 1];
+        foodSUP[1] = SUP[activeplayer - 1];
+        resourceshow(foodSUP);
+        map.GetInstantiatedObject(currentposition).transform.GetChild(0).gameObject.SetActive(false);
+        //Here we are resetting the units shown in the barracks build panel
+        for (int i = 0; i < map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.childCount; i++)
+        {
+            map.GetInstantiatedObject(currentposition).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(i).GetComponent<unitProduction>().destroyThis();
+        }
 
+        clicked = false;
+        unitNameInputField.Show(spawnedUnit);
+    }
     public Vector3Int gridPosition(Vector2 mouseposition)
     {
         Vector3Int gridposition = map.WorldToCell(mouseposition);

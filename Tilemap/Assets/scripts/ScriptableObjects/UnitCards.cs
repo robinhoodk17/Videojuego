@@ -85,7 +85,7 @@ public class UnitCards : MonoBehaviour
         {
             if (manager.selectedunits.Count < manager.decklimit)
             {
-                manager.onClick(unitName.text, this.gameObject);
+                manager.onClick(unitName.text, this.gameObject, unitprefab.GetComponent<unitScript>().foodCost);
                 this.gameObject.SetActive(false);
             }
             else

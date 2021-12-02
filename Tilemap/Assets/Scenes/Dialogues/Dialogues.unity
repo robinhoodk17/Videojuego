@@ -264,6 +264,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@DialogueUGUI'
       objectReference: {fileID: 0}
+    - target: {fileID: 11400004, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_FontData.m_MinSize
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400004, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400006, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_FontData.m_MinSize
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400006, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400008, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 32
+      objectReference: {fileID: 0}
     - target: {fileID: 11400010, guid: ea4f45f1433c2404197edc445210b679, type: 3}
       propertyPath: subtitleDelays.commaDelay
       value: 0
@@ -287,6 +307,26 @@ PrefabInstance:
     - target: {fileID: 11400010, guid: ea4f45f1433c2404197edc445210b679, type: 3}
       propertyPath: subtitleDelays.characterDelay
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400000, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 700
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400000, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 700
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400000, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400000, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 538.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400002, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 138
       objectReference: {fileID: 0}
     - target: {fileID: 22400002, guid: ea4f45f1433c2404197edc445210b679, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -377,12 +417,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22400012, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 94
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400012, guid: ea4f45f1433c2404197edc445210b679, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 22400014, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400014, guid: ea4f45f1433c2404197edc445210b679, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22451302, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 68
+      objectReference: {fileID: 0}
+    - target: {fileID: 224000012677293416, guid: ea4f45f1433c2404197edc445210b679, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea4f45f1433c2404197edc445210b679, type: 3}

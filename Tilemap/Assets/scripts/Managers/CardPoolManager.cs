@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.IO;
+using System.Linq;
 
 public class CardPoolManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class CardPoolManager : MonoBehaviour
     public GameObject deck;
     public GameObject buttons;
     public List<string> selectedunits;
+    public List<int> selectedunitCosts;
     public string deckname = "deck";
     public int decklimit = 10;
     private string cardseparator = "#CARD-NAME#";
@@ -73,20 +75,30 @@ public class CardPoolManager : MonoBehaviour
     }
 
     //we call this method when we select a unitcard
-    public void onClick(string buttonname, GameObject card)
+    public void onClick(string buttonname, GameObject card, int Cost)
     {
         //buttons is a prefab where we store the selected units (which we save in the pool of humans and avatars)
+        int index = 0;
         if(selectedunits.Count < decklimit)
         {
+            foreach(int i in selectedunitCosts)
+            {
+                if(Cost < i)
+                {
+                    break;
+                }
+                index++;
+            }
             GameObject button = Instantiate(buttons, new Vector3(0, 0, 0), Quaternion.identity);
             button.transform.SetParent(deck.transform, false);
+            button.transform.SetSiblingIndex(index);
             button.GetComponent<deckCards>().card = card;
             button.SetActive(true);
             button.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = buttonname;
             button.GetComponent<deckCards>().customAwake();
             string cardname = card.GetComponent<UnitCards>().unitName.text;
-            selectedunits.Add(cardname);
-            cardcount.text = selectedunits.Count.ToString() + "/" + decklimit.ToString();
+            selectedunits.Insert(index, cardname);
+            selectedunitCosts.Insert(index, Cost);
         }
     }
     //this method is called when we change scenes (or whenever else the manager is destroyed)
@@ -119,7 +131,10 @@ public class CardPoolManager : MonoBehaviour
 
     public void Remove(string cardName)
     {
+        int index = selectedunits.IndexOf(cardName);
         selectedunits.Remove(cardName);
+        selectedunitCosts.RemoveAt(index);
         cardcount.text = selectedunits.Count.ToString() + "/" + decklimit.ToString();
     }
+
 }
