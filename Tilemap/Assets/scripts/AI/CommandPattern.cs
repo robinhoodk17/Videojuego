@@ -14,6 +14,7 @@ public class CommandPattern : MonoBehaviour
     public unitScript some;
     public TextMeshProUGUI unitname;
     public UIInputWindowForBarracksName accept;
+    private Camera _mainCamera;
 
     private bool firstTurn = true;
     private Dictionary<string, GameObject> selectedbuildables;
@@ -22,6 +23,7 @@ public class CommandPattern : MonoBehaviour
     void takeTurn()
     {
         GameObject[] controllables = GameObject.FindGameObjectsWithTag("Controllable");
+        moveUnits();
         findOptimalBuild(controllables);
 
     }
@@ -41,6 +43,10 @@ public class CommandPattern : MonoBehaviour
             takeTurn();
     }
 
+    public void moveUnits()
+    {
+        GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
+    }
     public void findOptimalBuild(GameObject[] controllables)
     {
         int currentfood = mapmanager.food[1];
@@ -70,5 +76,26 @@ public class CommandPattern : MonoBehaviour
 
         Vector3Int gridposition = map.WorldToCell(position);
         return gridposition;
+    }
+    public unitScript getunit(Vector3 position, bool screen = true)
+    {
+
+        if (!screen)
+        {
+            position = _mainCamera.WorldToScreenPoint(position);
+        }
+        var ray = _mainCamera.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            var selection = hit.transform.gameObject;
+            unitScript unit = selection.GetComponent<unitScript>();
+            return unit;
+        }
+        //returns null if it did not find a unit
+        else
+        {
+            return null;
+        }
     }
 }

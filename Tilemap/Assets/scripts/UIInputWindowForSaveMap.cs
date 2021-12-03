@@ -46,7 +46,10 @@ public class UIInputWindowForSaveMap : MonoBehaviour
     public void changetoplayscene()
     {
         PlayerPrefs.SetString("mapname", inputField.text);
-        levelLoader.Connect();
+        if (PlayerPrefs.GetString("AIorHuman") == "Human")
+            levelLoader.Connect();
+        else
+            levelLoader.ChangeScene("AI");
     }
 
 }

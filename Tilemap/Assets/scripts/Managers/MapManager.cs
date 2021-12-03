@@ -30,7 +30,7 @@ public class MapManager : MonoBehaviourPun
     public Tilemap map, conditions, units;
     private Dictionary<string, GameObject> Buildables = new Dictionary<string, GameObject>();
     public Dictionary<string, GameObject> selectedbuildables = new Dictionary<string, GameObject>();
-    public bool clicked;
+    public bool clicked = false;
     public int numberOfPlayers;
     public BattleState state;
     public int activeplayer = 1;
@@ -55,6 +55,9 @@ public class MapManager : MonoBehaviourPun
     public int thisistheplayer = 1;
     void Start()
     {
+        if (PlayerPrefs.GetString("AIorHuman") == "AI")
+            thisistheplayer = 1;
+
         List<GameObject> temporal = GameObject.FindGameObjectWithTag("BuildableUnits").GetComponent<BuildableUnits>().Buildables;
         Buildables.Clear();
         foreach(GameObject card in temporal)
@@ -402,7 +405,7 @@ public class MapManager : MonoBehaviourPun
     {
 
         save.thisistheplayer = thisistheplayer;
-        if(thisistheplayer == 1)
+        if (thisistheplayer == 1)
         {
             save.LoadNetworkCaller(mapname);
         }
@@ -426,9 +429,7 @@ public class MapManager : MonoBehaviourPun
             foodSUP[0] = 1;
         }
         resourcePanels[thisistheplayer - 1].SetActive(true);
-        resourceshow(foodSUP);
-
-        
+        resourceshow(foodSUP);   
     }
 
 }

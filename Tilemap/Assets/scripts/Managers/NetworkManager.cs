@@ -128,12 +128,26 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             PhotonNetwork.Disconnect();
             PhotonNetwork.OfflineMode = true;
         }
+        if(currentScene.name == "AI")
+        {
+            PhotonNetwork.Disconnect();
+            PhotonNetwork.OfflineMode = true;
+            LoadScene();
+        }
     }
     [PunRPC]
+
+    public void AgainstAI()
+    {
+        PlayerPrefs.SetString("AIorHuman", "AI");
+    }
+    public void AgainstHuman()
+    {
+        PlayerPrefs.SetString("AIorHuman", "Human");
+    }
     public void ChangeScene(string sceneName)
     {
         PhotonNetwork.LoadLevel(sceneName);
-
     }
 
     [PunRPC]

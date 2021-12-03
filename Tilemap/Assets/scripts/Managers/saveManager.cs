@@ -186,12 +186,16 @@ public class saveManager : MonoBehaviourPun
     {
         string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
-        photonView.RPC("LoadNetwork", RpcTarget.All, alltiles);
+        if (PlayerPrefs.GetString("AIorHuman") == "AI")
+            LoadNetwork(alltiles);
+        else
+            photonView.RPC("LoadNetwork", RpcTarget.All, alltiles);
     }
 
     [PunRPC]
     public void LoadNetwork(string[] alltiles)
     {
+        string AIorHuman = PlayerPrefs.GetString("AIorHuman");
         int numberofcontrollables = 0;
         foreach (string currentTile in alltiles)
         {
