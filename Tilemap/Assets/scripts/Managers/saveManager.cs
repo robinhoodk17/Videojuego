@@ -7,8 +7,8 @@ using Photon.Pun;
 
 public class saveManager : MonoBehaviourPun
 {
-    string saveseparator = "#SAVE-VALUE#";
-    string tileseparator = "#NEW-TILE#";
+    string saveseparator = "#";
+    string tileseparator = "NEW";
     public int thisistheplayer;
     private UIInputWindowForSaveMap inputwindow;
     private UIInputWindowForSaveMap inputwindowforLoad;

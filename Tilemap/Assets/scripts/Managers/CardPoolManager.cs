@@ -18,7 +18,7 @@ public class CardPoolManager : MonoBehaviour
     public List<int> selectedunitCosts;
     public string deckname = "deck";
     public int decklimit = 10;
-    private string cardseparator = "#CARD-NAME#";
+    private string cardseparator = "#";
     public TextMeshProUGUI cardcount;
     // Start is called before the first frame update
     void Start()
