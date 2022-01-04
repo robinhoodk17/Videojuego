@@ -15,7 +15,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private void Awake()
 
     {
-        if(instance != null && instance != this)
+        if (instance != null && instance != this)
         {
             gameObject.SetActive(false);
         }
@@ -135,8 +135,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             LoadScene();
         }
     }
-    [PunRPC]
 
+    [PunRPC]
     public void AgainstAI()
     {
         PlayerPrefs.SetString("AIorHuman", "AI");
@@ -145,6 +145,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         PlayerPrefs.SetString("AIorHuman", "Human");
     }
+
+    [PunRPC]
     public void ChangeScene(string sceneName)
     {
         PhotonNetwork.LoadLevel(sceneName);
