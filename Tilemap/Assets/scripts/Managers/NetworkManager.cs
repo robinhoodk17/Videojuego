@@ -86,8 +86,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         base.OnPlayerEnteredRoom(newPlayer);
         if (PhotonNetwork.CurrentRoom.PlayerCount >1)
         {
-            PhotonNetwork.LoadLevel("testMap");
-            photonView.RPC("ChangeScene", RpcTarget.Others, "testMap");
+            photonView.RPC("ChangeScene", RpcTarget.All, "testMap");
         }
     }
     /*

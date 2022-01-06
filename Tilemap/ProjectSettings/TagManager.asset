@@ -18,6 +18,8 @@ TagManager:
   - Grid
   - BuildableUnits
   - unitTilemap
+  - saveManager
+  - MapList
   layers:
   - Default
   - TransparentFX

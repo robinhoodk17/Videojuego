@@ -12,8 +12,6 @@ public class saveManager : MonoBehaviourPun
     public int thisistheplayer;
     private UIInputWindowForSaveMap inputwindow;
     private UIInputWindowForSaveMap inputwindowforLoad;
-    public GameObject savewindow;
-    public GameObject loadwindow;
     public GameObject controllableprefab;
     /*forest: 0
     mountain: 1
@@ -41,8 +39,6 @@ public class saveManager : MonoBehaviourPun
         }
 
 
-        inputwindow = savewindow.GetComponent<UIInputWindowForSaveMap>();
-        inputwindowforLoad = loadwindow.GetComponent<UIInputWindowForSaveMap>();
         foreach (levelTile tile in tileBases)
         {
             tileDictionary[tile.type.ToString()] = tile;
@@ -52,15 +48,6 @@ public class saveManager : MonoBehaviourPun
             unitDictionary[unitprefab.GetComponent<unitScript>().unitname] = unitprefab;
         }
         z = gridPosition(new Vector3(0, 0, 0)).z;
-    }
-    //this is called by the Save button
-    public void SaveMap()
-    {
-        inputwindow.Show("IwIllFoRGeT");
-    }
-    public void LoadMap()
-    {
-        inputwindowforLoad.Show("lol nice try");
     }
     public void QuickSaveMap(string savename = "save")
     {
