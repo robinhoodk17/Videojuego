@@ -16,7 +16,7 @@ public class CommandPattern : MonoBehaviour
     public TextMeshProUGUI unitname;
     public UIInputWindowForBarracksName accept;
     private Camera _mainCamera;
-
+    Dictionary<unitScript, Dictionary<Vector3Int, int>> possibleMovesForAllUnits = new Dictionary<unitScript, Dictionary<Vector3Int, int>>();
     private bool firstTurn = true;
     private List<GameObject> selectedbuildables;
 
@@ -110,9 +110,9 @@ public class CommandPattern : MonoBehaviour
     //Here we first find all possible moves, then optimize the movement, and then move all units
     public void moveUnits()
     {
-        Dictionary<unitScript, Dictionary<Vector3Int, int>> possibleMovesForAllUnits = new Dictionary<unitScript, Dictionary<Vector3Int, int>>();
         GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
-        //Here we get all the possible move for each unit the AI controls
+        List<Vector3Int> visitedTiles = new List<Vector3Int>();
+        //Here we get all the possible moves for each unit the AI controls and then call the function FindOptimalMove, which calculates the score for each possible movement
         foreach (GameObject unitPrefab in allunits)
         {
             if (unitPrefab.GetComponent<unitScript>().owner == 2)
@@ -122,28 +122,45 @@ public class CommandPattern : MonoBehaviour
                 List<Vector3Int> Keys = new List<Vector3Int>(possibleMovesForAllUnits[currentMovingUnit].Keys);
                 foreach (Vector3Int Key in Keys)
                 {
+                    //Here we add the score calculated for each space (Key) of the currentmovingunit
                     possibleMovesForAllUnits[currentMovingUnit][Key] += findOptimalMove(currentMovingUnit, Key);
                 }
             }
         }
-
-
         //Here we assume that we already established the score for each movement, and take the best possible move
         foreach (unitScript currentMovingUnit in possibleMovesForAllUnits.Keys)
         {
-            Vector3Int currentPosition = gridPosition(currentMovingUnit.gameObject.transform.position);
-            int MaxValue = possibleMovesForAllUnits[currentMovingUnit].Values.Max();
+            //Vector3Int currentPosition = gridPosition(currentMovingUnit.gameObject.transform.position);
             Vector3Int targetPosition = new Vector3Int(0, 0, 0);
+            int MaxValue = -10;
+            //possibleMovesForAllUnits[currentMovingUnit].Keys is a list that Vector3Int values and contains all the possible tiles that the currentmovingunit can move to
             foreach (Vector3Int possibleTargetPosition in possibleMovesForAllUnits[currentMovingUnit].Keys)
             {
-                if (possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition] == MaxValue)
+                //Here we check that our current value is the max value we have and that it does not have a unit on it already
+                if(possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition] > MaxValue && !visitedTiles.Contains(possibleTargetPosition))
                 {
-                    targetPosition = possibleTargetPosition;
+                    if(map.GetTile<levelTile>(possibleTargetPosition).controllable)
+                    {
+                        //Here we just check that we are not moving to our own barracks
+                        if(!(map.GetTile<levelTile>(possibleTargetPosition).type == tileType.barracks && map.GetInstantiatedObject(possibleTargetPosition).GetComponent<controllable_script>().owner == 2))
+                        {
+                            MaxValue = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition];
+                            targetPosition = possibleTargetPosition;
+                        }
+                    }
+                    else
+                    {
+                        MaxValue = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition];
+                        targetPosition = possibleTargetPosition;
+                    }
                 }
             }
+            visitedTiles.Add(targetPosition);
             moveUnit(currentMovingUnit, targetPosition);
         }
     }
+
+
     public Dictionary<Vector3Int, int> findPossibleMoves(Vector3Int position, unitScript unit)
     {
         Dictionary<Vector3Int, int> possibleMoves = new Dictionary<Vector3Int, int> ();
@@ -207,11 +224,12 @@ public class CommandPattern : MonoBehaviour
                 }
             }
         }
-        //here we add 
+        //here we add between -3 to +4 depending on the defense of each tile.
         foreach (Vector3Int selectable in selectableTiles)
         {
-            possibleMoves[selectable] = map.GetTile<levelTile>(selectable).defense;
+            possibleMoves[selectable] = map.GetTile<levelTile>(selectable).defense/5;
         }
+        List<Vector3Int> positions = new List<Vector3Int>(possibleMoves.Keys);
         return possibleMoves;
 
         void findneighbors(unitScript unit, Vector3Int position)
@@ -473,9 +491,25 @@ public class CommandPattern : MonoBehaviour
             }
         }
     }
+
+    //We call this function for every possible tile the unit can move to
     public int findOptimalMove(unitScript checkedUnit, Vector3Int startingposition)
     {
-        return 5;
+        int score = 0;
+        if (checkedUnit.typeOfUnit == TypeOfUnit.infantry)
+        {
+            score += TrueIfwithinCaptureDistance(checkedUnit, startingposition);
+            //Here we check if there is a capturable property at the checked tile
+            if(map.GetTile<levelTile>(startingposition).controllable)
+            {
+                if(map.GetInstantiatedObject(startingposition).GetComponent<controllable_script>().owner == 0)
+                {
+                    score += 12;
+                }
+            }
+        }
+
+        return score;
     }
     public void moveUnit(unitScript unit, Vector3Int newPosition)
     {
@@ -483,7 +517,26 @@ public class CommandPattern : MonoBehaviour
         //GameObject unitprefab = getunitprefab(originalPosition);
         //unitprefab.transform.position = map.GetCellCenterWorld(newPosition) + new Vector3(0, 0, 5);
     }
-
+    //we check if there is a capturable location within range and increase the score by 8, which is the difference between the minimum and maximum defenses (-3 and +4)
+    private int TrueIfwithinCaptureDistance(unitScript checkedUnit, Vector3Int startingposition)
+    {
+        Dictionary<Vector3Int, int> moveswithinthissquare = findPossibleMoves(startingposition, checkedUnit);
+        List<Vector3Int> Positions = new List<Vector3Int>(moveswithinthissquare.Keys);
+        foreach(Vector3Int currentTile in Positions)
+        {
+            if(map.GetTile<levelTile>(currentTile) != null)
+            {
+                if (map.GetTile<levelTile>(currentTile).controllable)
+                {
+                    if (map.GetInstantiatedObject(currentTile).GetComponent<controllable_script>().owner == 0)
+                    {
+                        return 8;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
 
     public Vector3Int gridPosition(Vector3 position, bool screen = false)
     {
