@@ -491,7 +491,7 @@ MonoBehaviour:
   _serializedExposedParameters: []
   _boundGraphSerialization: '{"type":"NodeCanvas.DialogueTrees.DialogueTree","nodes":[{"statement":{"_text":"Welcome,
     friend, to Xibalba!"},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":436.0,"y":146.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"0"},{"saySelection":true,"availableChoices":[{"statement":{"_text":"Am
-    I dead?"}},{"statement":{"_text":"Cool, thanks (leave)"}}],"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":433.1126,"y":252.3628},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"1"},{"statement":{"_text":"Hahaha!
+    I dead"}},{"statement":{"_text":"Cool, thanks (leave)"}}],"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":433.1126,"y":252.3628},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"1"},{"statement":{"_text":"Hahaha!
     I am afraid have confused Xibalba for Mictlan, the place of the dead."},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":252.0,"y":443.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"2"},{"statement":{"_text":"You
     are not dead, my friend, you have barely begun your test!"},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":245.0,"y":544.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"3"},{"statement":{"_text":"Go
     through the main hall to start your journey."},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":246.0007,"y":630.6666},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"4"},{"_action":{"sceneName":{"_value":"DeckSelector"},"mode":{},"$type":"NodeCanvas.Tasks.Actions.LoadScene"},"_actorName":"NetworkManager","_actorParameterID":"0ad3798b-490f-4ec6-9edd-42b27e3251b3","_position":{"x":203.0,"y":774.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"5"},{"statement":{"_text":"Come
@@ -508,7 +508,7 @@ MonoBehaviour:
     _version: 3.21
     _category: 
     _comments: 
-    _translation: {x: 135, y: -393}
+    _translation: {x: 41, y: -167}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 1

@@ -4,14 +4,13 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.IO;
 using Photon.Pun;
+using System;
 
 public class saveManager : MonoBehaviourPun
 {
     string saveseparator = "#";
     string tileseparator = "NEW";
     public int thisistheplayer;
-    private UIInputWindowForSaveMap inputwindow;
-    private UIInputWindowForSaveMap inputwindowforLoad;
     public GameObject controllableprefab;
     /*forest: 0
     mountain: 1
@@ -25,6 +24,7 @@ public class saveManager : MonoBehaviourPun
     private Dictionary<string, levelTile> tileDictionary = new Dictionary<string, levelTile>();
     private List<GameObject> Buildables = new List<GameObject>();
     private Dictionary<string, GameObject> unitDictionary = new Dictionary<string, GameObject>();
+    MapManager mapmanager;
     [SerializeField]
     public Tilemap map, conditions;
     private int z;
@@ -177,12 +177,13 @@ public class saveManager : MonoBehaviourPun
             LoadNetwork(alltiles);
         else
             photonView.RPC("LoadNetwork", RpcTarget.All, alltiles);
+
     }
 
     [PunRPC]
     public void LoadNetwork(string[] alltiles)
     {
-        string AIorHuman = PlayerPrefs.GetString("AIorHuman");
+        Dictionary<Vector3Int, Tuple<int, int>> controllableInitializationList = new Dictionary<Vector3Int, Tuple<int, int>>();
         int numberofcontrollables = 0;
         foreach (string currentTile in alltiles)
         {
@@ -196,11 +197,18 @@ public class saveManager : MonoBehaviourPun
                 map.SetTile(where, tileDictionary[tile]);
                 if (bool.Parse(contents[5]))
                 {
-                    GameObject controllable = map.GetInstantiatedObject(where);
-                    PhotonView tileID = controllable.GetComponent<PhotonView>();
-                    tileID.ViewID = 999 - numberofcontrollables;
-                    numberofcontrollables++;
-                    controllable.GetComponent<controllable_script>().ownerchange(int.Parse(contents[6]), int.Parse(contents[7]));
+                    if(thisistheplayer == 1)
+                    {
+                        GameObject controllable = map.GetInstantiatedObject(where);
+                        PhotonView tileID = controllable.GetComponent<PhotonView>();
+                        tileID.ViewID = 999 - numberofcontrollables;
+                        numberofcontrollables++;
+                        controllable.GetComponent<controllable_script>().ownerchange(int.Parse(contents[6]), int.Parse(contents[7]));
+                    }
+                    else
+                    {
+                        controllableInitializationList[where] = Tuple.Create<int,int>(int.Parse(contents[6]), int.Parse(contents[7]));
+                    }
                 }
             }
             else
@@ -221,8 +229,13 @@ public class saveManager : MonoBehaviourPun
                 }
             }
         }
-    }
+        if(thisistheplayer!= 1)
+        {
+            mapmanager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+            mapmanager.controllableInitializationList = controllableInitializationList;
 
+        }
+    }
     public Vector3Int gridPosition(Vector3 position, bool screen = false)
     {
         if (screen)
@@ -258,5 +271,10 @@ public class saveManager : MonoBehaviourPun
     public unitScript getunit(Vector3Int position)
     {
         return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+    }
+
+    private IEnumerator wait(float waitingtime)
+    {
+        yield return new WaitForSeconds(waitingtime);
     }
 }

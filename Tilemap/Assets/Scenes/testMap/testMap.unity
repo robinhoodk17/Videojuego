@@ -5938,9 +5938,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thisistheplayer: 0
-  savewindow: {fileID: 394485307}
-  loadwindow: {fileID: 2078331372}
-  controllableprefab: {fileID: 0}
+  controllableprefab: {fileID: 4879992593563287845, guid: c328eb3de7d4adf4b807091dd0f9f417, type: 3}
   tileBases:
   - {fileID: 11400000, guid: 1e2aecd8f6da05f4490ab1603a04446b, type: 2}
   - {fileID: 11400000, guid: 4b46c688dd407114c914e8968d3857c2, type: 2}
@@ -7034,6 +7032,7 @@ MonoBehaviour:
   food: 
   SUP: 
   foodSUP: 0000000000000000
+  currentposition: {x: 0, y: 0, z: 0}
   OnTurnEndEvent: {fileID: 11400000, guid: 4c3bf28c710659648a267f9da3da338f, type: 2}
   savemanager: {fileID: 1466828368}
   CurrentButtonPressed: 0

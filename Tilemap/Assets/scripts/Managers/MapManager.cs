@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
 using Photon.Pun;
+using System;
 
 public enum BattleState { START, PLAYERTURN, ENDTURN, WON, LOST }
 //remember to add in the inspector the tiles in the tiledatas and the tilemap in "map" (for loading the map) and tilebases (for being able to edit)
@@ -30,6 +31,7 @@ public class MapManager : MonoBehaviourPun
     public Tilemap map, conditions, units;
     private Dictionary<string, GameObject> Buildables = new Dictionary<string, GameObject>();
     public Dictionary<string, GameObject> selectedbuildables = new Dictionary<string, GameObject>();
+    public Dictionary<Vector3Int, Tuple<int, int>> controllableInitializationList = new Dictionary<Vector3Int, Tuple<int, int>>();
     public bool clicked = false;
     public int numberOfPlayers;
     public BattleState state;
@@ -408,6 +410,18 @@ public class MapManager : MonoBehaviourPun
         if (thisistheplayer == 1)
         {
             save.LoadNetworkCaller(mapname);
+        }
+        else
+        {
+            int numberofcontrollables = 0;
+            foreach (Vector3Int where in controllableInitializationList.Keys)
+            {
+                GameObject controllable = map.GetInstantiatedObject(where);
+                PhotonView tileID = controllable.GetComponent<PhotonView>();
+                tileID.ViewID = 999 - numberofcontrollables;
+                numberofcontrollables++;
+                controllable.GetComponent<controllable_script>().ownerchange(controllableInitializationList[where].Item1, controllableInitializationList[where].Item2);
+            }
         }
         //Here we select the commanders for the game
         GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
