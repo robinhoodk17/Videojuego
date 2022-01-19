@@ -17,6 +17,8 @@ public class CameraMovement : MonoBehaviour
 
     float lastStep;
     public float timeBetweenSteps = 0.15f;
+    public float panborderthickness = 2f;
+    public float zoomspeedwithwheel = 20f;
 
     private float mapminx, mapmaxx, mapminy, mapmaxy;
     // Update is called once per frame
@@ -30,18 +32,9 @@ public class CameraMovement : MonoBehaviour
     }
     void LateUpdate()
     {
-        if(Input.anyKey)
-        {
-            PanCamera();
-            Zoom();
-        }
 
-    }
-
-    private void PanCamera()
-    {
-
-        if(Input.GetKey(KeyCode.W))
+        //move up
+        if (Input.GetKey(KeyCode.W) || Input.mousePosition.y >= Screen.height - panborderthickness)
         {
             if (Time.time - lastStep > timeBetweenSteps)
             {
@@ -49,10 +42,11 @@ public class CameraMovement : MonoBehaviour
                 Vector3 up = new Vector3(0, .5f, 0);
                 cam.transform.position = ClampCamera(cam.transform.position + up);
             }
-            
+
         }
 
-        if (Input.GetKey(KeyCode.S))
+        //move down
+        if (Input.GetKey(KeyCode.S) || Input.mousePosition.y <= panborderthickness)
         {
             if (Time.time - lastStep > timeBetweenSteps)
             {
@@ -62,7 +56,21 @@ public class CameraMovement : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.D))
+
+        //move left
+        if (Input.GetKey(KeyCode.A) || Input.mousePosition.x <= panborderthickness)
+        {
+            if (Time.time - lastStep > timeBetweenSteps )
+            {
+                lastStep = Time.time;
+                Vector3 left = new Vector3(-.5f, 0, 0);
+                cam.transform.position = ClampCamera(cam.transform.position + left);
+            }
+        }
+
+
+        //move right
+        if (Input.GetKey(KeyCode.D) || Input.mousePosition.x >= Screen.width - panborderthickness)
         {
             if (Time.time - lastStep > timeBetweenSteps)
             {
@@ -72,23 +80,9 @@ public class CameraMovement : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.A))
-        {
-            if (Time.time - lastStep > timeBetweenSteps)
-            {
-                lastStep = Time.time;
-                Vector3 left = new Vector3(-.5f, 0, 0);
-                cam.transform.position = ClampCamera(cam.transform.position + left);
-            }
-        }
 
-        
-
-    }
-
-    private void Zoom()
-    {
-        if(Input.GetKey(KeyCode.Z))
+        //zoom in
+        if (Input.GetKey(KeyCode.Z))
         {
             if (Time.time - lastStep > timeBetweenSteps)
             {
@@ -98,6 +92,9 @@ public class CameraMovement : MonoBehaviour
                 cam.transform.position = ClampCamera(cam.transform.position);
             }
         }
+
+
+        //zoom out
         if (Input.GetKey(KeyCode.X))
         {
             if (Time.time - lastStep > timeBetweenSteps)
@@ -108,6 +105,12 @@ public class CameraMovement : MonoBehaviour
                 cam.transform.position = ClampCamera(cam.transform.position);
             }
         }
+
+
+        //zoom with mouse wheel
+        float newsize = Input.GetAxis("Mouse ScrollWheel");
+        cam.orthographicSize += newsize * zoomspeedwithwheel * 20 * Time.deltaTime;
+        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minCamSize, maxCamSize);
     }
 
     private Vector3 ClampCamera(Vector3 targetPosition)
