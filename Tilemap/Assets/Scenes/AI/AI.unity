@@ -3141,6 +3141,7 @@ MonoBehaviour:
   some: {fileID: 8068614240618256459, guid: 7ddc0c6aba762aa4ea03b4ac37ff42cf, type: 3}
   unitname: {fileID: 1763985139}
   accept: {fileID: 1695376595}
+  endTurnButton: {fileID: 1028483783}
 --- !u!4 &980499893
 Transform:
   m_ObjectHideFlags: 0
@@ -3812,8 +3813,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thisistheplayer: 0
-  savewindow: {fileID: 1252081646}
-  loadwindow: {fileID: 936800274}
   controllableprefab: {fileID: 0}
   tileBases:
   - {fileID: 11400000, guid: 1e2aecd8f6da05f4490ab1603a04446b, type: 2}
@@ -4694,6 +4693,9 @@ MonoBehaviour:
   maxCamSize: 10
   map: {fileID: 547023886}
   timeBetweenSteps: 0.03
+  panborderthickness: 2
+  zoomspeedwithwheel: 20
+  invertZoomWheel: 1
 --- !u!81 &1355536337
 AudioListener:
   m_ObjectHideFlags: 0

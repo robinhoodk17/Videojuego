@@ -19,6 +19,7 @@ public class CameraMovement : MonoBehaviour
     public float timeBetweenSteps = 0.15f;
     public float panborderthickness = 2f;
     public float zoomspeedwithwheel = 20f;
+    public int invertZoomWheel = 1;
 
     private float mapminx, mapmaxx, mapminy, mapmaxy;
     // Update is called once per frame
@@ -109,7 +110,8 @@ public class CameraMovement : MonoBehaviour
 
         //zoom with mouse wheel
         float newsize = Input.GetAxis("Mouse ScrollWheel");
-        cam.orthographicSize += newsize * zoomspeedwithwheel * 20 * Time.deltaTime;
+        //the invert zoom wheel can get the value 1 or -1, depending on the key bindings
+        cam.orthographicSize += invertZoomWheel * newsize * zoomspeedwithwheel * 20 * Time.deltaTime;
         cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minCamSize, maxCamSize);
     }
 

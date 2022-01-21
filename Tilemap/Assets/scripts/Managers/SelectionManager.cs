@@ -162,10 +162,7 @@ public class SelectionManager : MonoBehaviour
             {
                 if(unitstate =="idle")
                 {
-                    findSelectabletiles(unit, currentposition);
-                    unitselected = true;
-                    unit.onMove();
-                    OnUnitSelected?.Invoke(unitprefab);
+                    selectUnit(unit, currentposition);
                 }
             }
         }
@@ -326,7 +323,13 @@ public class SelectionManager : MonoBehaviour
         
     }
 
-    
+    public void selectUnit(unitScript selectedUnit, Vector3Int unitposition)
+    {
+        findSelectabletiles(selectedUnit, unitposition);
+        unitselected = true;
+        unit.onMove();
+        OnUnitSelected?.Invoke(unitprefab);
+    }
     public void onWait()
     {
         mapmanager.selectedUnitWaits(currentposition, newposition);

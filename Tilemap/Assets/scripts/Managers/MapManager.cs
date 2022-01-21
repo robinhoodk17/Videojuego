@@ -192,7 +192,7 @@ public class MapManager : MonoBehaviourPun
 
     public void OnTurnEnd()
     {
-        if(activeplayer == thisistheplayer)
+        if(activeplayer == thisistheplayer || PlayerPrefs.GetString("AIorHuman") == "AI")
         {
             if(barracksSelected)
             {
@@ -405,7 +405,6 @@ public class MapManager : MonoBehaviourPun
     [PunRPC]
     private void InitializeGame(string mapname)
     {
-
         save.thisistheplayer = thisistheplayer;
         if (thisistheplayer == 1)
         {
