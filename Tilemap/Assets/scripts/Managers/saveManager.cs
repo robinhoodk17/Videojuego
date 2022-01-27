@@ -118,7 +118,7 @@ public class saveManager : MonoBehaviourPun
         }
         savestring = string.Join(tileseparator, alltiles);
 
-        File.WriteAllText(Application.persistentDataPath + "/" + savename + ".map", savestring);
+        File.WriteAllText(Application.streamingAssetsPath + "/" + savename + ".map", savestring);
     }
 
     public void QuickLoadMap(string savename = "save")
@@ -126,7 +126,7 @@ public class saveManager : MonoBehaviourPun
         PhotonNetwork.OfflineMode = true;
         thisistheplayer = 1;
         map.ClearAllTiles();
-        string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
+        string saveString = File.ReadAllText(Application.streamingAssetsPath + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
         int numberofcontrollables = GameObject.FindGameObjectWithTag("MapEditorManager").GetComponent<MapEditorManager>().numberofcontrollables;
         foreach (string currentTile in alltiles)
@@ -171,7 +171,7 @@ public class saveManager : MonoBehaviourPun
 
     public void LoadNetworkCaller(string savename = "save")
     {
-        string saveString = File.ReadAllText(Application.persistentDataPath + "/" + savename + ".map");
+        string saveString = File.ReadAllText(Application.streamingAssetsPath + "/" + savename + ".map");
         string[] alltiles = saveString.Split(new[] { tileseparator }, System.StringSplitOptions.None);
         if (PlayerPrefs.GetString("AIorHuman") == "AI")
             LoadNetwork(alltiles);

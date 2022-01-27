@@ -38,7 +38,7 @@ public class CardPoolManager : MonoBehaviour
         }
         //we knoe the CurrentDeck name because it was set in PlayerPrefs in the DeckSelector scene by the deckButton prefab's deckChooser script
         deckname = PlayerPrefs.GetString("CurrentDeck");
-        string saveString = File.ReadAllText(Application.persistentDataPath + "/" + deckname + ".deck");
+        string saveString = File.ReadAllText(Application.streamingAssetsPath + "/" + deckname + ".deck");
         string[] cardsindeck = saveString.Split(new[] { cardseparator }, System.StringSplitOptions.None);
         //Here we check if the instantiated card is part of the deck we loaded
         foreach (GameObject i in humans)
@@ -125,7 +125,7 @@ public class CardPoolManager : MonoBehaviour
             cardnames.Add(cardname);
         }
         savestring = string.Join(cardseparator, cardnames);
-        File.WriteAllText(Application.persistentDataPath + "/" + savename + ".deck", savestring);
+        File.WriteAllText(Application.streamingAssetsPath + "/" + savename + ".deck", savestring);
 
     }
 

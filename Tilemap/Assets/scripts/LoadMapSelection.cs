@@ -11,7 +11,7 @@ public class LoadMapSelection : MonoBehaviour
     public GameObject MapsArea;
     void Start()
     {
-        string[] fileInfo = Directory.GetFiles(Application.persistentDataPath, "*.map");
+        string[] fileInfo = Directory.GetFiles(Application.streamingAssetsPath, "*.map");
         foreach (string file in fileInfo)
         {
             string filename = Path.GetFileNameWithoutExtension(file);

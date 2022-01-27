@@ -12,7 +12,7 @@ public class deckManager : MonoBehaviour
     public GameObject DeckArea;
     void Start()
     {
-        string[] fileInfo = Directory.GetFiles(Application.persistentDataPath, "*.deck");
+        string[] fileInfo = Directory.GetFiles(Application.streamingAssetsPath, "*.deck");
         foreach (string file in fileInfo)
         {
             string filename = Path.GetFileNameWithoutExtension(file);
