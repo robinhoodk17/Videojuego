@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
@@ -24,14 +25,42 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        firstRun = PlayerPrefs.GetInt("firstRun");
-        if(firstRun == 0)
+        
+        if(PlayerPrefs.HasKey("RunNumber"))
         {
-            PlayerPrefs.SetInt("firstRun", 1);
-            ChangeScene("ProfileSetup");
+            PlayerPrefs.SetInt("RunNumber", PlayerPrefs.GetInt("RunNumber") + 1);
+            string saveString = File.ReadAllText(Application.streamingAssetsPath + "/map1.map");
+            File.WriteAllText(Application.persistentDataPath + "/map1.map", saveString);
+            File.WriteAllText(Application.persistentDataPath + "/new deck.deck", "");
+            //only use this method before creating the build
+            //resetPlayerPrefs();
+        }
+        else
+        {
+            //ChangeScene("ProfileSetup");
+            Debug.Log("First run");
+            PlayerPrefs.SetInt("RunNumber", 1);
+            string saveString = File.ReadAllText(Application.streamingAssetsPath + "/map1.map");
+            File.WriteAllText(Application.persistentDataPath + "/map1.map", saveString);
+            File.WriteAllText(Application.persistentDataPath + "/new deck.deck", "");
         }
     }
 
+    private void resetPlayerPrefs()
+    {
+        PlayerPrefs.DeleteKey("RunNumber");
+        PlayerPrefs.DeleteKey("mapname");
+        PlayerPrefs.DeleteKey("decksize");
+        for (int i = 0; i < 100; i++)
+        {
+            if(PlayerPrefs.HasKey("selecteddeck" + i.ToString()))
+            {
+                PlayerPrefs.DeleteKey("selecteddeck" + i.ToString());
+            }
+        }
+        PlayerPrefs.DeleteKey("AIorHuman");
+        Debug.Log("playerprefs resetted");
+    }
     public void Connect()
     {
         PhotonNetwork.ConnectUsingSettings();
