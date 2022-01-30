@@ -2807,7 +2807,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Back to main menu
+  m_text: Main Menu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3138,6 +3138,8 @@ MonoBehaviour:
   mapmanager: {fileID: 1684102299}
   selectionmanager: {fileID: 1492422733}
   map: {fileID: 547023886}
+  units: {fileID: 0}
+  conditions: {fileID: 0}
   some: {fileID: 8068614240618256459, guid: 7ddc0c6aba762aa4ea03b4ac37ff42cf, type: 3}
   unitname: {fileID: 1763985139}
   accept: {fileID: 1695376595}
@@ -6384,6 +6386,7 @@ GameObject:
   - component: {fileID: 1711883616}
   - component: {fileID: 1711883615}
   - component: {fileID: 1711883614}
+  - component: {fileID: 1711883617}
   m_Layer: 5
   m_Name: BackToMainMenu
   m_TagString: Untagged
@@ -6408,7 +6411,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -10, y: -10}
+  m_AnchoredPosition: {x: -41.200012, y: -43.200012}
   m_SizeDelta: {x: 222.05, y: 44.7}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1711883614
@@ -6455,10 +6458,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 664079007}
-        m_TargetAssemblyTypeName: NetworkManager, Assembly-CSharp
-        m_MethodName: ChangeScene
-        m_Mode: 5
+      - m_Target: {fileID: 1711883617}
+        m_TargetAssemblyTypeName: ReturnToMainMenu, Assembly-CSharp
+        m_MethodName: onClick
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6505,6 +6508,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1711883612}
   m_CullTransparentMesh: 1
+--- !u!114 &1711883617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711883612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c681c9be47aa5e4da38d35d632af703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1745306707
 GameObject:
   m_ObjectHideFlags: 0

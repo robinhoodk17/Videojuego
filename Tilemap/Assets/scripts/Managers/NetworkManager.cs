@@ -18,7 +18,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         if (instance != null && instance != this)
         {
-            gameObject.SetActive(false);
+            Destroy(this.gameObject);
         }
         else
         {
@@ -51,6 +51,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PlayerPrefs.DeleteKey("RunNumber");
         PlayerPrefs.DeleteKey("mapname");
         PlayerPrefs.DeleteKey("decksize");
+        PlayerPrefs.DeleteKey("PlayerName");
         for (int i = 0; i < 100; i++)
         {
             if(PlayerPrefs.HasKey("selecteddeck" + i.ToString()))

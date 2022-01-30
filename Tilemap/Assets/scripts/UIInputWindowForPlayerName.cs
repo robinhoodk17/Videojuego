@@ -8,6 +8,7 @@ public class UIInputWindowForPlayerName : MonoBehaviour
 {
     [SerializeField]
     private TMP_InputField inputField;
+    public NetworkManager networkManager;
 
     public void cancelPressed()
     {
@@ -16,6 +17,8 @@ public class UIInputWindowForPlayerName : MonoBehaviour
     public void playerNameSaved()
     {
         PlayerPrefs.SetString("PlayerName", inputField.text);
-        PhotonNetwork.LoadLevel("MainMenu");
+        networkManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkManager>();
+        networkManager.ChangeScene("MainMenu");
+        Destroy(networkManager.gameObject);
     }
 }
