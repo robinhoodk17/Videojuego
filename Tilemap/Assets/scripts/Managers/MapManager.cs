@@ -157,6 +157,7 @@ public class MapManager : MonoBehaviourPun
         int[] costs = new int[2];
         costs[0] = spawnedUnit.foodCost;
         costs[1] = spawnedUnit.SUPCost;
+        Debug.Log(CurrentButtonPressed);
         PhotonNetwork.Instantiate("Units/" + Buildables[CurrentButtonPressed].name, map.GetCellCenterWorld(currentposition), Quaternion.identity);
         spawnedUnit = getunit(currentposition);
         spawnedUnit.exhausted = true;

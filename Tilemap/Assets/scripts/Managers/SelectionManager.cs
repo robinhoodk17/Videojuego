@@ -18,6 +18,7 @@ public class SelectionManager : MonoBehaviour
     private float startHover;
     private bool startedHovering = false;
 
+
     public int thisistheplayer;
     int activeplayer = 1;
     public int playernumber = 2;
@@ -31,11 +32,15 @@ public class SelectionManager : MonoBehaviour
     public List<levelTile> movementUI;
     public GameObject damagePreview;
     private bool unitselected = false;
-    private unitScript unit;
+
+    //these are only accessed from the CommandPattern
+    public unitScript unit;
+    public Vector3Int currentposition = new Vector3Int();
+    public Vector3Int newposition = new Vector3Int();
+    public GameObject unitprefab;
+
+
     private unitScript transport;
-    private GameObject unitprefab;
-    private Vector3Int currentposition = new Vector3Int();
-    private Vector3Int newposition = new Vector3Int();
     private Vector3Int hoveringTile = new Vector3Int();
     private bool areWeHovering = false;
     //The unit panel to turn off after moving it
@@ -62,13 +67,14 @@ public class SelectionManager : MonoBehaviour
     private Camera _mainCamera;
     private gridCombat combatManager;
     //for the animations
-    string unitstate ="idle";
+    public string unitstate ="idle";
     //for the tooltip
     infoPanel unitToolTip;
     bool showingtooltip = false;
     private MapManager mapmanager;
     public GameObject buttonsprefab;
     public unitScript unloadUnit= null;
+    bool firstupdate = false;
     private void Start()
     {
         //Oncombatstart += Oncombat;
@@ -86,21 +92,7 @@ public class SelectionManager : MonoBehaviour
         {
             if (unitstate == "moving")
             {
-                if (path.Count > 0)
-                {
-                    Move(unitprefab.transform.position, path.Peek());
-                }
-                else
-                {
-                    units.ClearAllTiles();
-                    unitstate = "thinking";
-                    if (newposition == currentposition || unit.attackandmove)
-                    {
-                        findattackables(newposition, unit);
-                    }
-
-                    turnoff = showUnitPanel(unitprefab, unit, newposition);
-                }
+                Move(unitprefab.transform.position, path);
             }
 
         }
@@ -108,47 +100,46 @@ public class SelectionManager : MonoBehaviour
     }
     void Update()
     {
-        //this is the click to move the unit
-        if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject() && unitstate != "moving" && thisistheplayer == activeplayer)
+        
+        if(Input.GetMouseButtonUp(0))
         {
-            if (unit.owner != activeplayer) { Reset(); }
+            Debug.Log("thisistheplayer: " + thisistheplayer.ToString() + " active player: " + activeplayer + "unit selected: " + unitselected.ToString() );
+            Debug.Log(gridPosition(Input.mousePosition, true) + " " + getunit(gridPosition(Input.mousePosition, true)));
+        }
+        //this is the click to move the unit
+        if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject() && unitstate != "moving" && thisistheplayer == activeplayer && unitstate == "idle")
+        {
+            if (unit.owner != activeplayer) { Reset(); return; }
+            newposition = gridPosition(Input.mousePosition, true);
+            //these ifs set the unit in motion (works even if you press its own position) only if you are clicking on a movement UI tile while the
+            //unit is not exhausted an while the target position has no units.
+            if (getunit(newposition) != null)
+            {
+                if(getunit(newposition).istransport && getunit(newposition).transportedUnits.Count < getunit(newposition).unitCarryingCapacity && unit.typeOfUnit == TypeOfUnit.infantry && getunit(newposition).owner == unit.owner)
+                {
+                    load = true;
+                    transport = getunit(newposition);
+                }
+            }
+
+            if ((getunit(newposition) != null && newposition != currentposition && unitstate != "thinking" && !load) || (unit.exhausted || !units.HasTile(newposition) || unit.status == "stunned" || unit.status == "recovered"))
+            {
+                Reset();
+            }
             else
             {
-                if (unitstate == "idle")
+                if (!unit.exhausted && units.HasTile(newposition))
                 {
-                    //these ifs set the unit in motion (works even if you press its own position) only if you are clicking on a movement UI tile while the
-                    //unit is not exhausted an while the target position has no units.
-                    newposition = gridPosition(Input.mousePosition, true);
-                    if(getunit(newposition) != null)
+                    if (units.GetTile<levelTile>(newposition) == movementUI[0] || units.GetTile<levelTile>(newposition) == movementUI[2])
                     {
-                        if(getunit(newposition).istransport && getunit(newposition).transportedUnits.Count < getunit(newposition).unitCarryingCapacity && unit.typeOfUnit == TypeOfUnit.infantry && getunit(newposition).owner == unit.owner)
-                        {
-                            load = true;
-                            transport = getunit(newposition);
-                        }
+                        //getPath calculates the path from currentposition to newposition and sets the unitstate = "moving", which starts moving the unit
+                        getPath(currentposition, newposition);
                     }
-                    if ((getunit(newposition) != null && newposition != currentposition && unitstate != "thinking" && !load) || (unit.exhausted || !units.HasTile(newposition) || unit.status == "stunned" || unit.status == "recovered"))
-                    {
+                }
+                else
+                {
+                    if (unitstate != "thinking")
                         Reset();
-                    }
-                    else
-                    {
-                        if (!unit.exhausted && units.HasTile(newposition))
-                        {
-                            if (units.GetTile<levelTile>(newposition) == movementUI[0] || units.GetTile<levelTile>(newposition) == movementUI[2])
-                            {
-                                getPath(currentposition, newposition, unit);
-                                unitstate = "moving";
-                                path.Pop();
-                            }
-                        }
-                        else
-                        {
-                            if (unitstate != "thinking")
-                                Reset();
-                        }
-                    }
-
                 }
             }
         }
@@ -221,8 +212,9 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (getunit(clickedtile).owner != activeplayer)
                     {
-                        if(getunit(clickedtile).HP > 0 || unit.ability == "capture")
+                        if (getunit(clickedtile).HP > 0 || unit.ability == "capture")
                         {
+                            Debug.Log("we invoked combat");
                             onWait();
                             Oncombatstart?.Invoke(newposition, clickedtile);
                         }
@@ -330,6 +322,7 @@ public class SelectionManager : MonoBehaviour
         unit.onMove();
         OnUnitSelected?.Invoke(unitprefab);
     }
+    
     public void onWait()
     {
         mapmanager.selectedUnitWaits(currentposition, newposition);
@@ -377,6 +370,7 @@ public class SelectionManager : MonoBehaviour
         unit.onCap();
         onWait();
     }
+
     public void onAttackButtonClicked()
     {
         turnpanel(unitprefab, false, turnoff);
@@ -787,6 +781,7 @@ public class SelectionManager : MonoBehaviour
         if (!screen)
         {
             position = _mainCamera.WorldToScreenPoint(position);
+
         }
         var ray = _mainCamera.ScreenPointToRay(position);
         RaycastHit hit;
@@ -1023,7 +1018,7 @@ public class SelectionManager : MonoBehaviour
             }
         }
     }
-    public void getPath(Vector3Int previous, Vector3Int newposition, unitScript unit)
+    public void calculatePath(Vector3Int previous, Vector3Int newposition, unitScript unit)
     {
         path.Clear();
         Vector3Int next = newposition;
@@ -1034,22 +1029,44 @@ public class SelectionManager : MonoBehaviour
         }
     }
 
-    public void Move(Vector3 startposition, Vector3Int targetposition)
+    public void getPath(Vector3Int startposition, Vector3Int targetposition)
     {
-        Vector3 target = map.GetCellCenterLocal(targetposition) + new Vector3(0, 0, 5);
-        if (Vector3.Distance(startposition, target) <= .11f)
+        calculatePath(startposition, targetposition, unit);
+        unitstate = "moving";
+        path.Pop();
+    }
+    public void Move(Vector3 startposition, Stack<Vector3Int> path)
+    {
+        if(path.Count > 0)
         {
-            path.Pop();
-            unitprefab.transform.position = map.GetCellCenterWorld(targetposition) + new Vector3(0, 0, 5);
+            Vector3Int targetposition = path.Peek();
+            Vector3 target = map.GetCellCenterLocal(targetposition) + new Vector3(0, 0, 5);
+            if (Vector3.Distance(startposition, target) <= .11f)
+            {
+                path.Pop();
+                unitprefab.transform.position = map.GetCellCenterWorld(targetposition) + new Vector3(0, 0, 5);
+            }
+            else
+            {
+                Vector3 heading = target - startposition;
+                heading.Normalize();
+                Vector3 velocity = heading * unit.movespeedanimation;
+                unitprefab.transform.forward = heading;
+                unitprefab.transform.SetPositionAndRotation(unitprefab.transform.position + velocity * Time.fixedDeltaTime, Quaternion.identity);
+            }
+
         }
         else
         {
-            Vector3 heading = target - startposition;
-            heading.Normalize();
-            Vector3 velocity = heading * unit.movespeedanimation;
-            unitprefab.transform.forward = heading;
-            unitprefab.transform.SetPositionAndRotation(unitprefab.transform.position + velocity * Time.fixedDeltaTime, Quaternion.identity);
+            units.ClearAllTiles();
+            unitstate = "thinking";
+            if (newposition == currentposition || unit.attackandmove)
+            {
+                findattackables(newposition, unit);
+            }
+            turnoff = showUnitPanel(unitprefab, unit, newposition);
         }
+        
     }
 
     public void findattackables(Vector3Int position, unitScript unit)
@@ -1124,10 +1141,13 @@ public class SelectionManager : MonoBehaviour
         }
     }
 
-    //this method returns true if the targetposition is within the unit's aura range (position is the unit with aura's position)
+    //this method returns true if the targetposition is within the unit's aura range (position is the unit with aura's position) (it returns false on the unit that has the aura.
     public bool findifwithinrange(Vector3Int targetposition, unitScript unit, Vector3Int position)
     {
-
+        if(targetposition == position)
+        {
+            return false;
+        }
         //creating the neighborlist for attackable tiles
         neighborlist.Clear();
         selectableTiles.Clear();
@@ -1195,6 +1215,7 @@ public class SelectionManager : MonoBehaviour
         {
             if(selectable == targetposition)
             {
+                Debug.Log(targetposition + "selectable: " + selectable + getunit(selectable));
                 if (unit.auracheck(getunit(targetposition)))
                     return true;
             }

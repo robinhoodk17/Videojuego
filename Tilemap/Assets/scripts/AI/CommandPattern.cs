@@ -17,15 +17,58 @@ public class CommandPattern : MonoBehaviour
     public Tilemap map, units, conditions;
     public unitScript some;
     public TextMeshProUGUI unitname;
+    private Vector3 PlayerCameraCoordinates;
+    private float PlayerCameraZoom;
     public UIInputWindowForBarracksName accept;
     private Camera _mainCamera;
     Dictionary<unitScript, Dictionary<Vector3Int, (int,string)>> possibleMovesForAllUnits = new Dictionary<unitScript, Dictionary<Vector3Int, (int,string)>>();
+    Dictionary<unitScript, (Vector3Int, String)> targetPositionsandActions = new Dictionary<unitScript, (Vector3Int, string)>();
+    Queue<unitScript> unitsToMove = new Queue<unitScript>();
     private bool firstTurn = true;
     private List<GameObject> selectedbuildables;
     public Button endTurnButton;
     private gridCombat combatManager;
     public event Action<Vector3Int, Vector3Int> Oncombatstart;
+    private string unitstate = "idle";
+    private GameObject unitprefab;
+    Stack<Vector3Int> path = new Stack<Vector3Int>();
+    GameObject[] controllables;
+    private bool movingaUnit = false;
+    private bool finishedMovingAllUnits = false;
 
+    void Update()
+    {
+        if(activeplayer != 2)
+        {
+            return;
+        }
+        if(unitsToMove.Count == 0 && movingaUnit)
+        {
+            Debug.Log("we entered here");
+            movingaUnit = false;
+            finishedMovingAllUnits = true;
+        }
+        if(movingaUnit)
+        {
+            unitScript currentMovingUnit = unitsToMove.Peek();
+            moveUnit(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1, targetPositionsandActions[currentMovingUnit].Item2);
+            movingaUnit = false;
+        }
+        if(selectionmanager.unitstate == "thinking")
+        {
+            unitScript currentMovingUnit = unitsToMove.Dequeue();
+            takeAction(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1, targetPositionsandActions[currentMovingUnit].Item2);
+        }
+        if(finishedMovingAllUnits)
+        {
+            Debug.Log("we entered to the finished, for some reason");
+            finishedMovingAllUnits = false;
+            findOptimalBuild(controllables);
+            endTurn();
+            _mainCamera.transform.position = PlayerCameraCoordinates;
+            _mainCamera.orthographicSize = PlayerCameraZoom;
+        }
+    }
     private void Start()
     {
         _mainCamera = Camera.main;
@@ -34,12 +77,19 @@ public class CommandPattern : MonoBehaviour
         combatManager.map = map;
         combatManager.conditions = conditions;
     }
-    void takeTurn()
+
+    private void Reset()
     {
-        GameObject[] controllables = GameObject.FindGameObjectsWithTag("Controllable");
+        targetPositionsandActions.Clear();
+        possibleMovesForAllUnits.Clear();
+        movingaUnit = false;
+        finishedMovingAllUnits = false;
+        unitsToMove.Clear();
+    }
+    private void takeTurn()
+    {
+        controllables = GameObject.FindGameObjectsWithTag("Controllable");
         moveUnits();
-        findOptimalBuild(controllables);
-        endTurn();
     }
 
     public void onTurnEnd()
@@ -57,7 +107,12 @@ public class CommandPattern : MonoBehaviour
         else
             activeplayer = 1;
         if (activeplayer == 2)
+        {
+            Reset();
+            PlayerCameraCoordinates = _mainCamera.transform.position;
+            PlayerCameraZoom = _mainCamera.orthographicSize;
             takeTurn();
+        }
     }
 
     public void findOptimalBuild(GameObject[] controllables)
@@ -117,7 +172,8 @@ public class CommandPattern : MonoBehaviour
 
     }
 
-    //Here we first find all possible moves, then optimize the movement, and then move all units
+    //Here we first find all possible moves, then optimize the movement, and then set the movingaUnit flag to true. Then, on Update we trigger the movement of 
+    //the next unit in the selectionManager. After that unit moves and takes its action, we move the next one, and so forth.
     public void moveUnits()
     {
         GameObject[] allunits = GameObject.FindGameObjectsWithTag("Unit");
@@ -160,6 +216,7 @@ public class CommandPattern : MonoBehaviour
                             MaxValue = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item1;
                             targetPosition = possibleTargetPosition;
                             takenAction = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item2;
+                            unitsToMove.Enqueue(currentMovingUnit);
                         }
                     }
                     else
@@ -171,8 +228,10 @@ public class CommandPattern : MonoBehaviour
                 }
             }
             visitedTiles.Add(targetPosition);
-            moveUnit(currentMovingUnit, targetPosition, takenAction);
+            targetPositionsandActions[currentMovingUnit] = (targetPosition, takenAction);
+
         }
+        movingaUnit = true;
     }
 
 
@@ -527,56 +586,67 @@ public class CommandPattern : MonoBehaviour
 
         return (score, action);
     }
-    public void moveUnit(unitScript unit, Vector3Int newPosition, string Action)
+    
+    public void moveUnit(unitScript unit, Vector3Int newPosition, string  Action)
     {
-        unit.gameObject.transform.position = map.GetCellCenterWorld(newPosition) + new Vector3(0, 0, 5);
-        switch(Action)
+        Debug.Log(unit + "moved to " + newPosition + " and " + Action);
+
+        GameObject unitprefab = unit.gameObject;
+        selectionmanager.unit = unit;
+        selectionmanager.unitprefab = unitprefab;
+        selectionmanager.newposition = newPosition;
+        Vector3Int currentPosition = gridPosition(unit);
+        selectionmanager.currentposition = currentPosition; 
+        //Setting the camera to the unit we are about to move
+        float cam_x = unit.gameObject.transform.position.x;
+        float cam_y = unit.gameObject.transform.position.y;
+        float cam_z = _mainCamera.transform.position.z;
+        _mainCamera.transform.position = new Vector3(cam_x, cam_y, cam_z);
+        _mainCamera.orthographicSize = 5.5f;
+        StartCoroutine(waitSeconds(1600));
+        selectionmanager.selectUnit(unit, currentPosition);
+        StartCoroutine(waitSeconds(1600));
+        selectionmanager.getPath(currentPosition, newPosition);
+        /*
+        GameObject unitprefab = unit.gameObject;
+        selectionmanager.unit = unit;
+        selectionmanager.unitprefab = unitprefab;
+        selectionmanager.newposition = newPosition;
+        Vector3Int currentPosition = gridPosition(unit);
+        selectionmanager.currentposition = currentPosition;
+
+        float cam_x = unit.gameObject.transform.position.x;
+        float cam_y = unit.gameObject.transform.position.y;
+        float cam_z = _mainCamera.transform.position.z;
+        _mainCamera.transform.position = new Vector3(cam_x, cam_y, cam_z);
+        StartCoroutine(waitSeconds(.7f));
+        selectionmanager.selectUnit(unit, currentPosition);
+        StartCoroutine(waitSeconds(.7f));
+        selectionmanager.getPath(currentPosition, newPosition);
+        //GameObject unitprefab = getunitprefab(originalPosition);
+        //unitprefab.transform.position = map.GetCellCenterWorld(newPosition) + new Vector3(0, 0, 5);
+        */
+    }
+
+    public void takeAction(unitScript unit, Vector3Int newPosition, string Action)
+    {
+        switch (Action)
         {
             #region wait
             case "wait":
-                List<unitScript> auras = new List<unitScript>();
-                if (unit.hasaura)
-                {
-                    List<Vector3Int> affectedUnits = findifwithinrange(unit, newPosition);
-                    foreach (Vector3Int affectedUnit in affectedUnits)
-                    {
-                        switch (unit.ability)
-                        {
-                            case "deathdealer":
-                                getunit(affectedUnit).Destroyed();
-                                break;
-                        }
-                    }
-                }
-                foreach (GameObject unitloop in GameObject.FindGameObjectsWithTag("Unit"))
-                {
-                    if (unitloop.GetComponent<unitScript>().haswaitingaura)
-                    {
-                        auras.Add(unitloop.GetComponent<unitScript>());
-                    }
-                }
-                foreach (unitScript unitwithaura in auras)
-                {
-                    if (findifwithinrange(newPosition, unitwithaura, gridPosition(unit)))
-                    {
-                        switch (unitwithaura.ability)
-                        {
-                            case "pistolero":
-                                Oncombatstart?.Invoke(gridPosition(unit), newPosition);
-                                break;
-                        }
-                    }
-                }
-                unit.exhausted = true;
-                unit.sprite.color = new Color(.6f, .6f, .6f);
+                selectionmanager.onWait();
+                break;
+            #endregion
+            #region capture
+            case "capture":
+                selectionmanager.onCap();
                 break;
             #endregion
             default:
                 Debug.Log(Action);
                 break;
         }
-        //GameObject unitprefab = getunitprefab(originalPosition);
-        //unitprefab.transform.position = map.GetCellCenterWorld(newPosition) + new Vector3(0, 0, 5);
+        movingaUnit = true;
     }
     //we check if there is a capturable location within range and increase the score by 8, which is the difference between the minimum and maximum defenses (-3 and +4)
     private int TrueIfwithinCaptureDistance(unitScript checkedUnit, Vector3Int startingposition)
@@ -598,7 +668,6 @@ public class CommandPattern : MonoBehaviour
         }
         return 0;
     }
-
     public Vector3Int gridPosition(Vector3 position, bool screen = false)
     {
         if (screen)
@@ -656,7 +725,13 @@ public class CommandPattern : MonoBehaviour
     private void endTurn()
     {
         possibleMovesForAllUnits.Clear();
+        Reset();
         endTurnButton.onClick.Invoke();
+    }
+    public IEnumerator waitSeconds(float waitingTime)
+    {
+        yield return new WaitForSeconds(waitingTime);
+
     }
 
     //these two method cooperate to return true if the targetposition is within the unit's aura range (position is the unit with aura's position)
@@ -669,7 +744,10 @@ public class CommandPattern : MonoBehaviour
         List<Vector3Int> selectableTiles = new List<Vector3Int>();
         Stack<Vector3Int> path = new Stack<Vector3Int>();
         units.ClearAllTiles();
-
+        if(targetposition == position)
+        {
+            return false;
+        }
 
         //getting the attackable tiles
         foreach (var posi in map.cellBounds.allPositionsWithin)
@@ -730,6 +808,7 @@ public class CommandPattern : MonoBehaviour
         {
             if (selectable == targetposition)
             {
+                Debug.Log(getunit(targetposition));
                 if (unit.auracheck(getunit(targetposition)))
                     return true;
             }

@@ -3138,8 +3138,8 @@ MonoBehaviour:
   mapmanager: {fileID: 1684102299}
   selectionmanager: {fileID: 1492422733}
   map: {fileID: 547023886}
-  units: {fileID: 0}
-  conditions: {fileID: 0}
+  units: {fileID: 189581616}
+  conditions: {fileID: 777802529}
   some: {fileID: 8068614240618256459, guid: 7ddc0c6aba762aa4ea03b4ac37ff42cf, type: 3}
   unitname: {fileID: 1763985139}
   accept: {fileID: 1695376595}
@@ -5625,6 +5625,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1f1353ab8db1f7543990820c50e123a4, type: 2}
   - {fileID: 11400000, guid: 59f458820fe511848ae19eac482c0b38, type: 2}
   damagePreview: {fileID: 4868246463739579359, guid: e4d0a636d2c32094983e4bef9d5f984d, type: 3}
+  unit: {fileID: 0}
+  currentposition: {x: 0, y: 0, z: 0}
+  newposition: {x: 0, y: 0, z: 0}
+  unitprefab: {fileID: 0}
   mask:
     serializedVersion: 2
     m_Bits: 0
