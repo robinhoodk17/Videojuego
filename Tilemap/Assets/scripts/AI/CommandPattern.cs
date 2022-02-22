@@ -15,7 +15,6 @@ public class CommandPattern : MonoBehaviour
     private int activeplayer = 1;
     private int maxplayers = 2;
     public Tilemap map, units, conditions;
-    public unitScript some;
     public TextMeshProUGUI unitname;
     private Vector3 PlayerCameraCoordinates;
     private float PlayerCameraZoom;
@@ -23,15 +22,12 @@ public class CommandPattern : MonoBehaviour
     private Camera _mainCamera;
     Dictionary<unitScript, Dictionary<Vector3Int, (int,string)>> possibleMovesForAllUnits = new Dictionary<unitScript, Dictionary<Vector3Int, (int,string)>>();
     Dictionary<unitScript, (Vector3Int, String)> targetPositionsandActions = new Dictionary<unitScript, (Vector3Int, string)>();
-    Queue<unitScript> unitsToMove = new Queue<unitScript>();
+    List<unitScript> unitsToMove = new List<unitScript>();
+    int numberofunitmoved = 0;
     private bool firstTurn = true;
     private List<GameObject> selectedbuildables;
     public Button endTurnButton;
     private gridCombat combatManager;
-    public event Action<Vector3Int, Vector3Int> Oncombatstart;
-    private string unitstate = "idle";
-    private GameObject unitprefab;
-    Stack<Vector3Int> path = new Stack<Vector3Int>();
     GameObject[] controllables;
     private bool movingaUnit = false;
     private bool finishedMovingAllUnits = false;
@@ -42,27 +38,31 @@ public class CommandPattern : MonoBehaviour
         {
             return;
         }
-        if(unitsToMove.Count == 0 && movingaUnit)
+        if(numberofunitmoved <= 0 && movingaUnit)
         {
-            Debug.Log("we entered here");
             movingaUnit = false;
             finishedMovingAllUnits = true;
         }
         if(movingaUnit)
         {
-            unitScript currentMovingUnit = unitsToMove.Peek();
+            unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
+            Debug.Log("from " + gridPosition(currentMovingUnit.gameObject.transform.position) + "to " + targetPositionsandActions[currentMovingUnit].Item1);
             moveUnit(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1, targetPositionsandActions[currentMovingUnit].Item2);
             movingaUnit = false;
         }
         if(selectionmanager.unitstate == "thinking")
         {
-            unitScript currentMovingUnit = unitsToMove.Dequeue();
+            unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
+            numberofunitmoved--;
             takeAction(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1, targetPositionsandActions[currentMovingUnit].Item2);
         }
         if(finishedMovingAllUnits)
         {
-            Debug.Log("we entered to the finished, for some reason");
             finishedMovingAllUnits = false;
+            for (int i = 0; i < unitsToMove.Count; i++)
+            {
+                Debug.Log("finally" + unitsToMove[i] + " at " + gridPosition(unitsToMove[i].gameObject.transform.position));
+            }
             findOptimalBuild(controllables);
             endTurn();
             _mainCamera.transform.position = PlayerCameraCoordinates;
@@ -85,6 +85,7 @@ public class CommandPattern : MonoBehaviour
         movingaUnit = false;
         finishedMovingAllUnits = false;
         unitsToMove.Clear();
+        numberofunitmoved = 0;
     }
     private void takeTurn()
     {
@@ -126,7 +127,12 @@ public class CommandPattern : MonoBehaviour
         foreach (GameObject tile in controllables)
         {
             if (tile.GetComponent<controllable_script>().owner == 2 && map.GetTile<levelTile>(gridPosition(tile.transform.position)).type == tileType.barracks)
-                myBarracks.Add(tile);
+            {
+                if(getunit(gridPosition(tile.transform.position)) == null)
+                {
+                    myBarracks.Add(tile);
+                }
+            }
         }
         int numberofBarracks = myBarracks.Count;
         unitScript[] unitstoBuild = new unitScript[numberofBarracks];
@@ -200,7 +206,7 @@ public class CommandPattern : MonoBehaviour
         {
             //Vector3Int currentPosition = gridPosition(currentMovingUnit.gameObject.transform.position);
             Vector3Int targetPosition = new Vector3Int(0, 0, 0);
-            int MaxValue = -10;
+            int MaxValue = 0;
             string takenAction = "wait";
             //possibleMovesForAllUnits[currentMovingUnit].Keys is a list that Vector3Int values and contains all the possible tiles that the currentmovingunit can move to
             foreach (Vector3Int possibleTargetPosition in possibleMovesForAllUnits[currentMovingUnit].Keys)
@@ -216,7 +222,6 @@ public class CommandPattern : MonoBehaviour
                             MaxValue = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item1;
                             targetPosition = possibleTargetPosition;
                             takenAction = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item2;
-                            unitsToMove.Enqueue(currentMovingUnit);
                         }
                     }
                     else
@@ -227,9 +232,12 @@ public class CommandPattern : MonoBehaviour
                     }
                 }
             }
+
+            unitsToMove.Add(currentMovingUnit);
+            numberofunitmoved++;
+            Debug.Log("score of " + currentMovingUnit + " at " + gridPosition(currentMovingUnit.gameObject.transform.position) + " is " + MaxValue + " to " + targetPosition);
             visitedTiles.Add(targetPosition);
             targetPositionsandActions[currentMovingUnit] = (targetPosition, takenAction);
-
         }
         movingaUnit = true;
     }
@@ -301,7 +309,7 @@ public class CommandPattern : MonoBehaviour
         //here we add between -3 to +4 depending on the defense of each tile.
         foreach (Vector3Int selectable in selectableTiles)
         {
-            possibleMoves[selectable] = (map.GetTile<levelTile>(selectable).defense/5,"wait");
+            possibleMoves[selectable] = (map.GetTile<levelTile>(selectable).defense / 5, "wait");
         }
         return possibleMoves;
 
@@ -572,7 +580,8 @@ public class CommandPattern : MonoBehaviour
         string action = "wait";
         if (checkedUnit.typeOfUnit == TypeOfUnit.infantry)
         {
-            score += TrueIfwithinCaptureDistance(checkedUnit, startingposition);
+            if (TrueIfwithinCaptureDistance(checkedUnit, startingposition))
+                score += 8;
             //Here we check if there is a capturable property at the checked tile
             if(map.GetTile<levelTile>(startingposition).controllable)
             {
@@ -580,6 +589,10 @@ public class CommandPattern : MonoBehaviour
                 {
                     score += 12;
                     action = "capture";
+                }
+                if (map.GetInstantiatedObject(startingposition).GetComponent<controllable_script>().owner == 2 && map.GetTile<levelTile>(startingposition).type == tileType.barracks)
+                {
+                    score = 0;
                 }
             }
         }
@@ -589,8 +602,6 @@ public class CommandPattern : MonoBehaviour
     
     public void moveUnit(unitScript unit, Vector3Int newPosition, string  Action)
     {
-        Debug.Log(unit + "moved to " + newPosition + " and " + Action);
-
         GameObject unitprefab = unit.gameObject;
         selectionmanager.unit = unit;
         selectionmanager.unitprefab = unitprefab;
@@ -643,13 +654,12 @@ public class CommandPattern : MonoBehaviour
                 break;
             #endregion
             default:
-                Debug.Log(Action);
                 break;
         }
         movingaUnit = true;
     }
     //we check if there is a capturable location within range and increase the score by 8, which is the difference between the minimum and maximum defenses (-3 and +4)
-    private int TrueIfwithinCaptureDistance(unitScript checkedUnit, Vector3Int startingposition)
+    private bool TrueIfwithinCaptureDistance(unitScript checkedUnit, Vector3Int startingposition)
     {
         Dictionary<Vector3Int, (int,string)> moveswithinthissquare = findPossibleMoves(startingposition, checkedUnit);
         List<Vector3Int> Positions = new List<Vector3Int>(moveswithinthissquare.Keys);
@@ -661,12 +671,12 @@ public class CommandPattern : MonoBehaviour
                 {
                     if (map.GetInstantiatedObject(currentTile).GetComponent<controllable_script>().owner == 0)
                     {
-                        return 8;
+                        return true;
                     }
                 }
             }
         }
-        return 0;
+        return false;
     }
     public Vector3Int gridPosition(Vector3 position, bool screen = false)
     {
@@ -808,7 +818,6 @@ public class CommandPattern : MonoBehaviour
         {
             if (selectable == targetposition)
             {
-                Debug.Log(getunit(targetposition));
                 if (unit.auracheck(getunit(targetposition)))
                     return true;
             }

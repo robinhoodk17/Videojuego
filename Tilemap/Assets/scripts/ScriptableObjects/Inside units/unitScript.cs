@@ -322,7 +322,6 @@ public class unitScript : MonoBehaviourPun
                 gainXP();
                 break;
         }
-        Debug.Log("captured a tile ");
     }
 
     // this is called only for the attacker
