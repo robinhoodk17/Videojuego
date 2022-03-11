@@ -27,11 +27,13 @@ public class CommandPattern : MonoBehaviour
     private bool firstTurn = true;
     private List<GameObject> selectedbuildables;
     public Button endTurnButton;
-    private gridCombat combatManager;
+    //private gridCombat combatManager;
     GameObject[] controllables;
     private bool movingaUnit = false;
     private bool finishedMovingAllUnits = false;
-
+    private int movementStep = 0;
+    public float waitHowLong = .8f;
+    private bool flagforFlow = false;
     void Update()
     {
         if(activeplayer != 2)
@@ -43,13 +45,33 @@ public class CommandPattern : MonoBehaviour
             movingaUnit = false;
             finishedMovingAllUnits = true;
         }
+        #region MoveUnit
+        //Here we move the unit. We move the movingaUnit counter when we perform the action.
         if(movingaUnit)
         {
-            unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
-            Debug.Log("from " + gridPosition(currentMovingUnit.gameObject.transform.position) + "to " + targetPositionsandActions[currentMovingUnit].Item1);
-            moveUnit(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1, targetPositionsandActions[currentMovingUnit].Item2);
             movingaUnit = false;
+            StartCoroutine(waitSeconds(waitHowLong/2));
         }
+        if(movementStep == 1 && flagforFlow && Input.GetMouseButtonUp(0))
+        {
+            flagforFlow = false;
+            unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
+            CenterCameraonUnit(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1, targetPositionsandActions[currentMovingUnit].Item2);
+
+        }
+        if(movementStep == 2 && flagforFlow)
+        {
+            flagforFlow = false;
+            unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
+            SelectUnit(currentMovingUnit);
+        }
+        if(movementStep == 3 && flagforFlow && Input.GetMouseButtonUp(0))
+        {
+            flagforFlow = false;
+            unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
+            moveUnit(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1);
+        }
+        #endregion
         if(selectionmanager.unitstate == "thinking")
         {
             unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
@@ -59,10 +81,6 @@ public class CommandPattern : MonoBehaviour
         if(finishedMovingAllUnits)
         {
             finishedMovingAllUnits = false;
-            for (int i = 0; i < unitsToMove.Count; i++)
-            {
-                Debug.Log("finally" + unitsToMove[i] + " at " + gridPosition(unitsToMove[i].gameObject.transform.position));
-            }
             findOptimalBuild(controllables);
             endTurn();
             _mainCamera.transform.position = PlayerCameraCoordinates;
@@ -72,10 +90,10 @@ public class CommandPattern : MonoBehaviour
     private void Start()
     {
         _mainCamera = Camera.main;
-        combatManager = new gridCombat();
+        /*combatManager = new gridCombat();
         combatManager.Start();
         combatManager.map = map;
-        combatManager.conditions = conditions;
+        combatManager.conditions = conditions;*/
     }
 
     private void Reset()
@@ -86,6 +104,8 @@ public class CommandPattern : MonoBehaviour
         finishedMovingAllUnits = false;
         unitsToMove.Clear();
         numberofunitmoved = 0;
+        flagforFlow = false;
+        movementStep = 0;
     }
     private void takeTurn()
     {
@@ -397,6 +417,7 @@ public class CommandPattern : MonoBehaviour
                         if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
                         {
                             adjacencyList.Add(checkedposition);
+                            Debug.Log("we are adding as neighbor " + checkedposition + getunit(checkedposition));
                         }
                     }
                     if (map.HasTile(position + up) && map.GetTile<levelTile>(position + up).type.ToString() != "lava")
@@ -592,7 +613,7 @@ public class CommandPattern : MonoBehaviour
                 }
                 if (map.GetInstantiatedObject(startingposition).GetComponent<controllable_script>().owner == 2 && map.GetTile<levelTile>(startingposition).type == tileType.barracks)
                 {
-                    score = 0;
+                    score = -5;
                 }
             }
         }
@@ -600,7 +621,7 @@ public class CommandPattern : MonoBehaviour
         return (score, action);
     }
     
-    public void moveUnit(unitScript unit, Vector3Int newPosition, string  Action)
+    public void CenterCameraonUnit(unitScript unit, Vector3Int newPosition, string  Action)
     {
         GameObject unitprefab = unit.gameObject;
         selectionmanager.unit = unit;
@@ -614,29 +635,20 @@ public class CommandPattern : MonoBehaviour
         float cam_z = _mainCamera.transform.position.z;
         _mainCamera.transform.position = new Vector3(cam_x, cam_y, cam_z);
         _mainCamera.orthographicSize = 5.5f;
-        StartCoroutine(waitSeconds(1600));
-        selectionmanager.selectUnit(unit, currentPosition);
-        StartCoroutine(waitSeconds(1600));
-        selectionmanager.getPath(currentPosition, newPosition);
-        /*
-        GameObject unitprefab = unit.gameObject;
-        selectionmanager.unit = unit;
-        selectionmanager.unitprefab = unitprefab;
-        selectionmanager.newposition = newPosition;
+        StartCoroutine(waitSeconds(waitHowLong * .8f));
+    }
+    public void SelectUnit(unitScript unit)
+    {
         Vector3Int currentPosition = gridPosition(unit);
-        selectionmanager.currentposition = currentPosition;
-
-        float cam_x = unit.gameObject.transform.position.x;
-        float cam_y = unit.gameObject.transform.position.y;
-        float cam_z = _mainCamera.transform.position.z;
-        _mainCamera.transform.position = new Vector3(cam_x, cam_y, cam_z);
-        StartCoroutine(waitSeconds(.7f));
         selectionmanager.selectUnit(unit, currentPosition);
-        StartCoroutine(waitSeconds(.7f));
+        StartCoroutine(waitSeconds(waitHowLong));
+    }
+    public void moveUnit(unitScript unit, Vector3Int newPosition)
+    {
+        Vector3Int currentPosition = gridPosition(unit);
         selectionmanager.getPath(currentPosition, newPosition);
-        //GameObject unitprefab = getunitprefab(originalPosition);
-        //unitprefab.transform.position = map.GetCellCenterWorld(newPosition) + new Vector3(0, 0, 5);
-        */
+        movementStep = 0;
+        flagforFlow = false;
     }
 
     public void takeAction(unitScript unit, Vector3Int newPosition, string Action)
@@ -713,6 +725,10 @@ public class CommandPattern : MonoBehaviour
             return null;
         }
     }
+    public unitScript getunit(Vector3Int position)
+        {
+            return getunit(_mainCamera.WorldToScreenPoint(map.GetCellCenterWorld(position)));
+        }
     public GameObject getunitprefab(Vector3 position, bool screen = true)
     {
         if (!screen)
@@ -741,7 +757,8 @@ public class CommandPattern : MonoBehaviour
     public IEnumerator waitSeconds(float waitingTime)
     {
         yield return new WaitForSeconds(waitingTime);
-
+        movementStep++;
+        flagforFlow = true;
     }
 
     //these two method cooperate to return true if the targetposition is within the unit's aura range (position is the unit with aura's position)
@@ -909,326 +926,80 @@ public class CommandPattern : MonoBehaviour
         }
         return affectedUnits;
     }
-
-
-    public class gridCombat : MonoBehaviour
+    public int calculateDamage(unitScript attackingunit, unitScript defendingunit, Vector3Int attackPosition, Vector3Int defendposition)
     {
-        public Tilemap map, conditions;
+        if (attackingunit.status == "stunned" || attackingunit.status == "recovered")
+        return 0;
 
-        GameObject attacker;
-        unitScript attackerScript;
-        GameObject defender;
-        unitScript defenderScript;
-
-        public void Start()
+        List<string> attackingadv = new List<string>();
+        List<string> defendingresist = new List<string>();
+        List<string> defendingvul = new List<string>();
+        int damage = attackingunit.attackdamage;
+        if (attackingunit.advantages != null)
         {
-            //here we register this object as a listener to the combat initiation in the selection manager
-            GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>().Oncombatstart += OncombatHappening;
-            GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>().Oncombathover += OnCombatHover;
+            attackingadv = attackingunit.advantages;
         }
-        public void OncombatHappening(Vector3Int attackposition, Vector3Int defendposition)
+        if (defendingunit.resistances != null)
         {
-            attackerScript = getunit(attackposition);
-            switch (attackerScript.ability)
+            defendingresist = defendingunit.resistances;
+        }
+        if (defendingunit.vulnerabilities != null)
+        {
+            defendingvul = defendingunit.vulnerabilities;
+        }
+        foreach (string adv in attackingadv)
+        {
+            if (adv == defendingunit.typeOfUnit.ToString()|| adv == defendingunit.movementtype.ToString() || adv == defendingunit._attacktype || adv == (defendingunit._attacktype + defendingunit.movementtype) || adv == (defendingunit._attacktype + defendingunit.typeOfUnit.ToString()) || adv == (defendingunit.movementtype.ToString() + defendingunit.typeOfUnit.ToString()))
             {
-                //this is the god of small thing's ability, where all units gain 2 levels
-                case "demonstrate":
-                    foreach (GameObject unitObject in GameObject.FindGameObjectsWithTag("Unit"))
-                    {
-                        if (unitObject.GetComponent<unitScript>().owner == attackerScript.owner)
-                        {
-                            unitObject.GetComponent<unitScript>().gainXP();
-                            unitObject.GetComponent<unitScript>().gainXP();
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-            //This if happens if the unit is attacking a tile
-            if (getunit(defendposition) == null)
-            {
-                int damage = attackerScript.attackdamage;
-                damage = (int)(damage * attackerScript.HP / attackerScript.maxHP * (1 + attackerScript.level / 10) * (1 + GlobalModifiers(attackerScript.owner)[0]));
-                controllable_script attackedTile = map.GetInstantiatedObject(defendposition).GetComponent<controllable_script>();
-                if (attackerScript.ability == "siege")
-                {
-                    damage = 500;
-                }
-                attackedTile.HP -= damage;
-                if (attackedTile.HP <= 0)
-                {
-                    attackedTile.ownerloss();
-                }
-                else
-                {
-                    attackedTile.healthChanged();
-                    if (checkifneighbors(attackposition, defendposition))
-                    {
-                        attackerScript.HP -= 30;
-                        attackerScript.healthChanged();
-                    }
-                }
-            }
-
-            ////////////////////
-            //This if happens if the unit is attacking another unit
-            else
-            {
-                defenderScript = getunit(defendposition);
-                bool canCounterAttack = false;
-
-                //we check if the units have first strike. If the defender does, it deals damage first. Also, we check if the 
-                //defender can counterattack in case it survives.
-
-                if ((defenderScript._attacktype == "melee" || defenderScript.firstStrike) && checkifneighbors(attackposition, defendposition))
-                {
-                    canCounterAttack = true;
-                    if (defenderScript.firstStrike && !attackerScript.firstStrike)
-                    {
-                        attackerScript = getunit(defendposition);
-                        defenderScript = getunit(attackposition);
-                        Vector3Int temporal = attackposition;
-                        attackposition = defendposition;
-                        defendposition = temporal;
-                    }
-                }
-
-                //the attacker deals damage to the defender (status changes also happen here)
-                defenderScript.HP -= calculateDamage(attackerScript, defenderScript, defendposition);
-                defenderScript.status = changeStatus(attackerScript, defenderScript);
-
-
-                //if the defender survives, and can counterattack, here we add a counterattack on the combat
-                if (defenderScript.HP > 0 && canCounterAttack && defenderScript.status != "stunned")
-                {
-                    attackerScript.HP -= calculateDamage(defenderScript, attackerScript, defendposition);
-                    defenderScript.status = changeStatus(defenderScript, attackerScript);
-                    //The rest of the function adds the animation of the shooting from the attacker, who then calls the counterattack on its enemy.
-                    //The counterattack plays and then calls the damage animation on the attackerscript
-                    attackerScript.onCombat(defenderScript);
-
-                    if (attackerScript.HP <= 0)
-                    {
-                        if (defenderScript.cankill && defenderScript.ability != "capture")
-                        {
-                            attackerScript.Destroyed();
-                            defenderScript.downedanotherUnit();
-                        }
-                        else
-                        {
-                            if (!defenderScript.cankill)
-                            {
-                                attackerScript.Downed();
-                                defenderScript.downedanotherUnit();
-                            }
-                            if (defenderScript.ability == "capture")
-                            {
-                                attackerScript.HP = 10;
-                                attackerScript.ownerChange(defenderScript.owner);
-                                attackerScript.healthChanged();
-                                attackerScript.exhausted = true;
-                                attackerScript.sprite.color = new Color(.6f, .6f, .6f);
-                            }
-                        }
-                    }
-                }
-                //no counterattack
-                else
-                {
-                    attackerScript.onCombatWOCA(defenderScript);
-                }
-                if (defenderScript.HP <= 0)
-                {
-                    if (attackerScript.cankill && attackerScript.ability != "capture")
-                    {
-                        defenderScript.Destroyed();
-                        attackerScript.downedanotherUnit();
-                    }
-                    else
-                    {
-                        if (!attackerScript.cankill)
-                        {
-                            defenderScript.Downed();
-                            attackerScript.downedanotherUnit();
-                        }
-                        if (attackerScript.ability == "capture")
-                        {
-                            defenderScript.HP = 10;
-                            defenderScript.ownerChange(attackerScript.owner);
-                            defenderScript.healthChanged();
-                            defenderScript.exhausted = true;
-                            defenderScript.sprite.color = new Color(.6f, .6f, .6f);
-                        }
-                    }
-                }
+                damage *= 2;
             }
         }
-        public void OnCombatHover(Vector3Int attackposition, Vector3Int defendposition, GameObject preview)
+        foreach (string vul in defendingvul)
         {
-            attackerScript = getunit(attackposition);
-            defenderScript = getunit(defendposition);
-            string temporalstatus = defenderScript.status;
-            preview = preview.transform.GetChild(0).gameObject;
-            int defenderhealthchange = calculateDamage(attackerScript, defenderScript, defendposition);
-            defenderScript.status = changeStatus(attackerScript, defenderScript);
-            preview.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = defenderhealthchange.ToString();
-            defenderScript.HP -= defenderhealthchange;
-            preview.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = calculateDamage(defenderScript, attackerScript, attackposition).ToString();
-            defenderScript.HP += defenderhealthchange;
-            defenderScript.status = temporalstatus;
+            if (vul == attackingunit.typeOfUnit.ToString() || vul == attackingunit.movementtype.ToString() || vul == attackingunit._attacktype || vul == (attackingunit._attacktype + attackingunit.movementtype) || vul == (attackingunit._attacktype + attackingunit.typeOfUnit.ToString()) || vul == (attackingunit.movementtype.ToString() + attackingunit.typeOfUnit.ToString()))
+            {
+                damage *= 2;
+            }
         }
-        public unitScript getunit(Vector3 position, bool screen = true)
+        foreach (string res in defendingresist)
         {
+            if (attackingunit.typeOfUnit.ToString() == res || attackingunit.movementtype.ToString() == res || attackingunit._attacktype == res || res == (attackingunit._attacktype + attackingunit.movementtype) || res == (attackingunit._attacktype + attackingunit.typeOfUnit.ToString()) || res == (attackingunit.movementtype.ToString() + attackingunit.typeOfUnit.ToString()))
+                damage /= 2;
+        }
+        levelTile Tile = map.GetTile<levelTile>(defendposition);
+        int tiledefense = Tile.defense;
+        damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + attackingunit.level / 10) * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
+        damage -= tiledefense;
 
-            if (!screen)
-            {
-                position = Camera.main.WorldToScreenPoint(position);
-            }
-            var ray = Camera.main.ScreenPointToRay(position);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                var selection = hit.transform.gameObject;
-                unitScript unit = selection.GetComponent<unitScript>();
-                return unit;
-            }
-            //returns null if it did not find a unit
-            else
-            {
-                return null;
-            }
-        }
-        //tries to get a unit given a gridposition
-        public unitScript getunit(Vector3Int position)
-        {
-            return getunit(Camera.main.WorldToScreenPoint(map.GetCellCenterWorld(position)));
-        }
-        public Vector3 worldPosition(Vector3Int gridposition)
-        {
-            return map.CellToWorld(gridposition);
-        }
-        public GameObject getunitprefab(Vector3 position, bool screen = true)
-        {
-            if (!screen)
-            {
-                position = Camera.main.WorldToScreenPoint(position);
-            }
-            var ray = Camera.main.ScreenPointToRay(position);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                var selection = hit.transform.gameObject;
-                return selection;
-            }
-            //returns null if it did not find a unit
-            else
-            {
-                return null;
-            }
-        }
-        private bool checkifneighbors(Vector3Int pos1, Vector3Int pos2)
-        {
-            Vector3Int left = new Vector3Int(-1, 0, 0);
-            Vector3Int right = new Vector3Int(1, 0, 0);
-            Vector3Int up = new Vector3Int(0, 1, 0);
-            Vector3Int down = new Vector3Int(0, -1, 0);
-
-            if (pos1 + left == pos2 || pos1 + right == pos2 || pos1 + up == pos2 || pos1 + down == pos2)
-                return true;
-            else
-                return false;
-        }
-        public int calculateDamage(unitScript attackingunit, unitScript defendingunit, Vector3Int defendposition)
-        {
-
-            if (attackingunit.status == "stunned" || attackingunit.status == "recovered")
-                return 0;
-
-            List<string> attackingadv = new List<string>();
-            List<string> defendingresist = new List<string>();
-            List<string> defendingvul = new List<string>();
-            int damage = attackingunit.attackdamage;
-            if (attackingunit.advantages != null)
-            {
-                attackingadv = attackingunit.advantages;
-            }
-            if (defendingunit.resistances != null)
-            {
-                defendingresist = defendingunit.resistances;
-            }
-            if (defendingunit.vulnerabilities != null)
-            {
-                defendingvul = defendingunit.vulnerabilities;
-            }
-            foreach (string adv in attackingadv)
-            {
-                if (adv == defendingunit.typeOfUnit.ToString() || adv == defendingunit.movementtype.ToString() || adv == defendingunit._attacktype || adv == (defendingunit._attacktype + defendingunit.movementtype) || adv == (defendingunit._attacktype + defendingunit.typeOfUnit.ToString()) || adv == (defendingunit.movementtype.ToString() + defendingunit.typeOfUnit.ToString()))
-                {
-                    damage *= 2;
-                }
-            }
-            foreach (string vul in defendingvul)
-            {
-                if (vul == attackingunit.typeOfUnit.ToString() || vul == attackingunit.movementtype.ToString() || vul == attackingunit._attacktype || vul == (attackingunit._attacktype + attackingunit.movementtype) || vul == (attackingunit._attacktype + attackingunit.typeOfUnit.ToString()) || vul == (attackingunit.movementtype.ToString() + attackingunit.typeOfUnit.ToString()))
-                {
-                    damage *= 2;
-                }
-            }
-            foreach (string res in defendingresist)
-            {
-                if (attackingunit.typeOfUnit.ToString() == res || attackingunit.movementtype.ToString() == res || attackingunit._attacktype == res || res == (attackingunit._attacktype + attackingunit.movementtype) || res == (attackingunit._attacktype + attackingunit.typeOfUnit.ToString()) || res == (attackingunit.movementtype.ToString() + attackingunit.typeOfUnit.ToString()))
-                    damage /= 2;
-            }
-            levelTile Tile = map.GetTile<levelTile>(defendposition);
-            int tiledefense = Tile.defense;
-            damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + attackingunit.level / 10) * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
-            damage -= tiledefense;
-
-            if (damage < 0)
-                damage = 0;
-            return damage;
-        }
-
-        public string changeStatus(unitScript attackingunit, unitScript defendingunit)
-        {
-            string newStatus = null;
-            foreach (string stun in attackingunit.stuns)
-            {
-                if (stun == defendingunit.typeOfUnit.ToString() || stun == defendingunit.movementtype.ToString() || stun == defendingunit._attacktype)
-                {
-                    newStatus = "stunned";
-                }
-            }
-            return newStatus;
-        }
-
-        //on [0] returns global damage (bonfires, etc), and on [1] returns defense. For now, only bonfires are implemented.
-        public double[] GlobalModifiers(int owner)
-        {
-            double[] modifiers = new double[2];
-            modifiers[0] = 0;
-            modifiers[1] = 0;
-            foreach (var posi in map.cellBounds.allPositionsWithin)
-            {
-                Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
-                if (map.HasTile(localPlace))
-                {
-                    levelTile Tile = map.GetTile<levelTile>(localPlace);
-                    if (Tile.controllable)
-                    {
-                        int tileowner = map.GetInstantiatedObject(localPlace).GetComponent<controllable_script>().owner;
-                        if (owner == tileowner)
-                        {
-                            if (Tile.type == tileType.bonfire)
-                            {
-                                modifiers[0] += .1;
-                            }
-                        }
-                    }
-                }
-            }
-            return modifiers;
-        }
+        if (damage < 0)
+            damage = 0;
+        return damage;
     }
+public double[] GlobalModifiers(int owner)
+    {
+        double[] modifiers = new double[2];
+        modifiers[0] = 0;
+        modifiers[1] = 0;
+        foreach (var posi in map.cellBounds.allPositionsWithin)
+        {
+            Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
+            if (map.HasTile(localPlace))
+            {
+                levelTile Tile = map.GetTile<levelTile>(localPlace);
+                if (Tile.controllable)
+                {
+                    int tileowner = map.GetInstantiatedObject(localPlace).GetComponent<controllable_script>().owner;
+                    if (owner == tileowner)
+                    {
+                        if (Tile.type == tileType.bonfire)
+                        {
+                            modifiers[0] += .1;
+                        }
+                    }
+                }
+            }
+        }
+        return modifiers;
+    }
+    
 }

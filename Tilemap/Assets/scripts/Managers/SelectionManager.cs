@@ -17,8 +17,6 @@ public class SelectionManager : MonoBehaviour
     public float HoverTime = .5f;
     private float startHover;
     private bool startedHovering = false;
-
-
     public int thisistheplayer;
     int activeplayer = 1;
     public int playernumber = 2;
@@ -38,7 +36,6 @@ public class SelectionManager : MonoBehaviour
     public Vector3Int currentposition = new Vector3Int();
     public Vector3Int newposition = new Vector3Int();
     public GameObject unitprefab;
-
 
     private unitScript transport;
     private Vector3Int hoveringTile = new Vector3Int();
@@ -77,7 +74,7 @@ public class SelectionManager : MonoBehaviour
     bool firstupdate = false;
     private void Start()
     {
-        //Oncombatstart += Oncombat;
+        Oncombatstart += Oncombat;
         _mainCamera = Camera.main;
         combatManager = new gridCombat();
         combatManager.Start();
@@ -103,8 +100,7 @@ public class SelectionManager : MonoBehaviour
         
         if(Input.GetMouseButtonUp(0))
         {
-            Debug.Log("thisistheplayer: " + thisistheplayer.ToString() + " active player: " + activeplayer + "unit selected: " + unitselected.ToString() );
-            Debug.Log(gridPosition(Input.mousePosition, true) + " " + getunit(gridPosition(Input.mousePosition, true)));
+            Debug.Log("thisistheplayer: " + thisistheplayer.ToString() + gridPosition(Input.mousePosition, true) + " " + getunit(gridPosition(Input.mousePosition, true)));
         }
         //this is the click to move the unit
         if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject() && unitstate != "moving" && thisistheplayer == activeplayer && unitstate == "idle")
@@ -207,16 +203,31 @@ public class SelectionManager : MonoBehaviour
                 {
                     startedHovering = false;
                 }
-                //this if invokes combat against another unit
-                if (Input.GetMouseButtonUp(0) && units.HasTile(clickedtile) && getunit(clickedtile) != null && !usingability)
+                //this if invokes combat against another unit or controllable space
+                if (Input.GetMouseButtonUp(0) && units.HasTile(clickedtile) && !usingability && (getunit(clickedtile) != null || map.GetTile<levelTile>(clickedtile).controllable))
                 {
-                    if (getunit(clickedtile).owner != activeplayer)
+                    if(getunit(clickedtile)!=null)
                     {
-                        if (getunit(clickedtile).HP > 0 || unit.ability == "capture")
+                        if (getunit(clickedtile).owner != activeplayer)
                         {
-                            Debug.Log("we invoked combat");
+                            if (getunit(clickedtile).HP > 0)
+                            {
+                                Debug.Log("we are invoking combat against a unit");
+                                onWait();
+                                Oncombatstart?.Invoke(newposition, clickedtile);
+                                combatManager.OncombatHappening(newposition, clickedtile);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        if(map.GetInstantiatedObject(clickedtile).GetComponent<controllable_script>().owner != activeplayer)
+                        {
+                            Debug.Log("we are invoking combat against a property");
                             onWait();
                             Oncombatstart?.Invoke(newposition, clickedtile);
+                            combatManager.OncombatHappening(newposition, clickedtile);
                         }
                     }
                 }
@@ -295,19 +306,7 @@ public class SelectionManager : MonoBehaviour
                     }
                     #endregion unload
                 }
-                //this if attacks a controllable tile
-                if (units.HasTile(clickedtile) && getunit(clickedtile) == null && !usingability)
-                {
-                    if(map.GetTile<levelTile>(clickedtile).controllable)
-                    {
-                        GameObject attackedproperty = map.GetInstantiatedObject(clickedtile);
-                        if(attackedproperty.GetComponent<controllable_script>().owner != activeplayer)
-                        {
-                            Oncombatstart?.Invoke(newposition, clickedtile);
-                            onWait();
-                        }
-                    }
-                }
+                
             }
         }
 
@@ -1215,7 +1214,6 @@ public class SelectionManager : MonoBehaviour
         {
             if(selectable == targetposition)
             {
-                Debug.Log(targetposition + "selectable: " + selectable + getunit(selectable));
                 if (unit.auracheck(getunit(targetposition)))
                     return true;
             }
@@ -1383,13 +1381,13 @@ public class SelectionManager : MonoBehaviour
         unitobject.transform.GetChild(0).transform.GetChild(child).gameObject.SetActive(onoroff);
     }
 
-    /*public void Oncombat(Vector3Int attacker, Vector3Int defender)
+    public void Oncombat(Vector3Int attacker, Vector3Int defender)
     {
         currentposition = attacker; 
         unit.exhausted = true;
         unit.sprite.color = new Color(.6f, .6f, .6f);
         Reset();
-    }*/
+    }
 
     public class gridCombat : MonoBehaviour
     {

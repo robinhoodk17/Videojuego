@@ -72,7 +72,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Connected to master server");
         PhotonNetwork.JoinRandomRoom();
     }
 
@@ -87,7 +86,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnDisconnected(DisconnectCause cause)
     {
         base.OnDisconnected(cause);
-        Debug.Log("Disconnected");
         joinedRoom = true;
     }
     public void CreateRoom (string roomName)
@@ -98,13 +96,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnCreatedRoom()
     {
-        Debug.Log("Created room: " + PhotonNetwork.CurrentRoom.Name);
         joinedRoom = false;
     }
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
-        Debug.Log("Player " + PlayerPrefs.GetString("PlayerName") +" joined a room");
     }
 
     public void JoinRoom (string roomName)
@@ -186,7 +182,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         selectionManager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
         mapManager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
-        if (joinedRoom)
+        if (joinedRoom && PlayerPrefs.GetString("AIorHuman") == "Human")
         {
             selectionManager.thisistheplayer = 2;
             mapManager.thisistheplayer = 2;
