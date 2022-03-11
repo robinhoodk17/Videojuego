@@ -20,7 +20,7 @@ public class CommandPattern : MonoBehaviour
     private float PlayerCameraZoom;
     public UIInputWindowForBarracksName accept;
     private Camera _mainCamera;
-    Dictionary<unitScript, Dictionary<Vector3Int, (int,string)>> possibleMovesForAllUnits = new Dictionary<unitScript, Dictionary<Vector3Int, (int,string)>>();
+    Dictionary<unitScript, Dictionary<Vector3Int, (int,string, Vector3Int)>> possibleMovesForAllUnits = new Dictionary<unitScript, Dictionary<Vector3Int, (int,string, Vector3Int)>>();
     Dictionary<unitScript, (Vector3Int, String)> targetPositionsandActions = new Dictionary<unitScript, (Vector3Int, string)>();
     List<unitScript> unitsToMove = new List<unitScript>();
     int numberofunitmoved = 0;
@@ -52,7 +52,7 @@ public class CommandPattern : MonoBehaviour
             movingaUnit = false;
             StartCoroutine(waitSeconds(waitHowLong/2));
         }
-        if(movementStep == 1 && flagforFlow && Input.GetMouseButtonUp(0))
+        if(movementStep == 1 && flagforFlow)
         {
             flagforFlow = false;
             unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
@@ -65,7 +65,7 @@ public class CommandPattern : MonoBehaviour
             unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
             SelectUnit(currentMovingUnit);
         }
-        if(movementStep == 3 && flagforFlow && Input.GetMouseButtonUp(0))
+        if(movementStep == 3 && flagforFlow)
         {
             flagforFlow = false;
             unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
@@ -215,7 +215,7 @@ public class CommandPattern : MonoBehaviour
                 foreach (Vector3Int Key in Keys)
                 {
                     //Here we add the score calculated for each space (Key) of the currentmovingunit. The Item1 has the score and Item2 has the action
-                    (int, string) scoreAndAction = findOptimalMove(currentMovingUnit, Key);
+                    (int, string, Vector3Int) scoreAndAction = findOptimalMove(currentMovingUnit, Key);
                     scoreAndAction.Item1 += possibleMovesForAllUnits[currentMovingUnit][Key].Item1;
                     possibleMovesForAllUnits[currentMovingUnit][Key] = scoreAndAction;
                 }
@@ -263,9 +263,9 @@ public class CommandPattern : MonoBehaviour
     }
 
 
-    public Dictionary<Vector3Int, (int,string)> findPossibleMoves(Vector3Int position, unitScript unit)
+    public Dictionary<Vector3Int, (int,string, Vector3Int)> findPossibleMoves(Vector3Int position, unitScript unit)
     {
-        Dictionary<Vector3Int, (int,string)> possibleMoves = new Dictionary<Vector3Int, (int,string)> ();
+        Dictionary<Vector3Int, (int,string, Vector3Int)> possibleMoves = new Dictionary<Vector3Int, (int,string, Vector3Int)> ();
         Dictionary<Vector3Int, List<Vector3Int>> neighborlist = new Dictionary<Vector3Int, List<Vector3Int>>();
         Dictionary<Vector3Int, Vector3Int> parentlist = new Dictionary<Vector3Int, Vector3Int>();
         Dictionary<Vector3Int, int> distancelist = new Dictionary<Vector3Int, int>();
@@ -329,7 +329,7 @@ public class CommandPattern : MonoBehaviour
         //here we add between -3 to +4 depending on the defense of each tile.
         foreach (Vector3Int selectable in selectableTiles)
         {
-            possibleMoves[selectable] = (map.GetTile<levelTile>(selectable).defense / 5, "wait");
+            possibleMoves[selectable] = (map.GetTile<levelTile>(selectable).defense / 5, "wait", selectable);
         }
         return possibleMoves;
 
@@ -417,7 +417,6 @@ public class CommandPattern : MonoBehaviour
                         if ((getunit(checkedposition) == null || getunit(checkedposition).owner == unit.owner || getunit(checkedposition).status == "downed") && (tileowner == 0 || tileowner == unit.owner))
                         {
                             adjacencyList.Add(checkedposition);
-                            Debug.Log("we are adding as neighbor " + checkedposition + getunit(checkedposition));
                         }
                     }
                     if (map.HasTile(position + up) && map.GetTile<levelTile>(position + up).type.ToString() != "lava")
@@ -595,10 +594,11 @@ public class CommandPattern : MonoBehaviour
     }
 
     //We call this function for every possible tile the unit can move to. We return the score and the desired action.
-    public (int,string) findOptimalMove(unitScript checkedUnit, Vector3Int startingposition)
+    public (int,string, Vector3Int) findOptimalMove(unitScript checkedUnit, Vector3Int startingposition)
     {
         int score = 0;
         string action = "wait";
+        Vector3Int ActionTarget = startingposition;
         if (checkedUnit.typeOfUnit == TypeOfUnit.infantry)
         {
             if (TrueIfwithinCaptureDistance(checkedUnit, startingposition))
@@ -618,9 +618,17 @@ public class CommandPattern : MonoBehaviour
             }
         }
 
-        return (score, action);
+
+        return (score, action, ActionTarget);
     }
     
+    public List<(Vector3Int,int)> checkAttackables(unitScript unit)
+    {
+        Vector3Int target = new Vector3Int(0,0,0);
+        int score = 0;
+        List<(Vector3Int,int)> TargetsAndScores = new List<(Vector3Int,int)>();
+        return(TargetsAndScores);
+    }
     public void CenterCameraonUnit(unitScript unit, Vector3Int newPosition, string  Action)
     {
         GameObject unitprefab = unit.gameObject;
@@ -673,7 +681,7 @@ public class CommandPattern : MonoBehaviour
     //we check if there is a capturable location within range and increase the score by 8, which is the difference between the minimum and maximum defenses (-3 and +4)
     private bool TrueIfwithinCaptureDistance(unitScript checkedUnit, Vector3Int startingposition)
     {
-        Dictionary<Vector3Int, (int,string)> moveswithinthissquare = findPossibleMoves(startingposition, checkedUnit);
+        Dictionary<Vector3Int, (int,string, Vector3Int)> moveswithinthissquare = findPossibleMoves(startingposition, checkedUnit);
         List<Vector3Int> Positions = new List<Vector3Int>(moveswithinthissquare.Keys);
         foreach(Vector3Int currentTile in Positions)
         {
@@ -975,7 +983,7 @@ public class CommandPattern : MonoBehaviour
             damage = 0;
         return damage;
     }
-public double[] GlobalModifiers(int owner)
+    public double[] GlobalModifiers(int owner)
     {
         double[] modifiers = new double[2];
         modifiers[0] = 0;
