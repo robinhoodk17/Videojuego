@@ -62,7 +62,7 @@ public class SelectionManager : MonoBehaviour
     public event Action OnUnitDeselected;
     public event Action<Vector3Int, Vector3Int, GameObject> Oncombathover;
     private Camera _mainCamera;
-    private gridCombat combatManager;
+    public gridCombat combatManager;
     //for the animations
     public string unitstate ="idle";
     //for the tooltip
@@ -213,9 +213,7 @@ public class SelectionManager : MonoBehaviour
                             if (getunit(clickedtile).HP > 0)
                             {
                                 Debug.Log("we are invoking combat against a unit");
-                                onWait();
-                                Oncombatstart?.Invoke(newposition, clickedtile);
-                                combatManager.OncombatHappening(newposition, clickedtile);
+                                InvokeCombat(newposition, clickedtile);
                             }
                         }
 
@@ -225,9 +223,7 @@ public class SelectionManager : MonoBehaviour
                         if(map.GetInstantiatedObject(clickedtile).GetComponent<controllable_script>().owner != activeplayer)
                         {
                             Debug.Log("we are invoking combat against a property");
-                            onWait();
-                            Oncombatstart?.Invoke(newposition, clickedtile);
-                            combatManager.OncombatHappening(newposition, clickedtile);
+                            InvokeCombat(newposition, clickedtile);
                         }
                     }
                 }
@@ -1381,6 +1377,12 @@ public class SelectionManager : MonoBehaviour
         unitobject.transform.GetChild(0).transform.GetChild(child).gameObject.SetActive(onoroff);
     }
 
+    public void InvokeCombat(Vector3Int attackposition, Vector3Int target)
+    {
+        onWait();
+        Oncombatstart?.Invoke(attackposition, target);
+        combatManager.OncombatHappening(attackposition, target);
+    }
     public void Oncombat(Vector3Int attacker, Vector3Int defender)
     {
         currentposition = attacker; 

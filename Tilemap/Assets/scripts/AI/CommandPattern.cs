@@ -20,8 +20,9 @@ public class CommandPattern : MonoBehaviour
     private float PlayerCameraZoom;
     public UIInputWindowForBarracksName accept;
     private Camera _mainCamera;
-    Dictionary<unitScript, Dictionary<Vector3Int, (int,string, Vector3Int)>> possibleMovesForAllUnits = new Dictionary<unitScript, Dictionary<Vector3Int, (int,string, Vector3Int)>>();
-    Dictionary<unitScript, (Vector3Int, String)> targetPositionsandActions = new Dictionary<unitScript, (Vector3Int, string)>();
+    Dictionary<unitScript, Dictionary<Vector3Int, (decimal,string, Vector3Int)>> possibleMovesForAllUnits = new Dictionary<unitScript, Dictionary<Vector3Int, (decimal,string, Vector3Int)>>();
+    Dictionary<unitScript, (Vector3Int, String, Vector3Int)> targetPositionsandActions = new Dictionary<unitScript, (Vector3Int, string, Vector3Int)>();
+    Dictionary<unitScript, Dictionary<Vector3Int, List<(decimal, Vector3Int, bool)>>> PossibleAttacksandScores = new Dictionary<unitScript, Dictionary<Vector3Int, List<(decimal, Vector3Int, bool)>>>();
     List<unitScript> unitsToMove = new List<unitScript>();
     int numberofunitmoved = 0;
     private bool firstTurn = true;
@@ -32,8 +33,19 @@ public class CommandPattern : MonoBehaviour
     private bool movingaUnit = false;
     private bool finishedMovingAllUnits = false;
     private int movementStep = 0;
-    public float waitHowLong = .8f;
+    public float waitHowLong = .6f;
     private bool flagforFlow = false;
+    //The scores for the tile defense go from -4 to +3
+    public decimal cancapture = 12;
+    public decimal movesIntoCaptureRange = 8;
+    //while calculating the score, we multiply the value difference between the attacking unit and the defending unit by this number
+    public decimal attackedByEnemy = 8/7000;
+    public decimal attacksAnEnemy = 8/7000;
+    public decimal attacksAnEnemyThatWasAlreadyAttacked = 1/7000 + 1/14000;
+    //This we multiply by the unit's total value
+    public decimal attacksAndDestroysAnEnemy = 1/7000 + 1/14000;
+    public decimal AttackandGetDestroyed = 1/7000 + 1/14000;
+
     void Update()
     {
         if(activeplayer != 2)
@@ -71,13 +83,20 @@ public class CommandPattern : MonoBehaviour
             unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
             moveUnit(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1);
         }
-        #endregion
-        if(selectionmanager.unitstate == "thinking")
+        if(movementStep == 4 && flagforFlow && selectionmanager.unitstate == "thinking" )
         {
+            flagforFlow = false;
+            StartCoroutine(waitSeconds(waitHowLong * .8f));
+        }
+        if(movementStep == 5 && flagforFlow)
+        {
+            flagforFlow = false;
+            movementStep = 0;
             unitScript currentMovingUnit = unitsToMove[numberofunitmoved-1];
             numberofunitmoved--;
-            takeAction(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1, targetPositionsandActions[currentMovingUnit].Item2);
+            takeAction(currentMovingUnit, targetPositionsandActions[currentMovingUnit].Item1, targetPositionsandActions[currentMovingUnit].Item2, targetPositionsandActions[currentMovingUnit].Item3);
         }
+        #endregion
         if(finishedMovingAllUnits)
         {
             finishedMovingAllUnits = false;
@@ -100,6 +119,7 @@ public class CommandPattern : MonoBehaviour
     {
         targetPositionsandActions.Clear();
         possibleMovesForAllUnits.Clear();
+        PossibleAttacksandScores.Clear();
         movingaUnit = false;
         finishedMovingAllUnits = false;
         unitsToMove.Clear();
@@ -215,7 +235,7 @@ public class CommandPattern : MonoBehaviour
                 foreach (Vector3Int Key in Keys)
                 {
                     //Here we add the score calculated for each space (Key) of the currentmovingunit. The Item1 has the score and Item2 has the action
-                    (int, string, Vector3Int) scoreAndAction = findOptimalMove(currentMovingUnit, Key);
+                    (decimal, string, Vector3Int) scoreAndAction = findOptimalMove(currentMovingUnit, Key);
                     scoreAndAction.Item1 += possibleMovesForAllUnits[currentMovingUnit][Key].Item1;
                     possibleMovesForAllUnits[currentMovingUnit][Key] = scoreAndAction;
                 }
@@ -226,7 +246,8 @@ public class CommandPattern : MonoBehaviour
         {
             //Vector3Int currentPosition = gridPosition(currentMovingUnit.gameObject.transform.position);
             Vector3Int targetPosition = new Vector3Int(0, 0, 0);
-            int MaxValue = 0;
+            Vector3Int targetTile = new Vector3Int(0, 0, 0);
+            decimal MaxValue = 0;
             string takenAction = "wait";
             //possibleMovesForAllUnits[currentMovingUnit].Keys is a list that Vector3Int values and contains all the possible tiles that the currentmovingunit can move to
             foreach (Vector3Int possibleTargetPosition in possibleMovesForAllUnits[currentMovingUnit].Keys)
@@ -242,6 +263,7 @@ public class CommandPattern : MonoBehaviour
                             MaxValue = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item1;
                             targetPosition = possibleTargetPosition;
                             takenAction = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item2;
+                            targetTile = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item3;
                         }
                     }
                     else
@@ -249,23 +271,25 @@ public class CommandPattern : MonoBehaviour
                         MaxValue = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item1;
                         targetPosition = possibleTargetPosition;
                         takenAction = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item2;
+                        targetTile = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item3;
                     }
                 }
             }
 
             unitsToMove.Add(currentMovingUnit);
             numberofunitmoved++;
-            Debug.Log("score of " + currentMovingUnit + " at " + gridPosition(currentMovingUnit.gameObject.transform.position) + " is " + MaxValue + " to " + targetPosition);
+            Debug.Log("score of " + currentMovingUnit + " at " + gridPosition(currentMovingUnit.gameObject.transform.position) + " is " + MaxValue + " to " + targetPosition +" and" + possibleMovesForAllUnits[currentMovingUnit][targetPosition].Item2 + "to target " + possibleMovesForAllUnits[currentMovingUnit][targetPosition].Item3);
             visitedTiles.Add(targetPosition);
-            targetPositionsandActions[currentMovingUnit] = (targetPosition, takenAction);
+            targetPositionsandActions[currentMovingUnit] = (targetPosition, takenAction, targetTile);
         }
         movingaUnit = true;
     }
 
 
-    public Dictionary<Vector3Int, (int,string, Vector3Int)> findPossibleMoves(Vector3Int position, unitScript unit)
+//This returns all the scores, actions and targets (values) for when the unit moves into each position
+    public Dictionary<Vector3Int, (decimal,string, Vector3Int)> findPossibleMoves(Vector3Int position, unitScript unit)
     {
-        Dictionary<Vector3Int, (int,string, Vector3Int)> possibleMoves = new Dictionary<Vector3Int, (int,string, Vector3Int)> ();
+        Dictionary<Vector3Int, (decimal,string, Vector3Int)> possibleMoves = new Dictionary<Vector3Int, (decimal,string, Vector3Int)> ();
         Dictionary<Vector3Int, List<Vector3Int>> neighborlist = new Dictionary<Vector3Int, List<Vector3Int>>();
         Dictionary<Vector3Int, Vector3Int> parentlist = new Dictionary<Vector3Int, Vector3Int>();
         Dictionary<Vector3Int, int> distancelist = new Dictionary<Vector3Int, int>();
@@ -329,7 +353,7 @@ public class CommandPattern : MonoBehaviour
         //here we add between -3 to +4 depending on the defense of each tile.
         foreach (Vector3Int selectable in selectableTiles)
         {
-            possibleMoves[selectable] = (map.GetTile<levelTile>(selectable).defense / 5, "wait", selectable);
+            possibleMoves[selectable] = ((decimal) (map.GetTile<levelTile>(selectable).defense / 5), "wait", selectable);
         }
         return possibleMoves;
 
@@ -594,40 +618,145 @@ public class CommandPattern : MonoBehaviour
     }
 
     //We call this function for every possible tile the unit can move to. We return the score and the desired action.
-    public (int,string, Vector3Int) findOptimalMove(unitScript checkedUnit, Vector3Int startingposition)
+    public (decimal,string, Vector3Int) findOptimalMove(unitScript checkedUnit, Vector3Int startingposition)
     {
-        int score = 0;
+        decimal score = 0;
+        decimal scoreforattacking = 0;
         string action = "wait";
         Vector3Int ActionTarget = startingposition;
-        if (checkedUnit.typeOfUnit == TypeOfUnit.infantry)
+        if(checkedUnit.attackandmove)
         {
-            if (TrueIfwithinCaptureDistance(checkedUnit, startingposition))
-                score += 8;
-            //Here we check if there is a capturable property at the checked tile
-            if(map.GetTile<levelTile>(startingposition).controllable)
+            //Here we create a list with all the units that can be attacked from startingposition
+
+            Dictionary<Vector3Int, List<(decimal, Vector3Int, bool)>> checkifempty = checkAttackables(checkedUnit, startingposition);
+            if(checkifempty.Any())
             {
-                if(map.GetInstantiatedObject(startingposition).GetComponent<controllable_script>().owner == 0)
+                PossibleAttacksandScores[checkedUnit] = checkifempty;
+            }
+            (decimal, Vector3Int, string) ScoreTargetAction = FindOptimalAttack(checkedUnit, startingposition);
+            score = ScoreTargetAction.Item1;
+            ActionTarget = ScoreTargetAction.Item2;
+            action = ScoreTargetAction.Item3;
+
+            if (checkedUnit.typeOfUnit == TypeOfUnit.infantry)
+            {
+                //Here we check if there is a capturable property at the checked tile
+                if(map.GetTile<levelTile>(startingposition).controllable)
                 {
-                    score += 12;
-                    action = "capture";
+                    if(map.GetInstantiatedObject(startingposition).GetComponent<controllable_script>().owner == 0)
+                    {
+                        if(cancapture >= scoreforattacking)
+                        {
+                            score = cancapture;
+                            action = "capture";
+                            ActionTarget = startingposition;
+                        }
+                    }
                 }
-                if (map.GetInstantiatedObject(startingposition).GetComponent<controllable_script>().owner == 2 && map.GetTile<levelTile>(startingposition).type == tileType.barracks)
-                {
-                    score = -5;
-                }
+
+
+                //Here, if the unit is infantry, we check if it can capture a tile on the next turn
+                if (TrueIfwithinCaptureDistance(checkedUnit, startingposition))
+                    score += movesIntoCaptureRange;
             }
         }
 
 
-        return (score, action, ActionTarget);
+        ///////still have to add for units that cant attack and move
+       return(score, action, ActionTarget);
+
     }
     
-    public List<(Vector3Int,int)> checkAttackables(unitScript unit)
+    //this method returns  the score for the attack, and the target for the attack
+    public Dictionary<Vector3Int, List<(decimal, Vector3Int, bool)>> checkAttackables(unitScript unit, Vector3Int attackingPosition)
     {
         Vector3Int target = new Vector3Int(0,0,0);
-        int score = 0;
-        List<(Vector3Int,int)> TargetsAndScores = new List<(Vector3Int,int)>();
-        return(TargetsAndScores);
+        decimal score = 0;
+        bool destroys = false;
+        Dictionary<Vector3Int, List<(decimal, Vector3Int, bool)>> ScoreTargetDestoys = new Dictionary<Vector3Int, List<(decimal, Vector3Int, bool)>>();
+        List<(decimal, Vector3Int, bool)> temporalList = new List<(decimal, Vector3Int, bool)>();
+        foreach (var posi in map.cellBounds.allPositionsWithin)
+        {
+            score = 0;
+            destroys = false;
+            int distanceFromAttackingUnit = Math.Abs(posi.x - attackingPosition.x) + Math.Abs(posi.y - attackingPosition.y);
+            if(distanceFromAttackingUnit > unit.attackrange || getunit(posi) == null)
+            {
+                continue;
+            }
+            if(getunit(posi).owner == unit.owner)
+            {
+                continue;
+            }
+            //Here we calculate the score for attacking the unit at position posi from attackingPosition
+            
+            target = posi;
+            unitScript attackerScript = unit;
+            unitScript defenderScript = getunit(posi);
+            string temporalstatus = defenderScript.status;
+            int defenderhealthchange = calculateDamage(attackerScript, defenderScript, attackingPosition, posi);
+            defenderScript.status = changeStatus(attackerScript, defenderScript);
+            defenderScript.HP -= defenderhealthchange;
+            int attackingUnitHPchange  = calculateDamage(defenderScript, attackerScript, posi, attackingPosition);
+            defenderScript.HP += defenderhealthchange;
+            defenderScript.status = temporalstatus;
+            if(attackingUnitHPchange >= unit.HP)
+            {
+                score -= unit.foodCost * AttackandGetDestroyed;
+            }
+            if(defenderhealthchange >= defenderScript.HP)
+            {
+                score += defenderScript.foodCost * attacksAndDestroysAnEnemy;
+                destroys = true;
+            }
+            score += (unit.foodCost-defenderScript.foodCost) * attacksAnEnemy;
+            score +=  + possibleMovesForAllUnits[unit][attackingPosition].Item1;
+            temporalList.Add((score,target,destroys));
+        }
+        ScoreTargetDestoys[attackingPosition] = temporalList;
+        return(ScoreTargetDestoys);
+    }
+    public (decimal, Vector3Int, string) FindOptimalAttack(unitScript checkedUnit, Vector3Int startingposition)
+    {
+        decimal score = 0;
+        string action = "wait";
+        Vector3Int target = startingposition;
+
+        //and here we check what scores there are for attacking units, and add the highest
+        if(PossibleAttacksandScores.ContainsKey(checkedUnit))
+        {
+            if(PossibleAttacksandScores[checkedUnit].ContainsKey(startingposition))
+            {
+                foreach((decimal, Vector3Int, bool) scoreandTarget in PossibleAttacksandScores[checkedUnit][startingposition])
+                {
+                    if(scoreandTarget.Item3)
+                    {
+                        //here, if the attackingunit can destroy the defending unit, we give it extra points for its score.
+                        if(scoreandTarget.Item1 + attacksAndDestroysAnEnemy * getunit(scoreandTarget.Item2).foodCost > score)
+                        {
+                            score = scoreandTarget.Item1 + attacksAndDestroysAnEnemy * getunit(scoreandTarget.Item2).foodCost;
+                            action = "destroy";
+                            target = scoreandTarget.Item2;
+                        }
+                    }
+                    else
+                    {
+                        if(scoreandTarget.Item1 > score)
+                        {
+                            score = scoreandTarget.Item1;
+                            action = "attack";
+                            target = scoreandTarget.Item2;
+                        }
+                    }
+                }
+            }
+        }
+        return(score,target,action);
+    }
+    public List<(Vector3Int, int)> attackableUnits(Vector3Int attackposition, unitScript unit)
+    {
+        List<(Vector3Int, int)> TargetandScore = new List<(Vector3Int, int)>();
+        return(TargetandScore);
     }
     public void CenterCameraonUnit(unitScript unit, Vector3Int newPosition, string  Action)
     {
@@ -653,13 +782,13 @@ public class CommandPattern : MonoBehaviour
     }
     public void moveUnit(unitScript unit, Vector3Int newPosition)
     {
+        flagforFlow = true;
+        movementStep++;
         Vector3Int currentPosition = gridPosition(unit);
         selectionmanager.getPath(currentPosition, newPosition);
-        movementStep = 0;
-        flagforFlow = false;
     }
 
-    public void takeAction(unitScript unit, Vector3Int newPosition, string Action)
+    public void takeAction(unitScript unit, Vector3Int newPosition, string Action, Vector3Int target)
     {
         switch (Action)
         {
@@ -673,6 +802,13 @@ public class CommandPattern : MonoBehaviour
                 selectionmanager.onCap();
                 break;
             #endregion
+            #region attack/destroy
+            case "attack":
+            case "destroy":
+            Debug.Log("attacking " + target);
+                selectionmanager.InvokeCombat(newPosition,target);
+                break;
+            #endregion
             default:
                 break;
         }
@@ -681,7 +817,7 @@ public class CommandPattern : MonoBehaviour
     //we check if there is a capturable location within range and increase the score by 8, which is the difference between the minimum and maximum defenses (-3 and +4)
     private bool TrueIfwithinCaptureDistance(unitScript checkedUnit, Vector3Int startingposition)
     {
-        Dictionary<Vector3Int, (int,string, Vector3Int)> moveswithinthissquare = findPossibleMoves(startingposition, checkedUnit);
+        Dictionary<Vector3Int, (decimal,string, Vector3Int)> moveswithinthissquare = findPossibleMoves(startingposition, checkedUnit);
         List<Vector3Int> Positions = new List<Vector3Int>(moveswithinthissquare.Keys);
         foreach(Vector3Int currentTile in Positions)
         {
@@ -737,6 +873,7 @@ public class CommandPattern : MonoBehaviour
         {
             return getunit(_mainCamera.WorldToScreenPoint(map.GetCellCenterWorld(position)));
         }
+    
     public GameObject getunitprefab(Vector3 position, bool screen = true)
     {
         if (!screen)
@@ -936,9 +1073,11 @@ public class CommandPattern : MonoBehaviour
     }
     public int calculateDamage(unitScript attackingunit, unitScript defendingunit, Vector3Int attackPosition, Vector3Int defendposition)
     {
-        if (attackingunit.status == "stunned" || attackingunit.status == "recovered")
+        int distanceFromAttackingUnit = Math.Abs(attackPosition.x - defendposition.x) + Math.Abs(attackPosition.y - defendposition.y);
+        if (attackingunit.status == "stunned" || attackingunit.status == "recovered" || attackingunit.HP <= 0)
         return 0;
-
+        if(distanceFromAttackingUnit > attackingunit.attackrange)
+        return 0;
         List<string> attackingadv = new List<string>();
         List<string> defendingresist = new List<string>();
         List<string> defendingvul = new List<string>();
@@ -1009,5 +1148,17 @@ public class CommandPattern : MonoBehaviour
         }
         return modifiers;
     }
-    
+    public string changeStatus(unitScript attackingunit, unitScript defendingunit)
+        {
+            string newStatus = null;
+            foreach (string stun in attackingunit.stuns)
+            {
+                if (stun == defendingunit.typeOfUnit.ToString() || stun == defendingunit.movementtype.ToString() || stun == defendingunit._attacktype)
+                {
+                    newStatus = "stunned";
+                }
+            }
+            return newStatus;
+        }
+
 }
