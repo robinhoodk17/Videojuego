@@ -38,13 +38,14 @@ public class CommandPattern : MonoBehaviour
     //The scores for the tile defense go from -4 to +3
     public decimal cancapture = 12;
     public decimal movesIntoCaptureRange = 8;
+    public int maxUnitCost = 7000;
     //while calculating the score, we multiply the value difference between the attacking unit and the defending unit by this number
-    public decimal attackedByEnemy = 8/7000;
-    public decimal attacksAnEnemy = 8/7000;
-    public decimal attacksAnEnemyThatWasAlreadyAttacked = 1/7000 + 1/14000;
+    public decimal attackedByEnemy = 8;
+    public decimal attacksAnEnemy = 8;
+    public decimal attacksAnEnemyThatWasAlreadyAttacked = 1.5m;
     //This we multiply by the unit's total value
-    public decimal attacksAndDestroysAnEnemy = 1/7000 + 1/14000;
-    public decimal AttackandGetDestroyed = 1/7000 + 1/14000;
+    public decimal attacksAndDestroysAnEnemy = 1.5m;
+    public decimal AttackandGetDestroyed = 1.5m;
 
     void Update()
     {
@@ -108,7 +109,14 @@ public class CommandPattern : MonoBehaviour
     }
     private void Start()
     {
+        Debug.Log("before normalization: " + AttackandGetDestroyed);
         _mainCamera = Camera.main;
+        attackedByEnemy /= maxUnitCost;
+        attacksAnEnemy /= maxUnitCost;
+        attacksAnEnemyThatWasAlreadyAttacked /= maxUnitCost;
+        attacksAndDestroysAnEnemy /= maxUnitCost;
+        AttackandGetDestroyed /= maxUnitCost;
+        Debug.Log("after normalization: " + AttackandGetDestroyed);
         /*combatManager = new gridCombat();
         combatManager.Start();
         combatManager.map = map;

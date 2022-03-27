@@ -1381,7 +1381,7 @@ public class SelectionManager : MonoBehaviour
     {
         onWait();
         Oncombatstart?.Invoke(attackposition, target);
-        combatManager.OncombatHappening(attackposition, target);
+        //combatManager.OncombatHappening(attackposition, target);
     }
     public void Oncombat(Vector3Int attacker, Vector3Int defender)
     {
@@ -1662,8 +1662,9 @@ public class SelectionManager : MonoBehaviour
             }
             levelTile Tile = map.GetTile<levelTile>(defendposition);
             int tiledefense = Tile.defense;
-            damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + attackingunit.level / 10) * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
+            damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
             damage -= tiledefense;
+            Debug.Log("the damage is: " + damage);
 
             if (damage < 0)
                 damage = 0;
