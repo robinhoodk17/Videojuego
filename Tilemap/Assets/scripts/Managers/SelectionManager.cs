@@ -323,6 +323,9 @@ public class SelectionManager : MonoBehaviour
         mapmanager.selectedUnitWaits(currentposition, newposition);
         currentposition = newposition;
         List<unitScript> auras = new List<unitScript>();
+        unit.exhausted = true;
+        unit.sprite.color = new Color(.6f, .6f, .6f);
+        Reset();
         if(unit.hasaura)
         {
             List<Vector3Int> affectedUnits = findifwithinrange(unit, newposition);
@@ -355,9 +358,6 @@ public class SelectionManager : MonoBehaviour
                 }
             }
         }
-        unit.exhausted = true;
-        unit.sprite.color = new Color(.6f, .6f, .6f);
-        Reset();
     }
     public void onCap()
     {
@@ -955,7 +955,14 @@ public class SelectionManager : MonoBehaviour
             Dictionary<Vector3Int, bool> newvisitlist = new Dictionary<Vector3Int, bool>();
             List<Vector3Int> newselectableTiles = new List<Vector3Int>();
             foreach (var posi in map.cellBounds.allPositionsWithin)
-            {
+            {       
+                int distanceFromUnit = Math.Abs(posi.x - position.x) + Math.Abs(posi.y - position.y);
+                if(distanceFromUnit <= unit.aurarange)
+                {
+                    newselectableTiles.Add(posi);
+                }
+            }
+                /*
                 Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
                 if (map.HasTile(localPlace))
                 {
@@ -1006,10 +1013,13 @@ public class SelectionManager : MonoBehaviour
                     }
                 }
             }
-
+            */
             foreach (Vector3Int selectable in newselectableTiles)
             {
-                units.SetTile(selectable, movementUI[1]);
+                if(map.HasTile(selectable))
+                {
+                    units.SetTile(selectable, movementUI[1]);
+                }
             }
         }
     }
@@ -1063,7 +1073,6 @@ public class SelectionManager : MonoBehaviour
         }
         
     }
-
     public void findattackables(Vector3Int position, unitScript unit)
     {
 
@@ -1154,6 +1163,22 @@ public class SelectionManager : MonoBehaviour
         //getting the attackable tiles
         foreach (var posi in map.cellBounds.allPositionsWithin)
         {
+            int distanceFromUnit = Math.Abs(posi.x - position.x) + Math.Abs(posi.y - position.y);
+            if(distanceFromUnit <= unit.aurarange)
+            {
+                selectableTiles.Add(posi);
+            }
+        }
+        foreach (Vector3Int selectable in selectableTiles)
+        {
+            if(selectable == targetposition)
+            {
+                if (unit.auracheck(getunit(targetposition)))
+                    return true;
+            }
+        }
+        return false;
+            /*
             Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
             if (map.HasTile(localPlace))
             {
@@ -1215,6 +1240,7 @@ public class SelectionManager : MonoBehaviour
             }
         }
         return false;
+            */
     }
     public List<Vector3Int> findifwithinrange(unitScript unit, Vector3Int position)
     {
@@ -1230,6 +1256,26 @@ public class SelectionManager : MonoBehaviour
         //getting the attackable tiles
         foreach (var posi in map.cellBounds.allPositionsWithin)
         {
+            int distanceFromUnit = Math.Abs(posi.x - position.x) + Math.Abs(posi.y - position.y);
+            if(distanceFromUnit <= unit.aurarange)
+            {
+                selectableTiles.Add(posi);
+            }
+        }
+
+        foreach (Vector3Int selectable in selectableTiles)
+        {
+            if(getunit(selectable) != null)
+            {
+                if (unit.auracheck(getunit(selectable)))
+                {
+                    affectedUnits.Add(selectable);
+                }
+            }
+        }
+
+        return affectedUnits;
+            /*
             Vector3Int localPlace = new Vector3Int(posi.x, posi.y, posi.z);
             if (map.HasTile(localPlace))
             {
@@ -1293,6 +1339,7 @@ public class SelectionManager : MonoBehaviour
             }
         }
         return affectedUnits;
+        */
     }
 
     public int showUnitPanel(GameObject unitobject, unitScript unitscript, Vector3Int gridposition)
@@ -1664,7 +1711,6 @@ public class SelectionManager : MonoBehaviour
             int tiledefense = Tile.defense;
             damage = (int)(damage * attackingunit.HP / attackingunit.maxHP * (1 + GlobalModifiers(attackingunit.owner)[0]) * (1 - GlobalModifiers(defendingunit.owner)[1]));
             damage -= tiledefense;
-            Debug.Log("the damage is: " + damage);
 
             if (damage < 0)
                 damage = 0;
