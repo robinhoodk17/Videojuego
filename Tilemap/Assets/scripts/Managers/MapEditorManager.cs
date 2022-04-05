@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
 using Photon.Pun;
+using UnityEngine.InputSystem;
 
 public class MapEditorManager : MonoBehaviour
 {
@@ -62,10 +63,10 @@ public class MapEditorManager : MonoBehaviour
     private void Update()
     {
         //each time the frame is updated, we check the position of the mouse in the gridmap 
-        Vector3Int gridPosition = gridposition(Input.mousePosition, true);
+        Vector3Int gridPosition = gridposition(Mouse.current.position.ReadValue(), true);
 
         //when we select a unit, we make currentbuttonpressed = numberoftiles + 1, so that it enters this if.
-        if (Input.GetMouseButtonUp(0) && CurrentButtonPressed >= numberoftiles && !dragging)
+        if (Mouse.current.leftButton.wasReleasedThisFrame && CurrentButtonPressed >= numberoftiles && !dragging)
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {
@@ -74,7 +75,6 @@ public class MapEditorManager : MonoBehaviour
             if (map.HasTile(gridPosition))
             {
                 //the unit is built from our unit dictionary, then selected and it gets its respective owner
-
                 if (getunitprefab(gridPosition) != null)
                 {
                     Destroy(getunitprefab(gridPosition));
@@ -87,13 +87,14 @@ public class MapEditorManager : MonoBehaviour
                     activeplayer = 1;
                 }
                 spawnedUnit.ownerChange(activeplayer);
+                spawnedUnit.customAwake();
             }
         }
 
         //when the button gets pressed, we insert the appropriate tile in the tilemap.
         if (CurrentButtonPressed < numberoftiles)
         {
-            if (Input.GetMouseButton(0) && ItemButtons[CurrentButtonPressed].Clicked && Time.time - lastStep > timeBetweenSteps && !dragging)
+            if (Mouse.current.leftButton.isPressed && ItemButtons[CurrentButtonPressed].Clicked && Time.time - lastStep > timeBetweenSteps && !dragging)
             {
                 if (EventSystem.current.IsPointerOverGameObject())
                 {
@@ -122,7 +123,8 @@ public class MapEditorManager : MonoBehaviour
                 //Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
             }
         }
-        if (Input.GetMouseButton(1))
+        //this is just to destroy a tile with right click
+        if (Mouse.current.rightButton.isPressed)
         {
             map.SetTile(gridPosition, null);
             conditions.SetTile(gridPosition, null);
@@ -133,20 +135,22 @@ public class MapEditorManager : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(0) && dragging)
+        #region mirroring
+        if (Mouse.current.leftButton.wasPressedThisFrame && dragging)
         {
-            topLeft = gridposition(Input.mousePosition, true);
+            topLeft = gridposition(Mouse.current.position.ReadValue(), true);
             gotupperLeft = true;
         }
-        if (Input.GetMouseButtonUp(0) && dragging && gotupperLeft)
+        if (Mouse.current.leftButton.wasReleasedThisFrame && dragging && gotupperLeft)
         {
-            bottomRight = gridposition(Input.mousePosition, true);
+            bottomRight = gridposition(Mouse.current.position.ReadValue(), true);
             Vector3Int realtopLeft = new Vector3Int(Mathf.Min(topLeft.x, bottomRight.x), Mathf.Max(topLeft.y, bottomRight.y), topLeft.z);
             Vector3Int realbottomright = new Vector3Int(Mathf.Max(topLeft.x, bottomRight.x), Mathf.Min(topLeft.y, bottomRight.y), topLeft.z);
             dragging = false;
             gotupperLeft = false;
             rotatedmirror(realtopLeft, realbottomright);
         }
+    #endregion
     }
 
     public void onClick(unitScript unit)

@@ -162,7 +162,7 @@ public class saveManager : MonoBehaviourPun
                     unit.ownerChange(unit.owner);
                     unit.statusChange(unit.status);
                     unit.healthChanged();
-
+                    unit.customAwake();
                 }
             }
         }

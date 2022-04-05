@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using Photon.Pun;
 using System;
 
@@ -93,7 +94,7 @@ public class MapManager : MonoBehaviourPun
             InitializeGame(mapname);
         }
         // to deselect the barracks once it was selected
-        if (((Input.GetMouseButtonDown(0) && barracksSelected && !EventSystem.current.IsPointerOverGameObject()) || Input.GetMouseButtonDown(1)) && thisistheplayer == activeplayer)
+        if (((Mouse.current.leftButton.wasReleasedThisFrame && barracksSelected && !EventSystem.current.IsPointerOverGameObject()) || Mouse.current.rightButton.wasReleasedThisFrame) && thisistheplayer == activeplayer)
         {
             if (barracksSelected)
             {
@@ -107,9 +108,9 @@ public class MapManager : MonoBehaviourPun
             barracksSelected = false;
         }
         // to select the barracks
-        if (Input.GetMouseButtonDown(0) && !barracksSelected && !unitselected && thisistheplayer == activeplayer)
+        if (Mouse.current.leftButton.wasReleasedThisFrame && !barracksSelected && !unitselected && thisistheplayer == activeplayer)
         {
-            currentposition = gridPosition(Input.mousePosition, true);
+            currentposition = gridPosition(Mouse.current.position.ReadValue(), true);
             if (getunit(currentposition) == null)
             {
                 if (map.HasTile(currentposition))
@@ -203,7 +204,6 @@ public class MapManager : MonoBehaviourPun
         }
 
     }
-
 
     [PunRPC]
     public void OnTurnEndNetwork()

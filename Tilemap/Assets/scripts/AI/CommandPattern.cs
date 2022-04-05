@@ -14,6 +14,7 @@ public class CommandPattern : MonoBehaviour
     public SelectionManager selectionmanager;
     private int activeplayer = 1;
     private int maxplayers = 2;
+    private int AIplayer = 2;
     public Tilemap map, units, conditions;
     public TextMeshProUGUI unitname;
     private Vector3 PlayerCameraCoordinates;
@@ -24,6 +25,7 @@ public class CommandPattern : MonoBehaviour
     Dictionary<unitScript, (Vector3Int, String, Vector3Int)> targetPositionsandActions = new Dictionary<unitScript, (Vector3Int, string, Vector3Int)>();
     Dictionary<unitScript, Dictionary<Vector3Int, List<(decimal, Vector3Int, bool)>>> PossibleAttacksandScores = new Dictionary<unitScript, Dictionary<Vector3Int, List<(decimal, Vector3Int, bool)>>>();
     List<unitScript> unitsToMove = new List<unitScript>();
+    private Vector3Int enemyHQ = Vector3Int.zero;
     int numberofunitmoved = 0;
     private bool firstTurn = true;
     private List<GameObject> selectedbuildables;
@@ -35,7 +37,10 @@ public class CommandPattern : MonoBehaviour
     private int movementStep = 0;
     public float waitHowLong = .6f;
     private bool flagforFlow = false;
-    //The scores for the tile defense go from -4 to +3
+    [Header ("AI Atributes")] 
+    //The scores for the tile defense go from -.5 to +2
+    public decimal defenseScore = .05m;
+    public decimal movesCloserToHQ = 2;
     public decimal cancapture = 12;
     public decimal movesIntoCaptureRange = 8;
     public int maxUnitCost = 7000;
@@ -49,7 +54,7 @@ public class CommandPattern : MonoBehaviour
 
     void Update()
     {
-        if(activeplayer != 2)
+        if(activeplayer != AIplayer)
         {
             return;
         }
@@ -109,20 +114,13 @@ public class CommandPattern : MonoBehaviour
     }
     private void Start()
     {
-        Debug.Log("before normalization: " + AttackandGetDestroyed);
         _mainCamera = Camera.main;
         attackedByEnemy /= maxUnitCost;
         attacksAnEnemy /= maxUnitCost;
         attacksAnEnemyThatWasAlreadyAttacked /= maxUnitCost;
         attacksAndDestroysAnEnemy /= maxUnitCost;
         AttackandGetDestroyed /= maxUnitCost;
-        Debug.Log("after normalization: " + AttackandGetDestroyed);
-        /*combatManager = new gridCombat();
-        combatManager.Start();
-        combatManager.map = map;
-        combatManager.conditions = conditions;*/
     }
-
     private void Reset()
     {
         targetPositionsandActions.Clear();
@@ -138,6 +136,13 @@ public class CommandPattern : MonoBehaviour
     private void takeTurn()
     {
         controllables = GameObject.FindGameObjectsWithTag("Controllable");
+        foreach(GameObject controllable in controllables)
+        {
+            if(map.GetTile<levelTile>(gridPosition(controllable.transform.position)).type == tileType.HQ && controllable.GetComponent<controllable_script>().owner != AIplayer)
+            {
+                enemyHQ = gridPosition(controllable.transform.position);
+            }
+        }
         moveUnits();
     }
 
@@ -150,12 +155,11 @@ public class CommandPattern : MonoBehaviour
             selectedbuildables = selectedbuildables.OrderBy(go => go.GetComponent<unitScript>().foodCost).ToList<GameObject>();
         }
 
-
         if (activeplayer < maxplayers)
             activeplayer++;
         else
             activeplayer = 1;
-        if (activeplayer == 2)
+        if (activeplayer == AIplayer)
         {
             Reset();
             PlayerCameraCoordinates = _mainCamera.transform.position;
@@ -171,10 +175,10 @@ public class CommandPattern : MonoBehaviour
         int foodcost = 0;
         int SUPcost = 0;
         List<GameObject> myBarracks = new List<GameObject>();
-        //we find all the barracks owned by player 2
+        //we find all the barracks owned by player AIplayer
         foreach (GameObject tile in controllables)
         {
-            if (tile.GetComponent<controllable_script>().owner == 2 && map.GetTile<levelTile>(gridPosition(tile.transform.position)).type == tileType.barracks)
+            if (tile.GetComponent<controllable_script>().owner == AIplayer && map.GetTile<levelTile>(gridPosition(tile.transform.position)).type == tileType.barracks)
             {
                 if(getunit(gridPosition(tile.transform.position)) == null)
                 {
@@ -235,7 +239,7 @@ public class CommandPattern : MonoBehaviour
         //Here we get all the possible moves for each unit the AI controls and then call the function FindOptimalMove, which calculates the score for each possible movement
         foreach (GameObject unitPrefab in allunits)
         {
-            if (unitPrefab.GetComponent<unitScript>().owner == 2)
+            if (unitPrefab.GetComponent<unitScript>().owner == AIplayer)
             {
                 unitScript currentMovingUnit = unitPrefab.GetComponent<unitScript>();
                 possibleMovesForAllUnits[currentMovingUnit] = findPossibleMoves(gridPosition(unitPrefab.transform.position), currentMovingUnit);
@@ -266,7 +270,7 @@ public class CommandPattern : MonoBehaviour
                     if(map.GetTile<levelTile>(possibleTargetPosition).controllable)
                     {
                         //Here we just check that we are not moving to our own barracks
-                        if(!(map.GetTile<levelTile>(possibleTargetPosition).type == tileType.barracks && map.GetInstantiatedObject(possibleTargetPosition).GetComponent<controllable_script>().owner == 2))
+                        if(!(map.GetTile<levelTile>(possibleTargetPosition).type == tileType.barracks && map.GetInstantiatedObject(possibleTargetPosition).GetComponent<controllable_script>().owner == AIplayer))
                         {
                             MaxValue = possibleMovesForAllUnits[currentMovingUnit][possibleTargetPosition].Item1;
                             targetPosition = possibleTargetPosition;
@@ -358,10 +362,15 @@ public class CommandPattern : MonoBehaviour
                 }
             }
         }
-        //here we add between -3 to +4 depending on the defense of each tile.
+        //here we add between -.5 to +2 depending on the defense of each tile.
         foreach (Vector3Int selectable in selectableTiles)
         {
-            possibleMoves[selectable] = ((decimal) (map.GetTile<levelTile>(selectable).defense / 5), "wait", selectable);
+            int currentdistance = Math.Abs(position.x - enemyHQ.x) + Math.Abs(position.y - enemyHQ.y);
+            int newdistance = Math.Abs(selectable.x - enemyHQ.x) + Math.Abs(selectable.y - enemyHQ.y);
+            decimal MovingCloserToHQ = 0;
+            if(newdistance < currentdistance){MovingCloserToHQ = movesCloserToHQ;}
+
+            possibleMoves[selectable] = (map.GetTile<levelTile>(selectable).defense * defenseScore + MovingCloserToHQ, "wait", selectable);
         }
         return possibleMoves;
 

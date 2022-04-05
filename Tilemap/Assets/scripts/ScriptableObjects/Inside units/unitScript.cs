@@ -107,8 +107,9 @@ public class unitScript : MonoBehaviourPun
     public void customAwakeNewtork()
     {
         transportedUnits = new List<unitScript>();
-        healthbar.GetComponent<healthBar>().SetMaxHealth();
+        //healthbar.GetComponent<healthBar>().SetMaxHealth();
         healthbar.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = HP.ToString();
+        healthbar.GetComponent<healthBar>().SetColor(owner);
         initialattack = attackdamage;
         initialmaxHP = maxHP;
         attack.GetComponent<TextMeshProUGUI>().text = ((int)(attackdamage * HP / maxHP)).ToString();

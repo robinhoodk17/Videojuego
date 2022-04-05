@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
-using Unity;
+using UnityEngine.InputSystem;
 using TMPro;
 
 
@@ -72,8 +72,11 @@ public class SelectionManager : MonoBehaviour
     public GameObject buttonsprefab;
     public unitScript unloadUnit= null;
     bool firstupdate = false;
+
+    
     private void Start()
     {
+        
         Oncombatstart += Oncombat;
         _mainCamera = Camera.main;
         combatManager = new gridCombat();
@@ -96,17 +99,16 @@ public class SelectionManager : MonoBehaviour
 
     }
     void Update()
-    {
-        
-        if(Input.GetMouseButtonUp(0))
+    {   
+        if(Mouse.current.leftButton.wasReleasedThisFrame)
         {
-            Debug.Log("thisistheplayer: " + thisistheplayer.ToString() + gridPosition(Input.mousePosition, true) + " " + getunit(gridPosition(Input.mousePosition, true)));
+            Debug.Log("thisistheplayer: " + thisistheplayer.ToString() + gridPosition(Mouse.current.position.ReadValue(), true) + " " + getunit(gridPosition(Mouse.current.position.ReadValue(), true)));
         }
         //this is the click to move the unit
-        if (Input.GetMouseButtonUp(0) && unitselected && !EventSystem.current.IsPointerOverGameObject() && unitstate != "moving" && thisistheplayer == activeplayer && unitstate == "idle")
+        if (Mouse.current.leftButton.wasReleasedThisFrame && unitselected && !EventSystem.current.IsPointerOverGameObject() && unitstate != "moving" && thisistheplayer == activeplayer && unitstate == "idle")
         {
             if (unit.owner != activeplayer) { Reset(); return; }
-            newposition = gridPosition(Input.mousePosition, true);
+            newposition = gridPosition(Mouse.current.position.ReadValue(), true);
             //these ifs set the unit in motion (works even if you press its own position) only if you are clicking on a movement UI tile while the
             //unit is not exhausted an while the target position has no units.
             if (getunit(newposition) != null)
@@ -140,10 +142,10 @@ public class SelectionManager : MonoBehaviour
             }
         }
         //this is the click to select a unit (can also select enemy units and see their movement)
-        if (Input.GetMouseButtonUp(0) && !unitselected && !EventSystem.current.IsPointerOverGameObject() && thisistheplayer == activeplayer)
+        if (Mouse.current.leftButton.wasReleasedThisFrame && !unitselected && !EventSystem.current.IsPointerOverGameObject() && thisistheplayer == activeplayer)
         {
-            currentposition = gridPosition(Input.mousePosition, true);
-            unitprefab = getunitprefab(Input.mousePosition, true);
+            currentposition = gridPosition(Mouse.current.position.ReadValue(), true);
+            unitprefab = getunitprefab(Mouse.current.position.ReadValue(), true);
             unit = getunit(currentposition);
             if (unit != null)
             {
@@ -154,13 +156,13 @@ public class SelectionManager : MonoBehaviour
             }
         }
         //the right click resets the selection
-        if (Input.GetMouseButtonDown(1) && thisistheplayer == activeplayer)
+        if (Mouse.current.rightButton.isPressed && thisistheplayer == activeplayer)
         {
             Reset();
-            if (getunit(Input.mousePosition, true) != null && !showingtooltip && !unitselected)
+            if (getunit(Mouse.current.position.ReadValue(), true) != null && !showingtooltip && !unitselected)
             {
                 showingtooltip = true;
-                unitToolTip = getunitprefab(Input.mousePosition, true).GetComponent<infoPanel>();
+                unitToolTip = getunitprefab(Mouse.current.position.ReadValue(), true).GetComponent<infoPanel>();
                 unitToolTip.showPanel();
             }
         }
@@ -172,8 +174,8 @@ public class SelectionManager : MonoBehaviour
             //We also check for abilities, such as heals
             if (unitstate == "thinking" && Time.time - lastClick > timeBetweenClicks)
             {
-                Vector2 mousePos = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
-                Vector3Int clickedtile = gridPosition(Input.mousePosition, true);
+                Vector2 mousePos = _mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                Vector3Int clickedtile = gridPosition(Mouse.current.position.ReadValue(), true);
                 if(!startedHovering)
                 {
                     startedHovering = true;
@@ -204,7 +206,7 @@ public class SelectionManager : MonoBehaviour
                     startedHovering = false;
                 }
                 //this if invokes combat against another unit or controllable space
-                if (Input.GetMouseButtonUp(0) && units.HasTile(clickedtile) && !usingability && (getunit(clickedtile) != null || map.GetTile<levelTile>(clickedtile).controllable))
+                if (Mouse.current.leftButton.wasReleasedThisFrame && units.HasTile(clickedtile) && !usingability && (getunit(clickedtile) != null || map.GetTile<levelTile>(clickedtile).controllable))
                 {
                     if(getunit(clickedtile)!=null)
                     {
@@ -212,7 +214,6 @@ public class SelectionManager : MonoBehaviour
                         {
                             if (getunit(clickedtile).HP > 0)
                             {
-                                Debug.Log("we are invoking combat against a unit");
                                 InvokeCombat(newposition, clickedtile);
                             }
                         }
@@ -222,13 +223,12 @@ public class SelectionManager : MonoBehaviour
                     {
                         if(map.GetInstantiatedObject(clickedtile).GetComponent<controllable_script>().owner != activeplayer)
                         {
-                            Debug.Log("we are invoking combat against a property");
                             InvokeCombat(newposition, clickedtile);
                         }
                     }
                 }
                 //this if uses the ability of the unit
-                if(Input.GetMouseButtonUp(0) && units.HasTile(clickedtile)  && usingability && Time.time - lastClick > timeBetweenClicks)
+                if(Mouse.current.leftButton.wasReleasedThisFrame && units.HasTile(clickedtile)  && usingability && Time.time - lastClick > timeBetweenClicks)
                 {
                     #region heal
                     if (unit.ability == "heal" && getunit(clickedtile) != null)
@@ -302,14 +302,12 @@ public class SelectionManager : MonoBehaviour
                     }
                     #endregion unload
                 }
-                
             }
         }
 
         //to unload  a unit from a transport
         
     }
-
     public void selectUnit(unitScript selectedUnit, Vector3Int unitposition)
     {
         findSelectabletiles(selectedUnit, unitposition);

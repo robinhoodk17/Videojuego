@@ -29,4 +29,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AI/AI.unity
     guid: b2b4ed8e30ba31f49972393b53b08327
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: aa845b301b41b8740b9b3d6ae11a0867, type: 2}
