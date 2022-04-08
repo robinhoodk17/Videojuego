@@ -1045,6 +1045,7 @@ GameObject:
   m_Component:
   - component: {fileID: 293557119}
   - component: {fileID: 293557118}
+  - component: {fileID: 293557120}
   m_Layer: 5
   m_Name: Controls
   m_TagString: Untagged
@@ -1064,6 +1065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d934837ca69c2934cb673d35b95cb796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInput: {fileID: 293557120}
   MoveUp: {fileID: 5125098111578565741, guid: caeee4ca1e306ac45ab9082eda9e6d17, type: 3}
   UpButtonText: {fileID: 978050453}
   MoveDown: {fileID: -3776456713326528112, guid: caeee4ca1e306ac45ab9082eda9e6d17, type: 3}
@@ -1097,6 +1099,36 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &293557120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 293557117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: caeee4ca1e306ac45ab9082eda9e6d17, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Pause
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &295808641
 GameObject:
   m_ObjectHideFlags: 0

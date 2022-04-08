@@ -327,7 +327,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22400000, guid: ea4f45f1433c2404197edc445210b679, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 350
+      value: 876.5
       objectReference: {fileID: 0}
     - target: {fileID: 22400000, guid: ea4f45f1433c2404197edc445210b679, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -499,7 +499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _serializedExposedParameters: []
   _boundGraphSerialization: '{"type":"NodeCanvas.DialogueTrees.DialogueTree","nodes":[{"statement":{"_text":"Welcome,
-    friend, to Xibalba!"},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":436.0,"y":146.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"0"},{"saySelection":true,"availableChoices":[{"statement":{"_text":"Am
+    friend, to Xibalba!"},"_actorName":"Tlaloc","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":436.0,"y":146.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"0"},{"saySelection":true,"availableChoices":[{"statement":{"_text":"Am
     I dead"}},{"statement":{"_text":"Cool, thanks (leave)"}}],"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":433.1126,"y":252.3628},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"1"},{"statement":{"_text":"Hahaha!
     I am afraid have confused Xibalba for Mictlan, the place of the dead."},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":252.0,"y":443.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"2"},{"statement":{"_text":"You
     are not dead, my friend, you have barely begun your test!"},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":245.0,"y":544.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"3"},{"statement":{"_text":"Go
@@ -507,8 +507,9 @@ MonoBehaviour:
     back here, you little shit!"},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":560.0,"y":434.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"6"},{"statement":{"_text":"You
     will sit through the tutorial and you will like it!"},"_actorName":"Witzin","_actorParameterID":"38c8d525-ffc3-4c32-883d-ff23328e2832","_position":{"x":598.0,"y":517.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"7"},{"availableChoices":[{"statement":{"_text":"Fiiiiiiine,
     but only because the delevopers put hard work into this"}},{"statement":{"_text":"But
-    I just want to create my own maps!"}}],"_position":{"x":618.0,"y":622.0},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"8"},{"_action":{"sceneName":{"_value":"DeckSelector"},"mode":{},"$type":"NodeCanvas.Tasks.Actions.LoadScene"},"_actorName":"NetworkManager","_actorParameterID":"0ad3798b-490f-4ec6-9edd-42b27e3251b3","_position":{"x":542.0,"y":786.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"9"},{"_action":{"sceneName":{"_value":"MapEditor"},"mode":{},"$type":"NodeCanvas.Tasks.Actions.LoadScene"},"_actorName":"NetworkManager","_actorParameterID":"0ad3798b-490f-4ec6-9edd-42b27e3251b3","_position":{"x":882.0,"y":778.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"10"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"6"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"6"},"_targetNode":{"$ref":"7"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"8"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"9"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"10"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"AcceptedTutorial":{"_value":true,"_name":"AcceptedTutorial","_id":"3bfecb9b-4371-47e8-8d7a-cbf2dc296c41","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}},"derivedData":{"actorParameters":[{"_keyName":"Witzin","_id":"38c8d525-ffc3-4c32-883d-ff23328e2832","_actorObject":1},{"_keyName":"NetworkManager","_id":"0ad3798b-490f-4ec6-9edd-42b27e3251b3","_actorObject":2}],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
+    I just want to create my own maps!"}}],"_position":{"x":618.0,"y":622.0},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"8"},{"_action":{"sceneName":{"_value":"DeckSelector"},"mode":{},"$type":"NodeCanvas.Tasks.Actions.LoadScene"},"_actorName":"NetworkManager","_actorParameterID":"0ad3798b-490f-4ec6-9edd-42b27e3251b3","_position":{"x":542.0,"y":786.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"9"},{"_action":{"sceneName":{"_value":"MapEditor"},"mode":{},"$type":"NodeCanvas.Tasks.Actions.LoadScene"},"_actorName":"NetworkManager","_actorParameterID":"0ad3798b-490f-4ec6-9edd-42b27e3251b3","_position":{"x":882.0,"y":778.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"10"},{"statement":{"_text":"This
+    is a dialogue text"},"_position":{"x":199.0,"y":147.0},"$type":"NodeCanvas.DialogueTrees.StatementNode"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"6"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"6"},"_targetNode":{"$ref":"7"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"8"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"9"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"10"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"AcceptedTutorial":{"_value":true,"_name":"AcceptedTutorial","_id":"3bfecb9b-4371-47e8-8d7a-cbf2dc296c41","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}},"derivedData":{"actorParameters":[{"_keyName":"Tlaloc","_id":"38c8d525-ffc3-4c32-883d-ff23328e2832","_actorObject":1},{"_keyName":"NetworkManager","_id":"0ad3798b-490f-4ec6-9edd-42b27e3251b3","_actorObject":2}],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
   _boundGraphObjectReferences:
   - {fileID: 0}
   - {fileID: 2073628299}
@@ -517,7 +518,7 @@ MonoBehaviour:
     _version: 3.21
     _category: 
     _comments: 
-    _translation: {x: 41, y: -167}
+    _translation: {x: 64, y: -64}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 1
@@ -737,7 +738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a974e54b1f616fd4fbc2dfc97cd5cb01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelLoader: {fileID: 0}
+  levelLoader: {fileID: 1375560715}
 --- !u!4 &1707408300
 Transform:
   m_ObjectHideFlags: 0
@@ -766,7 +767,7 @@ GameObject:
   - component: {fileID: 2073628300}
   - component: {fileID: 2073628301}
   m_Layer: 0
-  m_Name: Square
+  m_Name: Tlaloc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -857,7 +858,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d2ed97cf6a7d897479f53de8c949e9b7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -876,7 +877,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073628298}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.05870948, y: -1.9961221, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

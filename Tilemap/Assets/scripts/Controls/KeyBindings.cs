@@ -4,6 +4,7 @@ using TMPro;
 
 public class KeyBindings : MonoBehaviour
 {
+    public PlayerInput playerInput = null;
     [Header("Up")]
     public InputActionReference MoveUp = null;
     public TMP_Text UpButtonText = null;
@@ -27,19 +28,33 @@ public class KeyBindings : MonoBehaviour
     private void Awake()
     {
         turnOn();
+        string rebinds = PlayerPrefs.GetString("rebinds", string.Empty);
+        if(string.IsNullOrEmpty(rebinds)){return;}
+        playerInput.actions.LoadBindingOverridesFromJson(rebinds);
         turnOff();
     }
     public void turnOn()
     {
         gameObject.SetActive(true);
-    }
-    public void turnOff()
-    {
-        gameObject.SetActive(false);
-    }
-    public void SaveSettings()
-    {
-        gameObject.SetActive(false);
+        string rebinds = PlayerPrefs.GetString("rebinds", string.Empty);
+        if(string.IsNullOrEmpty(rebinds))
+        {
+            return;
+        }
+        playerInput.actions.LoadBindingOverridesFromJson(rebinds);
+
+        UpButtonText.text = InputControlPath.ToHumanReadableString(
+            MoveUp.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        DownButtonText.text = InputControlPath.ToHumanReadableString(
+            MoveDown.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        RightButtonText.text = InputControlPath.ToHumanReadableString(
+            MoveRight.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        LeftButtonText.text = InputControlPath.ToHumanReadableString(
+            MoveLeft.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        InButtonText.text = InputControlPath.ToHumanReadableString(
+            ZoomIn.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        OutButtonText.text = InputControlPath.ToHumanReadableString(
+            ZoomOut.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
     }
 
     public void StartRebindingUp()
@@ -78,7 +93,7 @@ public class KeyBindings : MonoBehaviour
             MoveDown.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
         Camera.main.GetComponent<PlayerInput>()?.SwitchCurrentActionMap("CameraMovement");
     }
-        public void StartRebindingRight()
+    public void StartRebindingRight()
     {
         RightButtonText.gameObject.SetActive(false);
         Camera.main.GetComponent<PlayerInput>()?.SwitchCurrentActionMap("Pause");
@@ -96,7 +111,7 @@ public class KeyBindings : MonoBehaviour
             MoveRight.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
         Camera.main.GetComponent<PlayerInput>()?.SwitchCurrentActionMap("CameraMovement");
     }
-        public void StartRebindingLeft()
+    public void StartRebindingLeft()
     {
         LeftButtonText.gameObject.SetActive(false);
         Camera.main.GetComponent<PlayerInput>()?.SwitchCurrentActionMap("Pause");
@@ -150,4 +165,42 @@ public class KeyBindings : MonoBehaviour
             ZoomOut.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
         Camera.main.GetComponent<PlayerInput>()?.SwitchCurrentActionMap("CameraMovement");
     }
+
+    public void SaveSettings()
+    {
+        PlayerInput playerInput = Camera.main.GetComponent<PlayerInput>();
+        string rebinds = playerInput.actions.SaveBindingOverridesAsJson();
+        PlayerPrefs.SetString("rebinds", rebinds);
+        gameObject.SetActive(false);
+    }
+
+    public void turnOff()
+    {
+        Camera.main.GetComponent<PlayerInput>()?.SwitchCurrentActionMap("Pause");
+        string rebinds = PlayerPrefs.GetString("rebinds", string.Empty);
+        if(string.IsNullOrEmpty(rebinds))
+        {
+            playerInput.actions.RemoveAllBindingOverrides();
+            Camera.main.GetComponent<PlayerInput>()?.SwitchCurrentActionMap("CameraMovement");
+            return;
+        }
+        playerInput.actions.LoadBindingOverridesFromJson(rebinds);
+        Camera.main.GetComponent<PlayerInput>()?.actions.LoadBindingOverridesFromJson(rebinds);
+        UpButtonText.text = InputControlPath.ToHumanReadableString(
+            MoveUp.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        DownButtonText.text = InputControlPath.ToHumanReadableString(
+            MoveDown.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        RightButtonText.text = InputControlPath.ToHumanReadableString(
+            MoveRight.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        LeftButtonText.text = InputControlPath.ToHumanReadableString(
+            MoveLeft.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        InButtonText.text = InputControlPath.ToHumanReadableString(
+            ZoomIn.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+        OutButtonText.text = InputControlPath.ToHumanReadableString(
+            ZoomOut.action.bindings[0].effectivePath ,InputControlPath.HumanReadableStringOptions.OmitDevice);
+            
+        
+        gameObject.SetActive(false);
+    }
+
 }
