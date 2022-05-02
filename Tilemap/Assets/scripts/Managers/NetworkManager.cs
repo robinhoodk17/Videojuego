@@ -52,6 +52,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PlayerPrefs.DeleteKey("mapname");
         PlayerPrefs.DeleteKey("decksize");
         PlayerPrefs.DeleteKey("PlayerName");
+        PlayerPrefs.DeleteKey("DialogueNumber");
         for (int i = 0; i < 100; i++)
         {
             if(PlayerPrefs.HasKey("selecteddeck" + i.ToString()))

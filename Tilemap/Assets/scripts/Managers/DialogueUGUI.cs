@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NodeCanvas.DialogueTrees;
+using TMPro;
 
 namespace NodeCanvas.DialogueTrees.UI.Examples{
 
@@ -26,8 +27,8 @@ namespace NodeCanvas.DialogueTrees.UI.Examples{
 		//Group...
 		[Header("Subtitles")]
 		public RectTransform subtitlesGroup;
-		public Text actorSpeech;
-		public Text actorName;
+		public TMP_Text actorSpeech;
+		public TMP_Text actorName;
 		public Image actorPortrait;
 		public RectTransform waitInputIndicator;
 		public SubtitleDelays subtitleDelays = new SubtitleDelays();
@@ -223,7 +224,7 @@ namespace NodeCanvas.DialogueTrees.UI.Examples{
 				btn.gameObject.SetActive(true);
 				btn.transform.SetParent(optionsGroup.transform, false);
 				btn.transform.localPosition = (Vector2)optionButton.transform.localPosition - new Vector2(0, buttonHeight * i);
-				btn.GetComponentInChildren<Text>().text = pair.Key.text;
+				btn.GetComponentInChildren<TMP_Text>().text = pair.Key.text;
 				cachedButtons.Add(btn, pair.Value);
 				btn.onClick.AddListener( ()=> { Finalize(info, cachedButtons[btn]);	});
 				i++;
