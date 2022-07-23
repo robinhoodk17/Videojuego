@@ -13,7 +13,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     float minCamSize = 1;
     [SerializeField]
-    float maxCamSize = 20;
+    float maxCamSize = 40;
     [SerializeField]
     Tilemap map;
 
@@ -24,6 +24,7 @@ public class CameraMovement : MonoBehaviour
     public float panborderthickness = 2f;
     public float zoomspeedwithwheel = 20f;
     public int invertZoomWheel = 1;
+    public bool paused = false;
 
     private float mapminx, mapmaxx, mapminy, mapmaxy;
 
@@ -44,7 +45,7 @@ public class CameraMovement : MonoBehaviour
     {
 
         //move up
-        if (wpressed || Mouse.current.position.ReadValue().y >= Screen.height - panborderthickness)
+        if (wpressed || Mouse.current.position.ReadValue().y >= Screen.height - panborderthickness && !paused)
         {    
             if (Time.time - lastStep > timeBetweenSteps)
             {
@@ -55,7 +56,7 @@ public class CameraMovement : MonoBehaviour
             }
         }
         //move down
-        if (spressed || Mouse.current.position.ReadValue().y <= panborderthickness)
+        if (spressed || Mouse.current.position.ReadValue().y <= panborderthickness && !paused)
         {
             if (Time.time - lastStep > timeBetweenSteps)
             {
@@ -66,7 +67,7 @@ public class CameraMovement : MonoBehaviour
             }
         }
         //move left
-        if (apressed || Mouse.current.position.ReadValue().x <= panborderthickness)
+        if (apressed || Mouse.current.position.ReadValue().x <= panborderthickness && !paused)
         {
             if (Time.time - lastStep > timeBetweenSteps )
             {
@@ -77,7 +78,7 @@ public class CameraMovement : MonoBehaviour
             }
         }
         //move right
-        if (dpressed || Mouse.current.position.ReadValue().x >= Screen.width - panborderthickness)
+        if (dpressed || Mouse.current.position.ReadValue().x >= Screen.width - panborderthickness && !paused)
         {
             if (Time.time - lastStep > timeBetweenSteps)
             {
@@ -90,7 +91,7 @@ public class CameraMovement : MonoBehaviour
 
 
         //zoom in
-        if (zpressed)
+        if (zpressed && !paused)
         {
             if (Time.time - lastStep > timeBetweenSteps)
             {
@@ -102,7 +103,7 @@ public class CameraMovement : MonoBehaviour
             }
         }
         //zoom out
-        if (xpressed)
+        if (xpressed && !paused)
         {
             if (Time.time - lastStep > timeBetweenSteps)
             {

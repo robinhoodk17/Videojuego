@@ -14,17 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _serializedGraph: '{"type":"NodeCanvas.DialogueTrees.DialogueTree","nodes":[{"statement":{"_text":"Welcome,
     friend, to Xibalba!"},"_actorName":"Tlaloc","_actorParameterID":"1e160c8c-1477-44bf-94e9-92c71abe4ab9","_position":{"x":489.239,"y":1413.129},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"0"},{"statement":{"_text":"Oh!
-    I heard about this place! Is it the city of the gods?"},"_actorName":"protagonist","_actorParameterID":"9126766b-990e-4741-b97c-3db1d811f043","_position":{"x":480.9919,"y":1507.865},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"1"},{"statement":{"_text":"Indeed!
+    I heard about this place! Is it the city of the gods?"},"_actorName":"Protagonist","_actorParameterID":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_position":{"x":480.9919,"y":1507.865},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"1"},{"statement":{"_text":"Indeed!
     We promised humanity that you would become a God, like us!"},"_actorName":"Tlaloc","_actorParameterID":"1e160c8c-1477-44bf-94e9-92c71abe4ab9","_position":{"x":537.9624,"y":1605.985},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"2"},{"statement":{"_text":"Today
     you start your road towards godhood. We will show you how to face the trials."},"_actorName":"Tlaloc","_actorParameterID":"1e160c8c-1477-44bf-94e9-92c71abe4ab9","_position":{"x":558.936,"y":1687.123},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"3"},{"saySelection":true,"availableChoices":[{"isUnfolded":false,"statement":{"_text":"Let''s
     go!"}},{"isUnfolded":false,"statement":{"_text":"That sounds boring. What''s
-    over there? (Leave)"}}],"_actorName":"protagonist","_actorParameterID":"9126766b-990e-4741-b97c-3db1d811f043","_position":{"x":596.6661,"y":1779.334},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"4"},{"_action":{"actions":[{"method":{"_baseInfo":"GameDirector|DialogueFinished|System.Void","_paramsInfo":""},"parameters":[],"returnValue":{},"$type":"NodeCanvas.Tasks.Actions.ExecuteFunction_Multiplatform"},{"sceneName":{"_value":"DeckSelector"},"mode":{},"$type":"NodeCanvas.Tasks.Actions.LoadScene"}],"$type":"NodeCanvas.Framework.ActionList"},"_actorName":"DialogueManager","_actorParameterID":"1ec34cb8-1a00-4d68-86ea-2a7a749b991c","_position":{"x":502.972,"y":2055.673},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"5"},{"statement":{"_text":"Hey,
+    over there? (Leave)"}}],"_actorName":"Protagonist","_actorParameterID":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_position":{"x":596.6661,"y":1779.334},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"4"},{"_action":{"method":{"_baseInfo":"GameDirector|DialogueFinished|System.Void","_paramsInfo":"System.Boolean|System.String"},"parameters":[{"_type":"System.Boolean","_value":{"$content":true,"$type":"System.Boolean"}},{"_type":"System.String","_value":{"$content":"AI","$type":"System.String"}}],"returnValue":{},"$type":"NodeCanvas.Tasks.Actions.ExecuteFunction_Multiplatform"},"_actorName":"GameDirector","_actorParameterID":"6166ca84-5f51-48b2-bfec-83cbe43c2a8b","_position":{"x":502.972,"y":2055.673},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"5"},{"statement":{"_text":"Hey,
     you little shit, you have to go through the tutorial!"},"_actorName":"Tlaloc","_actorParameterID":"1e160c8c-1477-44bf-94e9-92c71abe4ab9","_position":{"x":849.3317,"y":1949.24},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"6"},{"saySelection":true,"availableChoices":[{"isUnfolded":false,"statement":{"_text":"Fiiiiiiine..."}},{"isUnfolded":false,"statement":{"_text":"But
-    I don''t want to!"}}],"_actorName":"protagonist","_actorParameterID":"9126766b-990e-4741-b97c-3db1d811f043","_position":{"x":889.9961,"y":2047.797},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"7"},{"statement":{"_text":"I
-    don''t care, the developers worked very hard on it. Go through that door."},"_actorName":"Tlaloc","_actorParameterID":"d2a09d09-3a85-445a-90cc-a9a63490035a","_position":{"x":865.0,"y":2274.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"8"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"6"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"6"},"_targetNode":{"$ref":"7"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"8"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[{"_keyName":"Tlaloc","_id":"d2a09d09-3a85-445a-90cc-a9a63490035a","_actorObject":1},{"_keyName":"protagonist","_id":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_actorObject":2},{"_keyName":"NetworkManager","_id":"3fc87b7d-a8d7-4ac8-9454-093042403663","_actorObject":3},{"_keyName":"DialogueManager","_id":"1ec34cb8-1a00-4d68-86ea-2a7a749b991c","_actorObject":4}],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
+    I don''t want to!"}}],"_actorName":"Protagonist","_actorParameterID":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_position":{"x":889.9961,"y":2047.797},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"7"},{"statement":{"_text":"I
+    don''t care, the developers worked very hard on it. Go through that door."},"_actorName":"Tlaloc","_actorParameterID":"d2a09d09-3a85-445a-90cc-a9a63490035a","_position":{"x":865.0,"y":2274.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"8"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"6"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"6"},"_targetNode":{"$ref":"7"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"8"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[{"_keyName":"Tlaloc","_id":"d2a09d09-3a85-445a-90cc-a9a63490035a","_actorObject":1},{"_keyName":"Protagonist","_id":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_actorObject":2},{"_keyName":"GameDirector","_id":"6166ca84-5f51-48b2-bfec-83cbe43c2a8b"}],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
   _objectReferences:
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -32,19 +30,16 @@ MonoBehaviour:
     _version: 3.21
     _category: 
     _comments: 
-    _translation: {x: 522, y: -641}
-    _zoomFactor: 0.45895088
+    _translation: {x: 311, y: -1102}
+    _zoomFactor: 0.70061564
   _haltSerialization: 0
   actorParameters:
   - _keyName: Tlaloc
     _id: d2a09d09-3a85-445a-90cc-a9a63490035a
     _actorObject: {fileID: 0}
-  - _keyName: protagonist
+  - _keyName: Protagonist
     _id: 7f47806a-37c0-424a-9c31-acac8bd2d2f5
     _actorObject: {fileID: 0}
-  - _keyName: NetworkManager
-    _id: 3fc87b7d-a8d7-4ac8-9454-093042403663
-    _actorObject: {fileID: 0}
-  - _keyName: DialogueManager
-    _id: 1ec34cb8-1a00-4d68-86ea-2a7a749b991c
+  - _keyName: GameDirector
+    _id: 6166ca84-5f51-48b2-bfec-83cbe43c2a8b
     _actorObject: {fileID: 0}

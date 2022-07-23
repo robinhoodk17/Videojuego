@@ -7806,11 +7806,12 @@ MonoBehaviour:
   zoomStep: 0.25
   minCamSize: 1
   maxCamSize: 10
-  map: {fileID: 0}
+  map: {fileID: 216623308}
   timeBetweenSteps: 0.03
   panborderthickness: 2
   zoomspeedwithwheel: 20
   invertZoomWheel: 1
+  paused: 0
   wpressed: 0
   apressed: 0
   spressed: 0

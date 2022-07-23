@@ -6,8 +6,11 @@ using System.IO;
 using Photon.Pun;
 using System;
 
+public enum eventtrigger{StartofTurn, EndofTurn, PlayerAttacks, UnitsDie};
+public enum happenings{UnitsAppear, Cutscene, UnitsModified, UnitsDie, PlaerGetsFood, PlayerGetsGold};
 public class saveManager : MonoBehaviourPun
 {
+
     string saveseparator = "#";
     string tileseparator = "NEW";
     public int thisistheplayer;
@@ -21,6 +24,7 @@ public class saveManager : MonoBehaviourPun
     bonfire: 6
      */
     public List<levelTile> tileBases;
+    public List<(eventtrigger,happenings, int)> EventsDuringGame;
     private Dictionary<string, levelTile> tileDictionary = new Dictionary<string, levelTile>();
     private List<GameObject> Buildables = new List<GameObject>();
     private Dictionary<string, GameObject> unitDictionary = new Dictionary<string, GameObject>();
@@ -28,6 +32,10 @@ public class saveManager : MonoBehaviourPun
     [SerializeField]
     public Tilemap map, conditions;
     private int z;
+    public void newEvent(eventtrigger trigger, happenings Event, int counter)
+    {
+        EventsDuringGame.Add((trigger, Event, counter));
+    }
     private void Start()
     {
         List<GameObject> temporal = GameObject.FindGameObjectWithTag("BuildableUnits").GetComponent<BuildableUnits>().Buildables;
@@ -116,7 +124,19 @@ public class saveManager : MonoBehaviourPun
             savestring = string.Join(saveseparator, contents);
             alltiles.Add(savestring);
         }
-        savestring = string.Join(tileseparator, alltiles);
+        
+        foreach (var happening in EventsDuringGame)
+        {
+            contents = new string[] {
+                "happening",
+                "" + happening.Item1,
+                "" + happening.Item2,
+                "" + happening.Item3
+
+            };
+            savestring = string.Join(saveseparator, contents);
+            alltiles.Add(savestring);
+        }
 
         File.WriteAllText(Application.streamingAssetsPath + "/" + savename + ".map", savestring);
     }

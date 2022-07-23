@@ -14,11 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _serializedGraph: '{"type":"NodeCanvas.DialogueTrees.DialogueTree","nodes":[{"statement":{"_text":"How
     was it?"},"_actorName":"Tlaloc","_actorParameterID":"d2a09d09-3a85-445a-90cc-a9a63490035a","_position":{"x":699.6002,"y":1699.942},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"0"},{"availableChoices":[{"statement":{"_text":"It
-    was an excellent introduction. The developers must be proud."}}],"_actorName":"protagonist","_actorParameterID":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_position":{"x":660.4413,"y":1809.378},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"1"},{"statement":{"_text":"Yes,
+    was an excellent introduction. The developers must be proud."}}],"_actorName":"Protagonist","_actorParameterID":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_position":{"x":660.4413,"y":1809.378},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"1"},{"statement":{"_text":"Yes,
     they worked really hard on it."},"_actorName":"Tlaloc","_actorParameterID":"d2a09d09-3a85-445a-90cc-a9a63490035a","_position":{"x":654.6324,"y":1939.557},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"2"},{"statement":{"_text":"Anyway,
-    go through the door if you want to start your first trial."},"_position":{"x":647.7746,"y":2026.351},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"3"},{"_action":{"actions":[{"method":{"_baseInfo":"GameDirector|DialogueFinished|System.Void","_paramsInfo":""},"parameters":[],"returnValue":{},"$type":"NodeCanvas.Tasks.Actions.ExecuteFunction_Multiplatform"},{"sceneName":{"_value":"DeckSelector"},"mode":{},"$type":"NodeCanvas.Tasks.Actions.LoadScene"}],"$type":"NodeCanvas.Framework.ActionList"},"_actorName":"DialogueManager","_actorParameterID":"606a81ab-5ba0-4b30-b0b5-f5d5aab37e3c","_position":{"x":754.3004,"y":2112.577},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"4"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[{"_keyName":"Tlaloc","_id":"d2a09d09-3a85-445a-90cc-a9a63490035a","_actorObject":1},{"_keyName":"protagonist","_id":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_actorObject":2},{"_keyName":"NetworkManager","_id":"3fc87b7d-a8d7-4ac8-9454-093042403663","_actorObject":3},{"_keyName":"DialogueManager","_id":"606a81ab-5ba0-4b30-b0b5-f5d5aab37e3c","_actorObject":4}],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
+    go through the door if you want to start your first trial."},"_position":{"x":647.7746,"y":2026.351},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"3"},{"_action":{"method":{"_baseInfo":"GameDirector|DialogueFinished|System.Void","_paramsInfo":"System.Boolean|System.String"},"parameters":[{"_type":"System.Boolean","_value":{"$content":true,"$type":"System.Boolean"}},{"_type":"System.String","_value":{"$content":"AI","$type":"System.String"}}],"returnValue":{},"$type":"NodeCanvas.Tasks.Actions.ExecuteFunction_Multiplatform"},"_actorName":"GameDirector","_actorParameterID":"3fc87b7d-a8d7-4ac8-9454-093042403663","_position":{"x":754.3004,"y":2112.577},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"4"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[{"_keyName":"Tlaloc","_id":"d2a09d09-3a85-445a-90cc-a9a63490035a","_actorObject":1},{"_keyName":"Protagonist","_id":"7f47806a-37c0-424a-9c31-acac8bd2d2f5","_actorObject":2},{"_keyName":"GameDirector","_id":"3fc87b7d-a8d7-4ac8-9454-093042403663","_actorObject":3}],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
   _objectReferences:
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -27,19 +26,16 @@ MonoBehaviour:
     _version: 3.21
     _category: 
     _comments: 
-    _translation: {x: 99, y: -1265}
-    _zoomFactor: 0.7271356
+    _translation: {x: -112, y: -1773}
+    _zoomFactor: 0.9999452
   _haltSerialization: 0
   actorParameters:
   - _keyName: Tlaloc
     _id: d2a09d09-3a85-445a-90cc-a9a63490035a
     _actorObject: {fileID: 0}
-  - _keyName: protagonist
+  - _keyName: Protagonist
     _id: 7f47806a-37c0-424a-9c31-acac8bd2d2f5
     _actorObject: {fileID: 0}
-  - _keyName: NetworkManager
+  - _keyName: GameDirector
     _id: 3fc87b7d-a8d7-4ac8-9454-093042403663
-    _actorObject: {fileID: 0}
-  - _keyName: DialogueManager
-    _id: 606a81ab-5ba0-4b30-b0b5-f5d5aab37e3c
     _actorObject: {fileID: 0}

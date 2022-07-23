@@ -6,9 +6,12 @@ using NodeCanvas.BehaviourTrees;
 
 public class GameDirector : MonoBehaviour
 {
-    //private static string SceneSaver = "currentScene";
+    public static GameDirector instance;
+
     [SerializeField]
     private int _DialogueCounter;
+    private int TurnNumber;
+    public NetworkManager networkmanager;
     public DialogueTreeController dialogueTreeController;
 
     public int DialogueCounter{
@@ -17,17 +20,9 @@ public class GameDirector : MonoBehaviour
     }
  
     public List<string> dialogueHistory;
- 
-    void Start(){
-        /*
-        switch(currentScene)
-        {
-            case("tutorial"):
-                dialogueTreeController.StartDialogue();
-                bre
 
-        }
-        */
+    void Start()
+    {
         _DialogueCounter = PlayerPrefs.GetInt("DialogueNumber", 0);
         _DialogueCounter = DialogueCounter;
         if(_DialogueCounter > 1)
@@ -38,24 +33,42 @@ public class GameDirector : MonoBehaviour
         DialogueTree.OnDialogueStarted += (x)=>{ dialogueHistory.Clear(); };
         DialogueTree.OnSubtitlesRequest += OnSubtitlesRequest;
         dialogueTreeController.StartBehaviour();
+
     }
    
     void OnSubtitlesRequest(SubtitlesRequestInfo info){
         //dialogueHistory.Add(info.statement.text);
     }
-    void Update()
-    {/*
-        if(Input.GetKeyDown("w"))
-        {
-            Debug.Log(dialogueHistory.Count);
-        }
-        */
-    }
 
-    public void DialogueFinished()
+    public void DialogueFinished(bool ChangeScene = false, string whichScene = "AI")
     {
         _DialogueCounter++;
         DialogueCounter = _DialogueCounter;
         PlayerPrefs.SetInt("DialogueNumber", _DialogueCounter);
+        if(ChangeScene)
+        {
+            networkmanager.ChangeScene(whichScene);
+        }
+    }
+
+        void onTurnStart()
+    {
+        TurnNumber++;
+        switch(DialogueCounter){
+            case 0:
+                tutorial(DialogueCounter);
+                break;
+        }
+
+    }
+
+    void tutorial(int turnnumber)
+    {
+
+    }
+
+    void custom(int turnnumber)
+    {
+        
     }
 }

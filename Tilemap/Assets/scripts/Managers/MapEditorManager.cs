@@ -4,10 +4,28 @@ using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
 using Photon.Pun;
 using UnityEngine.InputSystem;
+using TMPro;
+using System;
+using System.Text.RegularExpressions;
 
 public class MapEditorManager : MonoBehaviour
 {
-    public Item_controller[] ItemButtons;
+
+
+    #region EventsVariables
+    public static MapEditorManager Instance;
+    public List<(eventtrigger,happenings, int)> EventsDuringGame;
+    public eventtrigger currentTrigger;
+    public int triggerCounter;
+    public happenings currentHappening;
+    public int PlayerAttacks = 1;
+    public List<GameObject> EventEditingCanvases;
+    public GameObject DefaultCanvas;
+    public List<TMP_Text> Triggercounters;
+    bool EventEditingMode = false;
+    #endregion
+
+
 
     /*Here are stored the possible tiles for adding to the tilemap. You must add them in the Inspector.
     forest: 0
@@ -17,7 +35,10 @@ public class MapEditorManager : MonoBehaviour
     road: 4
     farm: 5
     bonfire: 6
+    barracks:7
+    HQ:8
      */
+    public Item_controller[] ItemButtons;
     public List<levelTile> tileBases;
     private List<GameObject> Buildables = new List<GameObject>();
     //we use a dictionary to access each unit by name instead of by number
@@ -35,6 +56,8 @@ public class MapEditorManager : MonoBehaviour
     public GameObject unitpanelcontent;
     public int activeplayer = 1;
     public string unitpressed;
+    public GameObject EventsCanvas;
+    public GameObject EventTriggersCanvas;
     private int numberoftiles;
     private Camera _mainCamera;
     private float timeBetweenSteps = 0.05f;
@@ -45,6 +68,10 @@ public class MapEditorManager : MonoBehaviour
     private Vector3Int topLeft;
     private Vector3Int bottomRight;
     private bool gotupperLeft = false;
+    private void Awake()
+    {
+        Instance = this;
+    }
     private void Start()
     {
         PhotonNetwork.OfflineMode = true;
@@ -59,6 +86,7 @@ public class MapEditorManager : MonoBehaviour
             instantiatedCard.transform.SetParent(unitpanelcontent.transform, false);
             numberoftiles = tileBases.Count;
         }
+        unitpanel.SetActive(false);
     }
     private void Update()
     {
@@ -66,7 +94,7 @@ public class MapEditorManager : MonoBehaviour
         Vector3Int gridPosition = gridposition(Mouse.current.position.ReadValue(), true);
 
         //when we select a unit, we make currentbuttonpressed = numberoftiles + 1, so that it enters this if.
-        if (Mouse.current.leftButton.wasReleasedThisFrame && CurrentButtonPressed >= numberoftiles && !dragging)
+        if (Mouse.current.leftButton.wasReleasedThisFrame && CurrentButtonPressed >= numberoftiles && !dragging && !EventEditingMode)
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {
@@ -92,7 +120,7 @@ public class MapEditorManager : MonoBehaviour
         }
 
         //when the button gets pressed, we insert the appropriate tile in the tilemap.
-        if (CurrentButtonPressed < numberoftiles)
+        if (CurrentButtonPressed < numberoftiles && !EventEditingMode)
         {
             if (Mouse.current.leftButton.isPressed && ItemButtons[CurrentButtonPressed].Clicked && Time.time - lastStep > timeBetweenSteps && !dragging)
             {
@@ -124,7 +152,7 @@ public class MapEditorManager : MonoBehaviour
             }
         }
         //this is just to destroy a tile with right click
-        if (Mouse.current.rightButton.isPressed)
+        if (Mouse.current.rightButton.isPressed && !EventEditingMode)
         {
             map.SetTile(gridPosition, null);
             conditions.SetTile(gridPosition, null);
@@ -136,12 +164,12 @@ public class MapEditorManager : MonoBehaviour
         }
 
         #region mirroring
-        if (Mouse.current.leftButton.wasPressedThisFrame && dragging)
+        if (Mouse.current.leftButton.wasPressedThisFrame && dragging &&!EventEditingMode)
         {
             topLeft = gridposition(Mouse.current.position.ReadValue(), true);
             gotupperLeft = true;
         }
-        if (Mouse.current.leftButton.wasReleasedThisFrame && dragging && gotupperLeft)
+        if (Mouse.current.leftButton.wasReleasedThisFrame && dragging && gotupperLeft &&!EventEditingMode)
         {
             bottomRight = gridposition(Mouse.current.position.ReadValue(), true);
             Vector3Int realtopLeft = new Vector3Int(Mathf.Min(topLeft.x, bottomRight.x), Mathf.Max(topLeft.y, bottomRight.y), topLeft.z);
@@ -167,6 +195,10 @@ public class MapEditorManager : MonoBehaviour
     public void setActivePlayer(int player)
     {
         activeplayer = player;
+    }
+    public void setAttackingPlayerForHappenings(int player)
+    {
+        PlayerAttacks = player;
     }
     public Vector3Int gridposition(Vector3 position, bool screen = false)
     {
@@ -273,5 +305,81 @@ public class MapEditorManager : MonoBehaviour
     {
         dragging = true;
         Destroy(GameObject.FindGameObjectWithTag("ItemImage"));
+    }
+    public void ButtonForTurningEventTriggersOn()
+    {
+        if(!EventTriggersCanvas.activeSelf && !EventsCanvas.activeSelf)
+        {
+            EventTriggersCanvas.SetActive(true);
+        }
+    }
+    public void CancelEvent()
+    {
+        EventTriggersCanvas.SetActive(false);
+        EventsCanvas.SetActive(false);
+        EventEditingModeOff();
+    }
+    public void newEventTrigger(int trigger)
+    {
+        string triggerCounterstring;
+        if(trigger != 2)
+        {
+            triggerCounterstring = Triggercounters[trigger].text;
+            Regex searchstrting = new Regex ("[0-9]+");
+            triggerCounterstring = searchstrting.Match(triggerCounterstring).Value;
+            int result;
+            int.TryParse(triggerCounterstring, out result);
+            triggerCounter = result;
+        }
+        else
+        {
+            triggerCounter = PlayerAttacks+1;
+        }
+        currentTrigger = (eventtrigger)trigger;
+        EventTriggersCanvas.SetActive(false);
+        EventsCanvas.SetActive(true);
+
+    }
+
+    public void newEvent(int happening)
+    {
+        currentHappening = (happenings)happening;
+        turnEventsCanvasOff();
+        EventEditingModeOn(happening);
+    }
+    public void confirmEvent()
+    {
+        EventsDuringGame.Add((currentTrigger, currentHappening, triggerCounter));
+        EventEditingModeOff();
+        EventTriggersCanvas.SetActive(true);
+    }
+    public void EventEditingModeOn(int happening)
+    {
+        DefaultCanvas.SetActive(false);
+        EventEditingCanvases[(int)happening].SetActive(true);
+    }
+    public void EventEditingModeOff()
+    {
+        foreach(GameObject canvas in EventEditingCanvases)
+        {
+            canvas.SetActive(false);
+        }
+        DefaultCanvas.SetActive(true);
+    }
+    public void StartOfTurnButtonClicked(TextMeshProUGUI turnnumber)
+    {
+        int turn = Convert.ToInt16(turnnumber.text);
+    }
+    public void TurnEventsCanvasOn()
+    {
+        if(!EventsCanvas.activeSelf)
+        {
+            EventsCanvas.SetActive(true);
+        }
+    }
+    public void turnEventsCanvasOff()
+    {
+        EventsCanvas.SetActive(false);
+        EventTriggersCanvas.SetActive(false);
     }
 }
